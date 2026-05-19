@@ -1,0 +1,49 @@
+{
+  "device": "cpu",
+  "model": "resnet18",
+  "epochs": 4,
+  "batch_size": 16,
+  "image_size": 224,
+  "learning_rate": 0.0002,
+  "weight_decay": 0.0001,
+  "use_balanced_sampler": true,
+  "merge_organic_into_other": true,
+  "sources": [
+    "TrashNet",
+    "TACO"
+  ],
+  "pretrained": false,
+  "freeze_backbone_epochs": 1,
+  "label_smoothing": 0.05,
+  "class_names": [
+    "Plastic",
+    "Glass",
+    "PaperCardboard",
+    "Metal",
+    "Other"
+  ],
+  "train_size": 2594,
+  "val_size": 553,
+  "test_size": 567,
+  "train_distribution": {
+    "Plastic": 563,
+    "Glass": 408,
+    "PaperCardboard": 847,
+    "Metal": 493,
+    "Other": 283
+  },
+  "val_distribution": {
+    "Plastic": 120,
+    "Glass": 87,
+    "PaperCardboard": 181,
+    "Metal": 105,
+    "Other": 60
+  },
+  "test_distribution": {
+    "Plastic": 122,
+    "Glass": 89,
+    "PaperCardboard": 184,
+    "Metal": 107,
+    "Other": 65
+  }
+}

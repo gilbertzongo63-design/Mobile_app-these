@@ -1,0 +1,30 @@
+{
+  "target_transitions": [
+    "Glass -> Other",
+    "Metal -> Glass",
+    "Metal -> Other",
+    "PaperCardboard -> Other",
+    "Plastic -> Glass",
+    "Plastic -> Other"
+  ],
+  "min_probability": 0.45,
+  "removed_total": 584,
+  "removed_counts_by_split": {
+    "train": 455,
+    "val": 129
+  },
+  "removed_counts_by_transition": {
+    "Glass -> Other": 27,
+    "Metal -> Other": 65,
+    "Metal -> Glass": 66,
+    "PaperCardboard -> Other": 190,
+    "Plastic -> Other": 180,
+    "Plastic -> Glass": 56
+  },
+  "kept_counts_by_split": {
+    "test": 530,
+    "train": 1958,
+    "val": 384
+  },
+  "output_dataset_dir": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class_confusion_cleaned"
+}

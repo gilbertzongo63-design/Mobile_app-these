@@ -1,0 +1,284 @@
+{
+  "checkpoint": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\training_runs\\stage2_combined_resnet18_plastic_refined\\best_model.pt",
+  "dataset_dir": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic",
+  "total_plastic_images": 122,
+  "correct_plastic_predictions": 74,
+  "plastic_error_count": 48,
+  "plastic_low_confidence_count": 42,
+  "predicted_class_distribution": {
+    "Plastic": 74,
+    "Other": 25,
+    "PaperCardboard": 2,
+    "Glass": 15,
+    "Metal": 6
+  },
+  "confidence_distribution": {
+    "medium": 24,
+    "high": 56,
+    "low": 42
+  },
+  "plastic_transition_counts": {
+    "Plastic -> Plastic": 74,
+    "Plastic -> Other": 25,
+    "Plastic -> PaperCardboard": 2,
+    "Plastic -> Glass": 15,
+    "Plastic -> Metal": 6
+  },
+  "dominant_second_candidates": {
+    "Plastic": 39,
+    "Other": 35,
+    "Glass": 24,
+    "Metal": 22,
+    "PaperCardboard": 2
+  },
+  "top_error_targets": [
+    {
+      "transition": "Plastic -> Other",
+      "count": 25,
+      "examples": [
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000007_ann4052.jpg",
+          "predicted_probability": 0.3847,
+          "top2_class": "Plastic",
+          "top2_probability": 0.3699,
+          "top3_class": "Metal",
+          "top3_probability": 0.1844
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000007_ann4053.jpg",
+          "predicted_probability": 0.3847,
+          "top2_class": "Plastic",
+          "top2_probability": 0.3699,
+          "top3_class": "Metal",
+          "top3_probability": 0.1844
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000013_ann4077.jpg",
+          "predicted_probability": 0.3847,
+          "top2_class": "Plastic",
+          "top2_probability": 0.3699,
+          "top3_class": "Metal",
+          "top3_probability": 0.1844
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000017_ann3662.jpg",
+          "predicted_probability": 0.3847,
+          "top2_class": "Plastic",
+          "top2_probability": 0.3699,
+          "top3_class": "Metal",
+          "top3_probability": 0.1844
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000022_ann3684.jpg",
+          "predicted_probability": 0.3847,
+          "top2_class": "Plastic",
+          "top2_probability": 0.3699,
+          "top3_class": "Metal",
+          "top3_probability": 0.1844
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000028_ann765.jpg",
+          "predicted_probability": 0.3847,
+          "top2_class": "Plastic",
+          "top2_probability": 0.3699,
+          "top3_class": "Metal",
+          "top3_probability": 0.1844
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000029_ann3520.jpg",
+          "predicted_probability": 0.3847,
+          "top2_class": "Plastic",
+          "top2_probability": 0.3699,
+          "top3_class": "Metal",
+          "top3_probability": 0.1844
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000033_ann3701.jpg",
+          "predicted_probability": 0.3847,
+          "top2_class": "Plastic",
+          "top2_probability": 0.3699,
+          "top3_class": "Metal",
+          "top3_probability": 0.1844
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000033_ann4239.jpg",
+          "predicted_probability": 0.3847,
+          "top2_class": "Plastic",
+          "top2_probability": 0.3699,
+          "top3_class": "Metal",
+          "top3_probability": 0.1844
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000044_ann3730.jpg",
+          "predicted_probability": 0.3847,
+          "top2_class": "Plastic",
+          "top2_probability": 0.3699,
+          "top3_class": "Metal",
+          "top3_probability": 0.1844
+        }
+      ]
+    },
+    {
+      "transition": "Plastic -> Glass",
+      "count": 15,
+      "examples": [
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000048_ann33.jpg",
+          "predicted_probability": 0.4554,
+          "top2_class": "Plastic",
+          "top2_probability": 0.4305,
+          "top3_class": "Other",
+          "top3_probability": 0.0731
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic101.jpg",
+          "predicted_probability": 0.6888,
+          "top2_class": "Plastic",
+          "top2_probability": 0.2278,
+          "top3_class": "PaperCardboard",
+          "top3_probability": 0.0404
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic119.jpg",
+          "predicted_probability": 0.825,
+          "top2_class": "Plastic",
+          "top2_probability": 0.1727,
+          "top3_class": "Other",
+          "top3_probability": 0.0017
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic139.jpg",
+          "predicted_probability": 0.4946,
+          "top2_class": "Plastic",
+          "top2_probability": 0.3643,
+          "top3_class": "Metal",
+          "top3_probability": 0.1124
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic163.jpg",
+          "predicted_probability": 0.8533,
+          "top2_class": "Plastic",
+          "top2_probability": 0.0966,
+          "top3_class": "Other",
+          "top3_probability": 0.0307
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic170.jpg",
+          "predicted_probability": 0.7868,
+          "top2_class": "Metal",
+          "top2_probability": 0.1065,
+          "top3_class": "Other",
+          "top3_probability": 0.0693
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic190.jpg",
+          "predicted_probability": 0.8997,
+          "top2_class": "Metal",
+          "top2_probability": 0.0468,
+          "top3_class": "Other",
+          "top3_probability": 0.0305
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic199.jpg",
+          "predicted_probability": 0.8111,
+          "top2_class": "Metal",
+          "top2_probability": 0.1751,
+          "top3_class": "Other",
+          "top3_probability": 0.0083
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic2.jpg",
+          "predicted_probability": 0.5067,
+          "top2_class": "Plastic",
+          "top2_probability": 0.4791,
+          "top3_class": "Other",
+          "top3_probability": 0.0106
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic206.jpg",
+          "predicted_probability": 0.8354,
+          "top2_class": "Plastic",
+          "top2_probability": 0.1389,
+          "top3_class": "Metal",
+          "top3_probability": 0.0146
+        }
+      ]
+    },
+    {
+      "transition": "Plastic -> Metal",
+      "count": 6,
+      "examples": [
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000091_ann1396.jpg",
+          "predicted_probability": 0.4846,
+          "top2_class": "Plastic",
+          "top2_probability": 0.2568,
+          "top3_class": "Other",
+          "top3_probability": 0.2008
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000091_ann164.jpg",
+          "predicted_probability": 0.4765,
+          "top2_class": "PaperCardboard",
+          "top2_probability": 0.4483,
+          "top3_class": "Glass",
+          "top3_probability": 0.0352
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic112.jpg",
+          "predicted_probability": 0.7784,
+          "top2_class": "Plastic",
+          "top2_probability": 0.1724,
+          "top3_class": "PaperCardboard",
+          "top3_probability": 0.027
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic188.jpg",
+          "predicted_probability": 0.7828,
+          "top2_class": "Plastic",
+          "top2_probability": 0.1136,
+          "top3_class": "Glass",
+          "top3_probability": 0.0887
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic370.jpg",
+          "predicted_probability": 0.3547,
+          "top2_class": "Glass",
+          "top2_probability": 0.296,
+          "top3_class": "Plastic",
+          "top3_probability": 0.2593
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\plastic84.jpg",
+          "predicted_probability": 0.4212,
+          "top2_class": "Glass",
+          "top2_probability": 0.2186,
+          "top3_class": "Plastic",
+          "top3_probability": 0.2002
+        }
+      ]
+    },
+    {
+      "transition": "Plastic -> PaperCardboard",
+      "count": 2,
+      "examples": [
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000022_ann972.jpg",
+          "predicted_probability": 0.5015,
+          "top2_class": "Plastic",
+          "top2_probability": 0.4539,
+          "top3_class": "Metal",
+          "top3_probability": 0.023
+        },
+        {
+          "image_path": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class\\test\\Plastic\\000104_ann211.jpg",
+          "predicted_probability": 0.3923,
+          "top2_class": "Plastic",
+          "top2_probability": 0.3701,
+          "top3_class": "Glass",
+          "top3_probability": 0.1229
+        }
+      ]
+    }
+  ]
+}

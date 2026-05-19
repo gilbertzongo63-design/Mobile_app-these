@@ -1,0 +1,42 @@
+{
+  "checkpoint": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\training_runs\\stage2_combined_resnet18_plastic_refined\\best_model.pt",
+  "target_class": "Plastic",
+  "removed_predicted_class": "Metal",
+  "splits_cleaned": [
+    "train",
+    "val"
+  ],
+  "removed_count": 13,
+  "removed_count_by_split": {
+    "train": 8,
+    "val": 5
+  },
+  "output_dataset_root": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class_plasticmetal_cleaned",
+  "output_manifest": "C:\\Users\\HP\\Desktop\\Soutenance-dev\\prepared_datasets\\combined_6class_plasticmetal_cleaned_manifest\\annotations_unified.csv",
+  "manifest_row_count": 3442,
+  "remaining_split_counts": {
+    "test": {
+      "Glass": 86,
+      "Metal": 93,
+      "Organic": 2,
+      "Other": 42,
+      "PaperCardboard": 184,
+      "Plastic": 122
+    },
+    "train": {
+      "Glass": 394,
+      "Metal": 426,
+      "Organic": 2,
+      "Other": 181,
+      "PaperCardboard": 847,
+      "Plastic": 555
+    },
+    "val": {
+      "Glass": 84,
+      "Metal": 90,
+      "Other": 38,
+      "PaperCardboard": 181,
+      "Plastic": 115
+    }
+  }
+}

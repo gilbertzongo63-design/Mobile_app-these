@@ -1,0 +1,81 @@
+{
+  "dataset": "TACO",
+  "final_classes": [
+    "Plastic",
+    "Glass",
+    "PaperCardboard",
+    "Metal",
+    "Organic",
+    "Other"
+  ],
+  "thresholds": {
+    "min_bbox_width": 40,
+    "min_bbox_height": 40,
+    "min_area_ratio": 0.003
+  },
+  "kept_annotation_count": 929,
+  "kept_image_count": 644,
+  "rejected_annotation_count": 3855,
+  "kept_original_category_counts": {
+    "Glass bottle": 64,
+    "Other carton": 65,
+    "Clear plastic bottle": 197,
+    "Drink can": 158,
+    "Food Can": 33,
+    "Other plastic bottle": 41,
+    "Aerosol": 8,
+    "Styrofoam piece": 63,
+    "Normal paper": 44,
+    "Crisp packet": 32,
+    "Egg carton": 10,
+    "Paper bag": 24,
+    "Disposable plastic cup": 67,
+    "Food waste": 4,
+    "Squeezable tube": 6,
+    "Spread tub": 6,
+    "Garbage bag": 29,
+    "Corrugated carton": 59,
+    "Magazine paper": 10,
+    "Pizza box": 3,
+    "Tupperware": 3,
+    "Other plastic container": 1,
+    "Other plastic cup": 2
+  },
+  "kept_final_class_counts": {
+    "Glass": 64,
+    "PaperCardboard": 215,
+    "Plastic": 323,
+    "Metal": 199,
+    "Other": 124,
+    "Organic": 4
+  },
+  "split_counts": {
+    "train": {
+      "Glass": 44,
+      "PaperCardboard": 150,
+      "Plastic": 226,
+      "Metal": 139,
+      "Other": 86,
+      "Organic": 2
+    },
+    "val": {
+      "Glass": 9,
+      "PaperCardboard": 32,
+      "Plastic": 48,
+      "Metal": 29,
+      "Other": 18
+    },
+    "test": {
+      "Glass": 11,
+      "PaperCardboard": 33,
+      "Plastic": 49,
+      "Metal": 31,
+      "Other": 20,
+      "Organic": 2
+    }
+  },
+  "crop_status": {
+    "cropped_count": 929,
+    "notes": []
+  }
+}

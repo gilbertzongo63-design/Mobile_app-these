@@ -1,0 +1,930 @@
+annotation_id,image_id,file_name,category_name,final_class,bbox,area,image_width,image_height,split
+1,0,batch_1/000006.jpg,Glass bottle,Glass,"[517.0, 127.0, 447.0, 1322.0]",403954.0,1537,2049,train
+3,1,batch_1/000008.jpg,Other carton,PaperCardboard,"[531.0, 292.0, 1006.0, 672.0]",99583.5,1537,2049,train
+4,2,batch_1/000010.jpg,Clear plastic bottle,Plastic,"[632.0, 987.0, 500.0, 374.0]",73832.5,1537,2049,train
+6,3,batch_1/000019.jpg,Clear plastic bottle,Plastic,"[209.0, 920.0, 454.0, 562.0]",98379.5,2049,1537,test
+7,3,batch_1/000019.jpg,Clear plastic bottle,Plastic,"[1212.0, 822.0, 179.0, 446.0]",43678.0,2049,1537,val
+9,3,batch_1/000019.jpg,Drink can,Metal,"[589.0, 548.0, 341.0, 405.0]",61402.0,2049,1537,train
+10,4,batch_1/000026.jpg,Drink can,Metal,"[556.0, 944.0, 490.0, 336.0]",93266.0,1537,2049,val
+11,5,batch_1/000047.jpg,Food Can,Metal,"[1205.0, 47.0, 623.0, 721.0]",336008.5,2049,1537,train
+12,5,batch_1/000047.jpg,Food Can,Metal,"[309.0, 11.0, 581.0, 820.0]",372822.5,2049,1537,train
+13,5,batch_1/000047.jpg,Other plastic bottle,Plastic,"[189.0, 751.0, 1617.0, 589.0]",736529.0,2049,1537,train
+17,6,batch_1/000055.jpg,Aerosol,Metal,"[515.0, 439.0, 357.0, 1125.0]",238627.5,1537,2049,train
+18,7,batch_1/000001.jpg,Clear plastic bottle,Plastic,"[826.0, 744.0, 464.0, 205.0]",68667.0,2049,1537,val
+20,8,batch_1/000005.jpg,Clear plastic bottle,Plastic,"[824.0, 557.0, 89.0, 236.0]",17734.0,1537,2049,train
+21,9,batch_1/000007.jpg,Food Can,Metal,"[730.0, 126.0, 275.0, 609.0]",133884.5,1537,2049,val
+24,10,batch_1/000012.jpg,Glass bottle,Glass,"[379.0, 1127.0, 425.0, 318.0]",43489.0,1537,2049,test
+27,11,batch_1/000014.jpg,Styrofoam piece,Other,"[914.0, 1308.0, 243.0, 187.0]",28200.5,1537,2049,train
+28,11,batch_1/000014.jpg,Drink can,Metal,"[672.0, 1069.0, 219.0, 161.0]",23242.0,1537,2049,train
+30,11,batch_1/000014.jpg,Other carton,PaperCardboard,"[836.0, 1010.0, 339.0, 207.0]",36370.5,1537,2049,train
+32,12,batch_1/000048.jpg,Other plastic bottle,Plastic,"[1527.0, 460.0, 415.0, 1033.0]",329938.0,2049,1537,train
+33,12,batch_1/000048.jpg,Clear plastic bottle,Plastic,"[579.0, 521.0, 322.0, 921.0]",227212.5,2049,1537,test
+34,12,batch_1/000048.jpg,Glass bottle,Glass,"[211.0, 1.0, 417.0, 1417.0]",324005.0,2049,1537,val
+42,13,batch_1/000053.jpg,Clear plastic bottle,Plastic,"[398.0, 410.0, 1134.0, 998.0]",437552.5,1537,2049,train
+46,14,batch_1/000056.jpg,Other plastic bottle,Plastic,"[419.0, 8.0, 713.0, 1854.0]",913836.0,1537,2049,train
+47,15,batch_1/000058.jpg,Other plastic bottle,Plastic,"[150.0, 328.0, 568.0, 1304.0]",550185.5,1537,2049,train
+48,15,batch_1/000058.jpg,Other plastic bottle,Plastic,"[802.0, 405.0, 547.0, 1404.0]",533408.0,1537,2049,train
+50,16,batch_1/000060.jpg,Aerosol,Metal,"[750.0, 244.0, 402.0, 1467.0]",518154.0,1537,2049,val
+51,16,batch_1/000060.jpg,Normal paper,PaperCardboard,"[1205.0, 989.0, 332.0, 602.0]",171665.5,1537,2049,train
+53,18,batch_1/000011.jpg,Drink can,Metal,"[522.0, 1168.0, 240.0, 122.0]",23393.0,1537,2049,train
+54,19,batch_1/000032.jpg,Drink can,Metal,"[503.0, 808.0, 445.0, 357.0]",108233.5,1537,2049,train
+56,20,batch_1/000040.jpg,Food Can,Metal,"[285.0, 402.0, 472.0, 624.0]",222774.5,2049,1537,train
+57,20,batch_1/000040.jpg,Food Can,Metal,"[1450.0, 379.0, 514.0, 612.0]",219840.5,2049,1537,train
+60,21,batch_1/000043.jpg,Food Can,Metal,"[602.0, 290.0, 865.0, 1059.0]",672696.5,2049,1537,train
+62,22,batch_1/000049.jpg,Drink can,Metal,"[399.0, 502.0, 483.0, 741.0]",201426.0,1537,2049,train
+64,23,batch_1/000054.jpg,Aerosol,Metal,"[184.0, 898.0, 494.0, 854.0]",268986.5,1537,2049,train
+65,23,batch_1/000054.jpg,Other plastic bottle,Plastic,"[605.0, 259.0, 379.0, 1196.0]",342826.0,1537,2049,train
+66,23,batch_1/000054.jpg,Other plastic bottle,Plastic,"[1051.0, 202.0, 486.0, 1078.0]",377292.5,1537,2049,train
+68,24,batch_1/000061.jpg,Aerosol,Metal,"[274.0, 723.0, 663.0, 846.0]",213443.5,1537,2049,val
+69,25,batch_1/000021.jpg,Glass bottle,Glass,"[852.0, 638.0, 687.0, 291.0]",95494.5,2049,1537,train
+71,26,batch_1/000022.jpg,Glass bottle,Glass,"[647.0, 1033.0, 820.0, 376.0]",142823.0,2049,1537,train
+73,27,batch_1/000023.jpg,Clear plastic bottle,Plastic,"[372.0, 1441.0, 293.0, 221.0]",29599.5,1537,2049,train
+74,27,batch_1/000023.jpg,Drink can,Metal,"[1015.0, 979.0, 190.0, 214.0]",20471.0,1537,2049,test
+75,27,batch_1/000023.jpg,Drink can,Metal,"[904.0, 1493.0, 168.0, 166.0]",11800.5,1537,2049,train
+76,27,batch_1/000023.jpg,Drink can,Metal,"[683.0, 1550.0, 221.0, 103.0]",11367.0,1537,2049,train
+80,28,batch_1/000024.jpg,Drink can,Metal,"[218.0, 1457.0, 273.0, 273.0]",19347.0,1537,2049,test
+81,28,batch_1/000024.jpg,Drink can,Metal,"[634.0, 860.0, 227.0, 232.0]",26337.5,1537,2049,test
+83,29,batch_1/000027.jpg,Drink can,Metal,"[668.0, 717.0, 455.0, 655.0]",165038.0,1537,2049,train
+85,31,batch_1/000030.jpg,Drink can,Metal,"[604.0, 1052.0, 187.0, 320.0]",27762.0,1537,2049,train
+86,32,batch_1/000031.jpg,Drink can,Metal,"[470.0, 1040.0, 413.0, 321.0]",89914.0,1537,2049,train
+87,33,batch_1/000042.jpg,Food Can,Metal,"[664.0, 619.0, 239.0, 270.0]",50284.0,2049,1537,train
+88,33,batch_1/000042.jpg,Food Can,Metal,"[1179.0, 662.0, 286.0, 265.0]",54620.0,2049,1537,train
+91,34,batch_1/000050.jpg,Drink can,Metal,"[642.0, 854.0, 833.0, 804.0]",261358.0,1537,2049,train
+93,35,batch_1/000059.jpg,Aerosol,Metal,"[656.0, 705.0, 319.0, 841.0]",220258.5,1537,2049,train
+94,35,batch_1/000059.jpg,Normal paper,PaperCardboard,"[744.0, 551.0, 792.0, 777.0]",443764.5,1537,2049,train
+97,36,batch_1/000000.jpg,Clear plastic bottle,Plastic,"[710.0, 1225.0, 153.0, 198.0]",14765.5,1537,2049,train
+98,37,batch_1/000013.jpg,Glass bottle,Glass,"[811.0, 1123.0, 199.0, 350.0]",24923.0,1537,2049,val
+100,38,batch_1/000015.jpg,Crisp packet,Other,"[828.0, 1058.0, 193.0, 187.0]",21204.0,1537,2049,train
+101,39,batch_1/000016.jpg,Glass bottle,Glass,"[593.0, 934.0, 432.0, 238.0]",45001.0,1537,2049,test
+102,40,batch_1/000017.jpg,Glass bottle,Glass,"[713.0, 530.0, 191.0, 373.0]",35424.0,1537,2049,train
+103,41,batch_1/000025.jpg,Drink can,Metal,"[323.0, 1055.0, 487.0, 352.0]",97726.0,1537,2049,train
+105,41,batch_1/000025.jpg,Normal paper,PaperCardboard,"[1426.0, 1294.0, 110.0, 273.0]",14693.0,1537,2049,train
+106,42,batch_1/000029.jpg,Drink can,Metal,"[652.0, 874.0, 425.0, 689.0]",152825.5,1537,2049,train
+107,43,batch_1/000035.jpg,Other plastic bottle,Plastic,"[33.0, 230.0, 602.0, 1316.0]",561775.0,1537,2049,train
+108,43,batch_1/000035.jpg,Other plastic bottle,Plastic,"[807.0, 103.0, 710.0, 1613.0]",808831.5,1537,2049,val
+110,44,batch_1/000037.jpg,Food Can,Metal,"[929.0, 557.0, 379.0, 500.0]",137266.5,2049,1537,train
+111,44,batch_1/000037.jpg,Food Can,Metal,"[494.0, 531.0, 372.0, 533.0]",157322.0,2049,1537,train
+112,44,batch_1/000037.jpg,Food Can,Metal,"[709.0, 271.0, 296.0, 482.0]",101780.5,2049,1537,train
+115,45,batch_1/000045.jpg,Food Can,Metal,"[564.0, 1303.0, 522.0, 233.0]",99856.5,2049,1537,train
+116,45,batch_1/000045.jpg,Food Can,Metal,"[0.0, 452.0, 437.0, 504.0]",196598.0,2049,1537,train
+117,45,batch_1/000045.jpg,Food Can,Metal,"[395.0, 475.0, 424.0, 486.0]",183373.0,2049,1537,test
+118,45,batch_1/000045.jpg,Food Can,Metal,"[804.0, 465.0, 339.0, 501.0]",157239.5,2049,1537,train
+119,45,batch_1/000045.jpg,Food Can,Metal,"[1128.0, 327.0, 496.0, 648.0]",284755.0,2049,1537,train
+120,45,batch_1/000045.jpg,Food Can,Metal,"[1583.0, 315.0, 466.0, 669.0]",280189.5,2049,1537,test
+121,46,batch_1/000038.jpg,Food Can,Metal,"[238.0, 686.0, 401.0, 475.0]",134469.5,2049,1537,test
+122,46,batch_1/000038.jpg,Food Can,Metal,"[802.0, 410.0, 413.0, 344.0]",89801.0,2049,1537,test
+123,46,batch_1/000038.jpg,Food Can,Metal,"[1498.0, 636.0, 405.0, 477.0]",137404.5,2049,1537,train
+129,47,batch_1/000065.JPG,Egg carton,PaperCardboard,"[1824.0, 475.0, 1028.0, 735.0]",548585.0,3264,2448,train
+130,47,batch_1/000065.JPG,Egg carton,PaperCardboard,"[1183.0, 55.0, 1006.0, 1054.0]",695322.5,3264,2448,train
+131,48,batch_1/000066.JPG,Egg carton,PaperCardboard,"[413.0, 1120.0, 1143.0, 922.0]",566935.5,3264,2448,train
+132,49,batch_1/000067.JPG,Egg carton,PaperCardboard,"[31.0, 194.0, 1700.0, 2107.0]",3020306.0,2448,3264,val
+134,51,batch_1/000069.JPG,Drink can,Metal,"[1050.0, 1654.0, 410.0, 353.0]",99515.5,2448,3264,train
+135,52,batch_1/000070.JPG,Drink can,Metal,"[1038.0, 1111.0, 255.0, 637.0]",138820.5,2448,3264,train
+136,53,batch_1/000071.JPG,Other carton,PaperCardboard,"[1024.0, 1397.0, 556.0, 592.0]",144990.0,2448,3264,train
+137,54,batch_1/000072.JPG,Crisp packet,Other,"[704.0, 1301.0, 683.0, 591.0]",257105.0,2448,3264,test
+138,54,batch_1/000072.JPG,Normal paper,PaperCardboard,"[1.0, 1413.0, 814.0, 1030.0]",533149.0,2448,3264,train
+139,55,batch_1/000073.JPG,Drink can,Metal,"[940.0, 837.0, 492.0, 711.0]",202553.5,2448,3264,train
+142,58,batch_1/000078.JPG,Paper bag,PaperCardboard,"[421.0, 1009.0, 1362.0, 1946.0]",1183239.5,2448,3264,train
+143,59,batch_1/000079.JPG,Paper bag,PaperCardboard,"[257.0, 1089.0, 1712.0, 1781.0]",1918134.5,2448,3264,train
+144,60,batch_1/000081.JPG,Clear plastic bottle,Plastic,"[749.0, 1972.0, 444.0, 284.0]",62899.0,2448,3264,train
+146,61,batch_1/000082.JPG,Crisp packet,Other,"[966.0, 1399.0, 525.0, 485.0]",153477.0,2448,3264,train
+149,63,batch_1/000084.JPG,Disposable plastic cup,Plastic,"[701.0, 2191.0, 605.0, 559.0]",176796.0,2448,3264,train
+157,66,batch_1/000087.JPG,Paper bag,PaperCardboard,"[1018.0, 1125.0, 358.0, 397.0]",84571.0,2448,3264,train
+158,67,batch_1/000088.JPG,Food Can,Metal,"[311.0, 1648.0, 865.0, 853.0]",591627.0,2448,3264,train
+162,68,batch_1/000090.JPG,Food Can,Metal,"[608.0, 439.0, 931.0, 1192.0]",797474.0,2448,3264,train
+163,68,batch_1/000090.JPG,Food waste,Organic,"[1118.0, 1008.0, 386.0, 380.0]",47527.5,2448,3264,test
+164,69,batch_1/000091.JPG,Squeezable tube,Plastic,"[0.0, 414.0, 2190.0, 1601.0]",1321487.0,3264,2448,test
+166,70,batch_1/000092.JPG,Other carton,PaperCardboard,"[277.0, 686.0, 1133.0, 1198.0]",829357.5,2448,3264,val
+167,70,batch_1/000092.JPG,Spread tub,Plastic,"[1533.0, 926.0, 618.0, 656.0]",301459.5,2448,3264,train
+169,71,batch_1/000093.JPG,Spread tub,Plastic,"[1278.0, 1841.0, 602.0, 654.0]",261345.5,2448,3264,train
+171,72,batch_1/000094.JPG,Food waste,Organic,"[665.0, 936.0, 1057.0, 1023.0]",704098.0,2448,3264,test
+175,74,batch_1/000096.JPG,Garbage bag,Other,"[597.0, 1008.0, 1218.0, 1126.0]",1044590.0,2448,3264,train
+176,75,batch_1/000062.JPG,Drink can,Metal,"[870.0, 673.0, 620.0, 386.0]",148961.0,2448,3264,train
+177,75,batch_1/000062.JPG,Drink can,Metal,"[1447.0, 829.0, 603.0, 661.0]",202419.5,2448,3264,train
+178,75,batch_1/000062.JPG,Clear plastic bottle,Plastic,"[657.0, 1036.0, 835.0, 361.0]",199505.0,2448,3264,train
+189,76,batch_1/000098.JPG,Clear plastic bottle,Plastic,"[571.0, 985.0, 447.0, 814.0]",211163.5,2448,3264,train
+200,81,batch_1/000102.JPG,Corrugated carton,PaperCardboard,"[812.0, 1171.0, 1204.0, 825.0]",895154.5,2448,3264,train
+201,81,batch_1/000102.JPG,Corrugated carton,PaperCardboard,"[955.0, 340.0, 1040.0, 878.0]",571137.5,2448,3264,val
+202,81,batch_1/000102.JPG,Corrugated carton,PaperCardboard,"[1824.0, 720.0, 610.0, 818.0]",300483.0,2448,3264,train
+208,82,batch_1/000104.JPG,Aerosol,Metal,"[734.0, 1236.0, 1192.0, 1153.0]",487038.0,3264,2448,train
+211,82,batch_1/000104.JPG,Squeezable tube,Plastic,"[2493.0, 1044.0, 689.0, 1229.0]",348845.5,3264,2448,test
+212,82,batch_1/000104.JPG,Squeezable tube,Plastic,"[1545.0, 1010.0, 375.0, 455.0]",49416.5,3264,2448,val
+217,84,batch_1/000106.JPG,Other plastic bottle,Plastic,"[1680.0, 2500.0, 278.0, 682.0]",151893.5,2448,3264,train
+218,84,batch_1/000106.JPG,Other plastic bottle,Plastic,"[2030.0, 2438.0, 417.0, 635.0]",206161.5,2448,3264,train
+220,85,batch_1/000107.JPG,Drink can,Metal,"[2039.0, 1606.0, 360.0, 536.0]",144205.5,2448,3264,train
+221,85,batch_1/000107.JPG,Garbage bag,Other,"[1909.0, 544.0, 200.0, 268.0]",29900.0,2448,3264,train
+222,85,batch_1/000107.JPG,Garbage bag,Other,"[2061.0, 501.0, 189.0, 286.0]",36956.0,2448,3264,train
+223,85,batch_1/000107.JPG,Garbage bag,Other,"[2153.0, 413.0, 192.0, 277.0]",28881.0,2448,3264,train
+228,88,batch_1/000111.JPG,Drink can,Metal,"[844.0, 2332.0, 257.0, 296.0]",42960.5,2448,3264,train
+229,88,batch_1/000111.JPG,Drink can,Metal,"[434.0, 1871.0, 187.0, 281.0]",43372.0,2448,3264,val
+232,89,batch_1/000115.JPG,Clear plastic bottle,Plastic,"[361.0, 520.0, 698.0, 331.0]",115524.0,3264,2448,test
+234,89,batch_1/000115.JPG,Drink can,Metal,"[2278.0, 759.0, 457.0, 213.0]",53063.0,3264,2448,train
+236,89,batch_1/000115.JPG,Normal paper,PaperCardboard,"[2427.0, 845.0, 413.0, 262.0]",52684.0,3264,2448,test
+243,91,batch_1/000118.JPG,Crisp packet,Other,"[831.0, 1289.0, 348.0, 251.0]",51014.5,2448,3264,train
+244,92,batch_1/000119.JPG,Food waste,Organic,"[922.0, 1748.0, 492.0, 775.0]",254732.0,2448,3264,train
+249,96,batch_1/000004.jpg,Drink can,Metal,"[649.0, 55.0, 93.0, 88.0]",4273.0,1241,751,test
+250,97,batch_1/000124.JPG,Styrofoam piece,Other,"[489.0, 124.0, 1761.0, 3125.0]",4559112.0,2448,3264,train
+253,98,batch_1/000127.JPG,Food Can,Metal,"[1.0, 1727.0, 849.0, 1217.0]",644002.5,2448,3264,train
+254,98,batch_1/000127.JPG,Food Can,Metal,"[768.0, 1254.0, 962.0, 675.0]",350190.0,2448,3264,val
+257,98,batch_1/000127.JPG,Garbage bag,Other,"[1.0, 0.0, 2447.0, 1097.0]",578778.0,2448,3264,train
+258,98,batch_1/000127.JPG,Other carton,PaperCardboard,"[661.0, 97.0, 1787.0, 1212.0]",1044424.0,2448,3264,train
+259,98,batch_1/000127.JPG,Other carton,PaperCardboard,"[1711.0, 1285.0, 736.0, 958.0]",430672.5,2448,3264,train
+261,98,batch_1/000127.JPG,Spread tub,Plastic,"[634.0, 71.0, 513.0, 163.0]",52359.0,2448,3264,test
+263,99,batch_1/000128.JPG,Other carton,PaperCardboard,"[0.0, 0.0, 1528.0, 1687.0]",1384536.5,2448,3264,train
+265,99,batch_1/000128.JPG,Other carton,PaperCardboard,"[0.0, 1093.0, 1936.0, 1756.0]",1990231.0,2448,3264,train
+266,99,batch_1/000128.JPG,Drink can,Metal,"[1102.0, 861.0, 611.0, 339.0]",145062.5,2448,3264,train
+267,99,batch_1/000128.JPG,Food Can,Metal,"[1505.0, 401.0, 543.0, 567.0]",227249.5,2448,3264,train
+268,99,batch_1/000128.JPG,Food Can,Metal,"[1850.0, 1007.0, 598.0, 531.0]",260253.0,2448,3264,test
+271,99,batch_1/000128.JPG,Other plastic bottle,Plastic,"[954.0, 1582.0, 1492.0, 1290.0]",689658.0,2448,3264,test
+276,100,batch_1/000129.JPG,Corrugated carton,PaperCardboard,"[0.0, 1139.0, 2394.0, 1963.0]",2324871.0,2448,3264,train
+277,100,batch_1/000129.JPG,Food Can,Metal,"[618.0, 1224.0, 249.0, 242.0]",49169.0,2448,3264,test
+279,100,batch_1/000129.JPG,Other carton,PaperCardboard,"[1014.0, 805.0, 447.0, 362.0]",55138.5,2448,3264,train
+280,100,batch_1/000129.JPG,Egg carton,PaperCardboard,"[1196.0, 549.0, 262.0, 276.0]",60445.5,2448,3264,test
+281,100,batch_1/000129.JPG,Other carton,PaperCardboard,"[1479.0, 772.0, 596.0, 328.0]",114783.0,2448,3264,train
+282,100,batch_1/000129.JPG,Other carton,PaperCardboard,"[335.0, 641.0, 620.0, 511.0]",244810.5,2448,3264,train
+309,101,batch_10/000000.jpg,Clear plastic bottle,Plastic,"[1370.0, 1291.0, 380.0, 150.0]",26956.999999999993,1824,4000,train
+310,102,batch_10/000001.jpg,Other plastic bottle,Plastic,"[247.0, 101.04761, 458.0, 397.99998999999997]",98553.99794,4000,1824,val
+315,102,batch_10/000001.jpg,Squeezable tube,Plastic,"[2231.0, 836.0476, 263.0, 206.0000000000001]",31791.00000000002,4000,1824,test
+325,103,batch_10/000002.jpg,Clear plastic bottle,Plastic,"[1224.0, 994.0, 406.0, 200.0]",35170.99999999999,4000,1824,test
+330,104,batch_10/000003.jpg,Clear plastic bottle,Plastic,"[516.0, 377.0, 248.0, 178.0]",28841.0,4000,1824,train
+331,104,batch_10/000003.jpg,Clear plastic bottle,Plastic,"[665.0, 313.0, 245.0, 191.00000000000006]",28886.000000000004,4000,1824,val
+357,106,batch_10/000005.jpg,Clear plastic bottle,Plastic,"[1139.0, 3035.0, 569.0, 222.0]",85967.50000000001,1824,4000,train
+376,112,batch_10/000011.jpg,Glass bottle,Glass,"[827.0, 90.0, 157.0, 426.0]",40866.0,4000,1824,test
+382,112,batch_10/000011.jpg,Glass bottle,Glass,"[2331.0, 487.0, 217.0, 534.0]",92945.0,4000,1824,train
+384,112,batch_10/000011.jpg,Glass bottle,Glass,"[2585.0, 154.0, 212.0, 722.0]",100598.5,4000,1824,train
+385,112,batch_10/000011.jpg,Glass bottle,Glass,"[2691.0, 567.0, 261.0, 620.0]",131237.0,4000,1824,train
+404,120,batch_10/000019.jpg,Normal paper,PaperCardboard,"[663.0, 2432.0, 188.0, 306.0]",27548.5,1824,4000,train
+429,126,batch_10/000025.jpg,Drink can,Metal,"[1151.0, 2356.0, 257.0, 191.0]",38245.0,1824,4000,test
+430,127,batch_10/000026.jpg,Egg carton,PaperCardboard,"[1250.0, 1299.0, 435.0, 450.0]",119568.5,4000,1824,train
+431,127,batch_10/000026.jpg,Egg carton,PaperCardboard,"[1689.0, 777.0, 449.0, 439.0]",121584.0,4000,1824,train
+438,130,batch_10/000029.jpg,Clear plastic bottle,Plastic,"[539.5, 1928.0, 603.0, 561.0]",65608.5,1824,4000,train
+442,131,batch_10/000030.jpg,Corrugated carton,PaperCardboard,"[869.0, 1605.0, 346.0, 191.0]",29120.0,1824,4000,train
+443,132,batch_10/000031.jpg,Corrugated carton,PaperCardboard,"[631.0, 1508.0, 1192.0, 647.0]",400947.0,1824,4000,train
+507,139,batch_10/000038.jpg,Normal paper,PaperCardboard,"[1.0, 2093.0, 187.0, 253.0]",37018.0,1824,4000,train
+508,139,batch_10/000038.jpg,Magazine paper,PaperCardboard,"[1.0, 1522.0, 452.0, 616.0]",183107.0,1824,4000,train
+554,152,batch_10/000051.jpg,Styrofoam piece,Other,"[1456.0, 1023.0, 306.0, 192.0]",37632.0,4000,1824,test
+600,182,batch_10/000081.jpg,Clear plastic bottle,Plastic,"[1807.0, 673.0, 341.0, 163.0]",28188.5,4000,1824,val
+610,185,batch_10/000084.jpg,Garbage bag,Other,"[501.0, 1263.0, 1278.0, 616.0]",398081.5,1824,4000,train
+623,186,batch_10/000085.jpg,Corrugated carton,PaperCardboard,"[1038.0, 1407.0, 754.0, 436.0]",97025.5,1824,4000,val
+631,188,batch_10/000087.jpg,Clear plastic bottle,Plastic,"[342.0, 836.0, 338.0, 159.0]",31072.5,1824,4000,test
+635,189,batch_10/000088.jpg,Other carton,PaperCardboard,"[989.0, 1556.0, 433.0, 387.0]",93893.5,1824,4000,val
+646,192,batch_10/000091.jpg,Glass bottle,Glass,"[2214.0, 1255.0, 429.0, 244.0]",42008.5,4000,1824,train
+657,194,batch_10/000093.jpg,Glass bottle,Glass,"[2588.0, 1543.0, 143.0, 279.0]",23547.5,4000,1824,val
+680,198,batch_10/000097.jpg,Clear plastic bottle,Plastic,"[800.0, 2520.0, 396.0, 151.0]",40387.0,1824,4000,train
+682,199,batch_10/000098.jpg,Styrofoam piece,Other,"[564.0952, 1500.238, 1013.0, 1335.9999999999998]",874073.4999999998,1824,4000,train
+683,199,batch_10/000098.jpg,Corrugated carton,PaperCardboard,"[527.0, 1478.619, 959.0, 1332.0001]",55827.29635238005,1824,4000,train
+686,201,batch_11/000000.jpg,Styrofoam piece,Other,"[1323.0, 725.0, 1751.0, 882.0]",1070663.5,4000,1824,train
+687,201,batch_11/000000.jpg,Corrugated carton,PaperCardboard,"[1329.0, 633.0, 1737.0, 300.0]",158090.0,4000,1824,train
+689,202,batch_11/000001.jpg,Styrofoam piece,Other,"[784.0, 1785.0000000000002, 419.0, 395.9999999999998]",64829.99999999997,1824,4000,val
+690,202,batch_11/000001.jpg,Styrofoam piece,Other,"[0.0, 0.0, 1820.0, 1242.0]",1996942.0,1824,4000,train
+691,202,batch_11/000001.jpg,Corrugated carton,PaperCardboard,"[1382.0, 1035.0, 189.0, 204.0]",24620.5,1824,4000,train
+692,203,batch_11/000002.jpg,Styrofoam piece,Other,"[572.0, 1625.0, 882.0, 1145.0]",560844.0,1824,4000,train
+693,204,batch_11/000003.jpg,Corrugated carton,PaperCardboard,"[131.0, 1160.0, 720.0, 799.0]",373846.5,1824,4000,train
+694,204,batch_11/000003.jpg,Corrugated carton,PaperCardboard,"[194.0, 1674.0, 1532.0, 1541.0]",2007828.0,1824,4000,test
+695,204,batch_11/000003.jpg,Corrugated carton,PaperCardboard,"[687.0, 226.0, 1135.0, 1619.0]",1136835.0,1824,4000,train
+698,205,batch_11/000004.jpg,Styrofoam piece,Other,"[1.0, 213.0, 1142.0, 3582.0]",2005818.5,1824,4000,train
+699,205,batch_11/000004.jpg,Corrugated carton,PaperCardboard,"[1126.0, 1363.0, 696.0, 1177.0]",623638.5,1824,4000,test
+700,206,batch_11/000005.jpg,Corrugated carton,PaperCardboard,"[2.0, 1207.0, 1641.0, 1653.0]",2222282.0,1824,4000,train
+701,206,batch_11/000005.jpg,Styrofoam piece,Other,"[2.0, 1896.0, 1177.0, 837.0]",792167.0,1824,4000,train
+702,207,batch_11/000006.jpg,Corrugated carton,PaperCardboard,"[119.0, 1692.0, 664.0, 699.0]",257788.5,1824,4000,train
+703,207,batch_11/000006.jpg,Corrugated carton,PaperCardboard,"[643.0, 1801.0, 639.0, 885.0]",332874.0,1824,4000,train
+704,207,batch_11/000006.jpg,Corrugated carton,PaperCardboard,"[1148.0, 2082.0, 605.0, 663.0]",271767.5,1824,4000,train
+705,207,batch_11/000006.jpg,Corrugated carton,PaperCardboard,"[1195.0, 1337.0, 260.0, 228.0]",34938.0,1824,4000,train
+706,208,batch_11/000007.jpg,Styrofoam piece,Other,"[1180.0, 2191.0, 504.9999999999998, 806.0]",364439.99999999994,1824,4000,train
+707,209,batch_11/000008.jpg,Styrofoam piece,Other,"[0.0, -1.0, 1352.0, 2364.0]",2866329.0,1824,4000,train
+708,209,batch_11/000008.jpg,Corrugated carton,PaperCardboard,"[2.0, 3336.9999999999995, 1419.0, 662.0000000000005]",216862.9999999997,1824,4000,train
+709,209,batch_11/000008.jpg,Corrugated carton,PaperCardboard,"[0.0, 0.0, 1811.5068493150686, 3793.75]",6657464.630136986,1824,4000,train
+710,210,batch_11/000009.jpg,Garbage bag,Other,"[779.0, 651.0, 792.0, 695.0]",326176.5,1824,4000,train
+711,210,batch_11/000009.jpg,Corrugated carton,PaperCardboard,"[745.0, 2445.0, 876.0, 813.0]",333698.0,1824,4000,train
+712,211,batch_11/000010.jpg,Corrugated carton,PaperCardboard,"[256.0, 921.0, 625.0, 836.0]",337070.5,1824,4000,train
+714,211,batch_11/000010.jpg,Corrugated carton,PaperCardboard,"[876.0, 1039.0, 929.0, 584.0]",272870.0,1824,4000,test
+715,211,batch_11/000010.jpg,Corrugated carton,PaperCardboard,"[1015.0, 1043.0, 721.0, 221.0]",93558.0,1824,4000,val
+716,211,batch_11/000010.jpg,Corrugated carton,PaperCardboard,"[199.0, 1477.0, 846.0, 727.0]",373004.0,1824,4000,train
+717,212,batch_11/000011.jpg,Pizza box,PaperCardboard,"[318.0, 1308.0476, 1175.0, 1127.9999999999998]",537022.9999999999,1824,4000,test
+718,212,batch_11/000011.jpg,Corrugated carton,PaperCardboard,"[193.95238, 3250.6191, 1624.14282, 748.4285]",636975.4581681001,1824,4000,train
+719,212,batch_11/000011.jpg,Corrugated carton,PaperCardboard,"[695.0, 3687.762, 1082.0952, 311.2855999999997]",201456.14359455978,1824,4000,val
+720,213,batch_11/000012.jpg,Corrugated carton,PaperCardboard,"[0.0, 1339.0, 1754.0, 1895.0]",2385035.5,1824,4000,test
+721,213,batch_11/000012.jpg,Corrugated carton,PaperCardboard,"[1229.0, 3178.0, 594.0, 821.0]",247706.5,1824,4000,train
+722,214,batch_11/000013.jpg,Corrugated carton,PaperCardboard,"[1.0, 3149.0, 302.0, 850.0]",160831.5,1824,4000,train
+723,214,batch_11/000013.jpg,Corrugated carton,PaperCardboard,"[345.0, 1.0, 1474.0, 3245.0]",4072287.5,1824,4000,test
+724,215,batch_11/000014.jpg,Corrugated carton,PaperCardboard,"[265.3333, 1755.619, 1374.0001, 1121.8097]",852710.6661666702,1824,4000,val
+725,215,batch_11/000014.jpg,Styrofoam piece,Other,"[257.3333, 2350.238, 597.0, 568.0]",179466.20620000007,1824,4000,train
+726,216,batch_11/000015.jpg,Styrofoam piece,Other,"[843.0, 1867.0, 382.0, 578.0]",204466.5,1824,4000,train
+727,216,batch_11/000015.jpg,Styrofoam piece,Other,"[491.0, 1293.0, 1132.0, 1170.0]",263040.5,1824,4000,train
+731,217,batch_11/000016.jpg,Corrugated carton,PaperCardboard,"[578.0, 221.0, 1131.0, 787.0]",729133.5,4000,1824,train
+732,217,batch_11/000016.jpg,Styrofoam piece,Other,"[2257.0, 386.0, 813.0, 1437.0]",386444.0,4000,1824,train
+733,218,batch_11/000017.jpg,Styrofoam piece,Other,"[502.0, 489.0, 989.0, 2326.0]",1108838.5,1824,4000,train
+741,220,batch_11/000019.jpg,Other plastic bottle,Plastic,"[2689.0, 1780.58, 462.0, 280.0487000000003]",88794.65619999997,6000,4000,train
+746,222,batch_11/000021.jpg,Other plastic bottle,Plastic,"[1859.0, 1248.8448, 2577.0, 1217.6991999999998]",1445531.3169500001,6000,4000,train
+747,223,batch_11/000022.jpg,Spread tub,Plastic,"[1914.0, 9.014085, 3086.0, 3148.920215]",5466152.831959998,6000,4000,train
+751,227,batch_11/000026.jpg,Clear plastic bottle,Plastic,"[2459.0, 1427.9662, 997.0, 1056.5882]",559812.1522499997,6000,4000,train
+755,229,batch_11/000028.jpg,Styrofoam piece,Other,"[687.0, 2055.0, 972.0, 572.0]",328728.0,2322,4128,test
+757,229,batch_11/000028.jpg,Styrofoam piece,Other,"[820.0, 2515.0, 824.0, 623.0]",352139.0,2322,4128,val
+765,229,batch_11/000028.jpg,Other plastic bottle,Plastic,"[1642.0, 2530.0, 538.0, 641.0]",274765.0,2322,4128,test
+769,232,batch_11/000031.jpg,Other carton,PaperCardboard,"[843.0, 2084.0, 690.0, 543.0]",291170.0,2322,4128,train
+772,235,batch_11/000034.jpg,Other plastic bottle,Plastic,"[58.0, 371.0, 2304.0, 2511.0]",4445106.0,2448,3264,train
+773,236,batch_11/000035.jpg,Styrofoam piece,Other,"[847.0, 636.0, 1674.0, 1386.0]",1631220.5,3264,2448,test
+774,237,batch_11/000036.jpg,Other plastic bottle,Plastic,"[61.0, 503.0, 2214.0, 2390.0]",4453946.0,2448,3264,train
+775,238,batch_11/000037.jpg,Magazine paper,PaperCardboard,"[2311.0, 1872.0, 539.0, 272.0]",91599.5,4618,3463,train
+783,241,batch_11/000040.jpg,Normal paper,PaperCardboard,"[2185.5227, 2563.0, 366.7111, 456.0]",93747.80290000001,3463,4618,val
+784,242,batch_11/000041.jpg,Drink can,Metal,"[1374.9506999999999, 2107.0, 330.6412, 409.0]",77605.99255000004,3463,4618,train
+787,245,batch_11/000044.jpg,Garbage bag,Other,"[738.0, 1566.0, 1379.0, 615.0]",393507.5,3120,4160,test
+794,249,batch_11/000048.jpg,Drink can,Metal,"[715.0, 1961.0, 1096.0, 665.0]",547256.0,3024,4032,test
+801,254,batch_11/000053.jpg,Other carton,PaperCardboard,"[891.0, 698.0, 1445.0, 1315.0]",1211451.5,4032,3024,test
+803,255,batch_11/000054.jpg,Corrugated carton,PaperCardboard,"[1638.0, 267.0, 684.0, 355.0]",115383.0,3024,4032,test
+805,256,batch_11/000055.jpg,Styrofoam piece,Other,"[926.0, 2200.0, 986.0, 627.0]",225741.0,3024,4032,val
+816,263,batch_11/000062.jpg,Styrofoam piece,Other,"[969.0, 1910.0, 696.0, 649.0]",330308.0,3024,4032,train
+827,269,batch_11/000068.jpg,Styrofoam piece,Other,"[571.9524, 1215.9524, 1687.2855999999997, 1538.0000000000002]",1795091.5798459204,3024,4032,val
+829,270,batch_11/000069.jpg,Styrofoam piece,Other,"[1419.0, 2199.0, 853.0, 646.0]",275552.0,3024,4032,train
+830,271,batch_11/000070.jpg,Clear plastic bottle,Plastic,"[967.0, 1882.0, 1149.0, 353.0]",310380.0,3024,4032,train
+834,272,batch_11/000071.jpg,Styrofoam piece,Other,"[2667.0, 272.0, 299.0, 196.0]",39440.5,3024,4032,train
+842,275,batch_11/000074.jpg,Styrofoam piece,Other,"[917.0, 1344.0, 498.0, 456.0]",141026.5,4032,3024,test
+845,275,batch_11/000074.jpg,Styrofoam piece,Other,"[2034.0, 1252.0, 1009.0, 374.0]",186885.0,4032,3024,train
+851,276,batch_11/000075.jpg,Styrofoam piece,Other,"[727.0, 1418.0, 808.0, 494.0]",227698.5,3024,4032,test
+852,276,batch_11/000075.jpg,Clear plastic bottle,Plastic,"[1401.0, 1686.0, 582.0, 503.0]",128867.5,3024,4032,val
+856,277,batch_11/000076.jpg,Styrofoam piece,Other,"[472.0, 1688.0, 1872.0, 1085.0]",735466.0,3024,4032,train
+858,278,batch_11/000077.jpg,Styrofoam piece,Other,"[1023.0, 1173.0, 764.0, 1601.0]",359571.5,3024,4032,train
+860,279,batch_11/000078.jpg,Styrofoam piece,Other,"[742.0, 1555.0, 1358.0, 1204.0]",887151.5,3024,4032,val
+871,281,batch_11/000080.jpg,Garbage bag,Other,"[964.0, 1719.0, 1364.0, 1229.0]",840912.5,3024,4032,train
+872,282,batch_11/000081.jpg,Styrofoam piece,Other,"[507.0, 1954.0, 1461.0, 645.0]",539157.5,3024,4032,val
+884,290,batch_11/000089.jpg,Other carton,PaperCardboard,"[757.0, 1399.0, 916.0, 637.0]",446660.5,2448,3264,train
+885,291,batch_11/000090.jpg,Clear plastic bottle,Plastic,"[1249.5, 923.1, 1443.3000000000002, 657.9]",704662.92,3264,2448,train
+891,295,batch_11/000094.jpg,Clear plastic bottle,Plastic,"[801.0, 947.0, 1234.0, 2689.0]",2025093.5,2988,5312,train
+893,296,batch_11/000095.jpg,Clear plastic bottle,Plastic,"[1660.0, 2342.0, 368.0, 971.0]",261662.5,2988,5312,train
+917,299,batch_11/000098.jpg,Glass bottle,Glass,"[1204.0, 1899.0, 977.0, 565.0]",213248.5,2988,5312,test
+919,300,batch_11/000099.jpg,Clear plastic bottle,Plastic,"[1483.0, 2475.0, 384.0, 434.0]",67459.0,2988,5312,train
+931,305,batch_12/000004.jpg,Other carton,PaperCardboard,"[1218.75, 572.0, 2138.5, 1417.0]",1780985.375,4160,2340,test
+935,308,batch_12/000007.jpg,Crisp packet,Other,"[1345.0, 1919.0, 1477.0, 1656.0]",1300787.5,2988,5312,val
+937,309,batch_12/000008.jpg,Drink can,Metal,"[1007.0, 1210.0, 1383.0, 2289.0]",2522073.0,2988,5312,train
+947,313,batch_12/000012.jpg,Clear plastic bottle,Plastic,"[682.0, 1178.0, 1278.0, 2083.0]",1375164.5,2988,5312,train
+948,314,batch_12/000013.jpg,Clear plastic bottle,Plastic,"[334.0, 739.0, 1741.0, 1576.0]",1105434.5,5312,2988,train
+956,318,batch_12/000017.jpg,Crisp packet,Other,"[876.0, 2061.0, 651.0, 814.0]",375506.0,2988,5312,train
+957,318,batch_12/000017.jpg,Disposable plastic cup,Plastic,"[1785.0, 3287.0, 320.0, 395.0]",84306.5,2988,5312,train
+958,319,batch_12/000018.jpg,Drink can,Metal,"[1146.0, 2174.0, 725.0, 519.0]",193975.0,2988,5312,train
+964,320,batch_12/000019.jpg,Clear plastic bottle,Plastic,"[1020.0, 2237.0, 592.0, 542.0]",138491.5,2988,5312,train
+970,322,batch_12/000021.jpg,Clear plastic bottle,Plastic,"[1408.0, 2531.0, 503.0, 602.0]",155824.0,2988,5312,train
+972,323,batch_12/000022.jpg,Disposable plastic cup,Plastic,"[1045.1904, 1893.381, 783.0, 849.9999]",501426.94820000004,2988,5312,test
+973,324,batch_12/000023.jpg,Drink can,Metal,"[1182.0, 2193.0, 594.0, 940.0]",318932.0,2988,5312,test
+976,325,batch_12/000024.jpg,Clear plastic bottle,Plastic,"[1208.0, 3150.0, 519.0, 228.0]",67344.0,2988,5312,val
+1066,330,batch_12/000029.jpg,Clear plastic bottle,Plastic,"[521.0, 2818.0, 729.0, 304.0]",132105.5,2988,5312,train
+1069,330,batch_12/000029.jpg,Normal paper,PaperCardboard,"[1910.0, 1933.0, 481.0, 243.0]",47878.5,2988,5312,train
+1080,332,batch_12/000031.jpg,Garbage bag,Other,"[1241.0, 3141.0, 1050.0, 1084.0]",610420.0,2988,5312,val
+1082,332,batch_12/000031.jpg,Paper bag,PaperCardboard,"[1736.0, 3212.0, 546.0, 618.0]",89433.0,2988,5312,train
+1100,335,batch_12/000034.jpg,Clear plastic bottle,Plastic,"[909.0, 732.0, 567.0, 519.0]",125683.5,2988,5312,train
+1104,336,batch_12/000035.jpg,Other carton,PaperCardboard,"[1944.0, 3468.0, 443.0, 372.0]",99368.0,2988,5312,train
+1120,340,batch_12/000039.jpg,Normal paper,PaperCardboard,"[669.0, 18.0, 619.0, 457.0]",152363.5,2988,5312,train
+1135,345,batch_12/000044.jpg,Drink can,Metal,"[1275.0, 2425.0, 260.0, 337.0]",54445.0,3024,4032,train
+1137,347,batch_12/000046.jpg,Disposable plastic cup,Plastic,"[1742.0, 1929.0, 232.0, 316.0]",49153.5,2976,3968,train
+1141,347,batch_12/000046.jpg,Disposable plastic cup,Plastic,"[2225.0, 2488.0, 261.0, 282.0]",56383.0,2976,3968,train
+1147,348,batch_12/000047.jpg,Corrugated carton,PaperCardboard,"[943.0, 923.0, 180.0, 959.0]",85328.0,2976,3968,train
+1159,350,batch_12/000049.jpg,Disposable plastic cup,Plastic,"[1272.0, 1706.0, 396.0, 517.0]",150554.5,2976,3968,val
+1194,353,batch_12/000052.jpg,Disposable plastic cup,Plastic,"[1011.0, 1589.0, 824.0, 782.0]",490438.0,2988,5312,train
+1195,354,batch_12/000053.jpg,Drink can,Metal,"[204.0, 2055.0, 2083.0, 1707.0]",1683480.0,2988,5312,train
+1196,355,batch_12/000054.jpg,Disposable plastic cup,Plastic,"[978.0, 1615.0, 982.0, 793.0]",564021.0,2988,5312,train
+1198,356,batch_12/000055.jpg,Crisp packet,Other,"[1038.0, 1997.0, 1305.0, 1271.0]",737635.0,3120,4160,train
+1201,358,batch_12/000057.jpg,Crisp packet,Other,"[1468.0, 2181.0, 508.0, 437.0]",153569.0,3120,4160,train
+1205,358,batch_12/000057.jpg,Glass bottle,Glass,"[1277.0, 311.0, 473.0, 185.0]",60048.0,3120,4160,test
+1217,360,batch_12/000059.jpg,Clear plastic bottle,Plastic,"[237.0, 2277.0, 710.0, 290.0]",147663.0,3024,4032,train
+1244,362,batch_12/000061.jpg,Crisp packet,Other,"[1022.0, 2550.0, 356.0, 368.0]",62498.0,3000,4000,train
+1263,363,batch_12/000062.jpg,Normal paper,PaperCardboard,"[455.0, 1479.0, 375.0, 334.0]",68418.5,4000,3000,train
+1308,368,batch_12/000067.jpg,Disposable plastic cup,Plastic,"[724.6119, 3071.0, 1017.8593999999999, 771.0]",494739.254765,2368,4208,train
+1309,369,batch_12/000068.jpg,Glass bottle,Glass,"[167.21175, 1527.0, 1934.44965, 870.0]",781529.6860500001,2368,4208,train
+1313,373,batch_12/000072.jpg,Disposable plastic cup,Plastic,"[1039.0, 1287.0, 1081.0, 1500.0]",1092646.5,3120,4160,val
+1315,375,batch_12/000074.jpg,Disposable plastic cup,Plastic,"[1054.0, 1364.0, 351.0, 209.0]",50995.5,3120,4160,train
+1320,375,batch_12/000074.jpg,Disposable plastic cup,Plastic,"[2309.0, 1566.0, 364.0, 326.0]",58321.5,3120,4160,train
+1326,377,batch_12/000076.jpg,Drink can,Metal,"[1737.0, 1019.0, 1411.0, 781.0]",960169.0,4160,3120,test
+1327,378,batch_12/000077.jpg,Drink can,Metal,"[726.0, 3214.0, 1309.0, 861.0]",933585.0,3120,4160,test
+1328,378,batch_12/000077.jpg,Drink can,Metal,"[687.0, 353.0, 1315.0, 836.0]",929441.0,3120,4160,train
+1330,380,batch_12/000079.jpg,Clear plastic bottle,Plastic,"[748.0, 865.0, 934.0, 2841.0]",1954955.0,3120,4160,train
+1332,381,batch_12/000080.jpg,Normal paper,PaperCardboard,"[1582.75, 1241.5, 1982.5, 1085.5]",1600852.5,4160,3120,train
+1337,385,batch_12/000084.jpg,Paper bag,PaperCardboard,"[661.0, 1437.0, 369.0, 381.0]",92710.5,4160,3120,train
+1339,385,batch_12/000084.jpg,Clear plastic bottle,Plastic,"[2424.0, 2284.0, 249.0, 418.0]",47375.0,4160,3120,val
+1362,388,batch_12/000087.jpg,Disposable plastic cup,Plastic,"[661.0, 438.0, 644.0, 703.0]",229560.0,3120,4160,val
+1385,390,batch_12/000089.jpg,Disposable plastic cup,Plastic,"[556.0, 2068.0, 1563.0, 892.0]",986812.0,3120,4160,train
+1391,391,batch_12/000090.jpg,Clear plastic bottle,Plastic,"[3205.0, 1321.0, 464.0, 731.0]",160675.5,4160,3120,test
+1396,392,batch_12/000091.jpg,Disposable plastic cup,Plastic,"[41.0, 665.0, 1473.0, 1525.0]",1567972.5,4160,3120,test
+1398,392,batch_12/000091.jpg,Disposable plastic cup,Plastic,"[2778.0, 655.0, 1378.0, 1370.0]",1293721.0,4160,3120,train
+1405,393,batch_12/000092.jpg,Disposable plastic cup,Plastic,"[1010.0, 2975.0, 792.0, 737.0]",319982.0,3120,4160,train
+1408,394,batch_12/000093.jpg,Clear plastic bottle,Plastic,"[1082.0, 2255.0, 2036.0, 738.0]",1004518.0,4160,3120,train
+1414,395,batch_12/000094.jpg,Clear plastic bottle,Plastic,"[1300.0, 1398.0, 752.0, 2530.0]",1396235.5,3120,4160,test
+1424,399,batch_12/000098.jpg,Normal paper,PaperCardboard,"[1131.0, 1170.0, 2554.5, 1410.5]",2190345.625,4160,3120,val
+1433,405,batch_13/000004.jpg,Disposable plastic cup,Plastic,"[725.381, 1849.619, 1070.0, 894.0001]",502678.53485,3120,4160,test
+1438,406,batch_13/000005.jpg,Other carton,PaperCardboard,"[1724.0, 2157.0, 337.0, 510.0]",132002.0,3120,4160,train
+1444,409,batch_13/000008.jpg,Disposable plastic cup,Plastic,"[800.0, 576.0, 1928.0, 1908.0]",1844331.0,4160,3120,train
+1451,410,batch_13/000009.jpg,Other carton,PaperCardboard,"[3219.0908, 1776.2783, 660.0, 520.0]",182314.5,4160,3120,train
+1452,410,batch_13/000009.jpg,Clear plastic bottle,Plastic,"[117.5483, 1580.2783, 386.0, 1102.6363000000001]",336651.6735000001,4160,3120,train
+1454,411,batch_13/000010.jpg,Disposable plastic cup,Plastic,"[168.0, 7.0, 2297.0, 1749.0]",2891432.5,4160,3120,train
+1461,414,batch_13/000013.jpg,Other plastic bottle,Plastic,"[1182.75, 1034.3098, 513.0, 668.8471]",188860.67285000003,4208,2368,val
+1467,415,batch_13/000014.jpg,Disposable plastic cup,Plastic,"[1175.4886, 2111.0, 584.7405000000001, 603.0]",220333.51385,2368,4208,train
+1476,416,batch_13/000015.jpg,Disposable plastic cup,Plastic,"[494.0, 1962.0, 1267.0, 1574.0]",1352751.0,3120,4160,train
+1478,416,batch_13/000015.jpg,Other carton,PaperCardboard,"[139.0, 2187.0, 370.0, 304.0]",66436.0,3120,4160,test
+1482,418,batch_13/000017.jpg,Disposable plastic cup,Plastic,"[1111.5, 1532.0, 1147.5, 1679.0]",1107797.0,3120,4160,train
+1499,423,batch_13/000022.jpg,Disposable plastic cup,Plastic,"[516.0, 781.0, 657.0, 962.0]",284182.5,4160,3120,train
+1543,427,batch_13/000026.jpg,Drink can,Metal,"[975.2857, 3442.9524, 372.0001000000001, 602.0]",125548.52945000003,3120,4160,train
+1545,427,batch_13/000026.jpg,Other plastic bottle,Plastic,"[1196.0476, 3.0476074, 603.0, 571.9999926]",169470.49780469996,3120,4160,val
+1546,428,batch_13/000027.jpg,Drink can,Metal,"[398.0, 1433.0, 2082.0, 1407.0]",2096998.5,3120,4160,test
+1549,429,batch_13/000028.jpg,Clear plastic bottle,Plastic,"[1400.0, 829.0, 893.0, 2774.0]",1664112.0,3120,4160,test
+1550,430,batch_13/000029.jpg,Styrofoam piece,Other,"[302.0, 2140.0, 2789.0, 1155.0]",1613484.0,3120,4160,test
+1557,435,batch_13/000034.jpg,Other plastic bottle,Plastic,"[864.0, 1320.0, 1099.0, 998.0]",512494.5,3120,4160,train
+1558,435,batch_13/000034.jpg,Other plastic bottle,Plastic,"[1084.0, 3356.0, 857.0, 803.0]",353621.0,3120,4160,test
+1562,437,batch_13/000036.jpg,Clear plastic bottle,Plastic,"[2781.0, 1425.0, 260.0, 559.0]",111446.0,4160,3120,train
+1564,438,batch_13/000037.jpg,Drink can,Metal,"[1226.0156, 1623.1406, 570.0, 1518.0000000000002]",806341.5000000001,3120,4160,train
+1566,440,batch_13/000039.jpg,Clear plastic bottle,Plastic,"[974.0, 1801.0, 553.0, 1534.0]",542549.5,3120,4160,train
+1571,443,batch_13/000042.jpg,Clear plastic bottle,Plastic,"[972.1905, 1138.2856, 892.9998999999999, 2246.2384]",1482282.82679999,3120,4160,train
+1572,444,batch_13/000043.jpg,Clear plastic bottle,Plastic,"[1199.0, 657.0, 820.0, 1775.0]",900449.0,3120,4160,train
+1577,446,batch_13/000045.jpg,Drink can,Metal,"[745.0, 943.0, 516.0, 936.0]",429940.0,3120,4160,train
+1579,446,batch_13/000045.jpg,Drink can,Metal,"[1310.0, 2753.0, 654.0, 853.0]",354377.5,3120,4160,val
+1585,450,batch_13/000049.jpg,Styrofoam piece,Other,"[539.0952, 1703.8572, 899.7144000000001, 598.3807999999999]",301139.5784,3120,4160,train
+1586,450,batch_13/000049.jpg,Styrofoam piece,Other,"[1343.238, 1321.619, 806.0476000000001, 798.0001]",412589.1358190601,3120,4160,train
+1591,453,batch_13/000052.jpg,Other carton,PaperCardboard,"[2215.0, 1197.0, 1490.0, 973.0]",810726.0,4160,3120,train
+1593,454,batch_13/000053.jpg,Styrofoam piece,Other,"[374.0, 1542.0, 269.0, 340.0]",69593.0,4160,3120,val
+1595,454,batch_13/000053.jpg,Styrofoam piece,Other,"[2941.0, 1158.0, 803.0, 635.0]",183740.0,4160,3120,train
+1596,455,batch_13/000054.jpg,Corrugated carton,PaperCardboard,"[836.0, 632.0, 1562.0, 1484.0]",1144258.0,4160,3120,train
+1598,455,batch_13/000054.jpg,Drink can,Metal,"[926.0, 1827.0, 196.0, 329.0]",54157.0,4160,3120,train
+1601,455,batch_13/000054.jpg,Drink can,Metal,"[815.0, 2150.0, 351.0, 198.0]",63279.5,4160,3120,train
+1602,455,batch_13/000054.jpg,Drink can,Metal,"[782.0, 2338.0, 227.0, 296.0]",50906.5,4160,3120,train
+1603,455,batch_13/000054.jpg,Drink can,Metal,"[1016.0, 2353.0, 268.0, 359.0]",62290.0,4160,3120,train
+1604,455,batch_13/000054.jpg,Drink can,Metal,"[1308.0, 2413.0, 326.0, 341.0]",64027.5,4160,3120,test
+1605,455,batch_13/000054.jpg,Drink can,Metal,"[1168.0, 2142.0, 338.0, 283.0]",58542.0,4160,3120,train
+1606,455,batch_13/000054.jpg,Drink can,Metal,"[1356.0, 2046.0, 352.0, 274.0]",55440.5,4160,3120,train
+1607,455,batch_13/000054.jpg,Drink can,Metal,"[1842.0, 1695.0, 339.0, 361.0]",63414.0,4160,3120,val
+1608,455,batch_13/000054.jpg,Drink can,Metal,"[2013.0, 2236.0, 253.0, 382.0]",68762.5,4160,3120,test
+1609,455,batch_13/000054.jpg,Drink can,Metal,"[2360.0, 1061.0, 286.0, 392.0]",63892.5,4160,3120,train
+1610,455,batch_13/000054.jpg,Drink can,Metal,"[2548.0, 905.0, 407.0, 346.0]",84191.5,4160,3120,train
+1611,455,batch_13/000054.jpg,Drink can,Metal,"[3500.0, 1269.0, 288.0, 435.0]",96935.5,4160,3120,train
+1618,457,batch_13/000056.jpg,Disposable plastic cup,Plastic,"[1522.0, 883.0, 538.0, 943.0]",344260.0,3120,4160,train
+1621,457,batch_13/000056.jpg,Normal paper,PaperCardboard,"[799.0, -1.0, 492.0, 484.0]",149843.0,3120,4160,train
+1623,457,batch_13/000056.jpg,Other carton,PaperCardboard,"[106.0, 3.0, 504.0, 935.0]",276492.0,3120,4160,train
+1624,457,batch_13/000056.jpg,Paper bag,PaperCardboard,"[504.0, 1194.0, 842.0, 581.0]",250718.5,3120,4160,train
+1629,460,batch_13/000059.jpg,Glass bottle,Glass,"[644.0, 438.0, 1534.0, 1036.0]",611671.5,3024,4032,test
+1632,460,batch_13/000059.jpg,Disposable plastic cup,Plastic,"[1942.0, 664.0, 1082.0, 1054.0]",871129.0,3024,4032,train
+1634,460,batch_13/000059.jpg,Drink can,Metal,"[845.0, 2616.0, 1172.0, 1063.0]",841086.5,3024,4032,train
+1641,464,batch_13/000063.jpg,Styrofoam piece,Other,"[320.0, 1490.0, 2339.0, 1969.0]",2903887.5,3120,4160,train
+1642,465,batch_13/000064.jpg,Tupperware,Plastic,"[581.0, 933.0, 2938.0, 2186.0]",2632677.0,4160,3120,val
+1645,468,batch_13/000067.jpg,Glass bottle,Glass,"[395.0, 1032.0, 3758.0, 1042.0]",3044175.0,4160,3120,train
+1649,472,batch_13/000071.jpg,Other carton,PaperCardboard,"[1160.0, 1501.0, 1312.0, 1694.0]",1298086.5,3120,4160,train
+1656,479,batch_13/000078.jpg,Other carton,PaperCardboard,"[312.0, 790.0, 2326.0, 2304.0]",3405557.625,3120,4160,test
+1662,483,batch_13/000082.jpg,Drink can,Metal,"[893.0, 831.0, 1190.0, 2525.0]",2729814.5,3120,4160,val
+1677,487,batch_13/000086.jpg,Clear plastic bottle,Plastic,"[990.0, 628.0, 1360.0, 2420.0]",1798219.0,3120,4160,train
+1681,489,batch_13/000088.jpg,Drink can,Metal,"[807.0, 512.0, 2247.0, 1260.0]",2219156.0,4160,3120,train
+1687,493,batch_13/000092.jpg,Clear plastic bottle,Plastic,"[975.5, 367.0, 1063.0, 3586.0]",3108104.0,3120,4160,train
+1689,494,batch_13/000093.jpg,Clear plastic bottle,Plastic,"[40.0, 450.0, 3688.0, 1498.0]",4376761.0,4160,3120,train
+1690,495,batch_13/000094.jpg,Drink can,Metal,"[727.0, 821.0, 3082.0, 1437.0]",3929719.0,4160,3120,train
+1692,496,batch_13/000095.jpg,Clear plastic bottle,Plastic,"[550.0, 771.0, 996.0, 3015.0]",2443807.5,3120,4160,train
+1693,496,batch_13/000095.jpg,Clear plastic bottle,Plastic,"[1602.0, 412.0, 969.0, 3116.0]",2450913.5,3120,4160,test
+1701,502,batch_14/000001.jpg,Disposable plastic cup,Plastic,"[1270.0, 791.0, 1807.0, 1790.0]",1744541.5,4160,3120,train
+1708,507,batch_14/000006.jpg,Other plastic bottle,Plastic,"[375.0, 607.0, 2405.0, 3380.0]",3961034.0,3120,4160,test
+1710,508,batch_14/000007.jpg,Other plastic bottle,Plastic,"[285.0, 998.0, 3368.0, 1131.0]",3100036.0,4160,3120,val
+1718,514,batch_14/000013.jpg,Clear plastic bottle,Plastic,"[465.0, 1150.0, 3573.0, 1192.0]",3477744.0,4160,3120,train
+1722,516,batch_14/000015.jpg,Clear plastic bottle,Plastic,"[2587.0, 2052.0, 1283.0, 1049.0]",492380.0,4160,3120,train
+1725,518,batch_14/000017.jpg,Other carton,PaperCardboard,"[601.0, 619.0, 2709.0, 1932.0]",2516546.25,4160,3120,train
+1727,520,batch_14/000019.jpg,Clear plastic bottle,Plastic,"[327.0, 81.0, 2309.0, 3995.0]",4087485.0,3120,4160,train
+1729,521,batch_14/000020.jpg,Other carton,PaperCardboard,"[579.0, 517.0, 2956.0, 2400.0]",3782530.5,4160,3120,val
+1730,522,batch_14/000021.jpg,Drink can,Metal,"[1175.0, 1930.0, 350.0, 242.0]",44908.0,3024,4032,train
+1731,522,batch_14/000021.jpg,Other plastic bottle,Plastic,"[1433.0, 2971.0, 564.0, 248.0]",85136.0,3024,4032,train
+1732,522,batch_14/000021.jpg,Other carton,PaperCardboard,"[1591.0, 1419.0, 294.0, 456.0]",114327.0,3024,4032,test
+1734,523,batch_14/000022.jpg,Paper bag,PaperCardboard,"[1227.0, 706.0, 1431.0, 1235.0]",989862.0,3456,3456,test
+1739,524,batch_14/000023.jpg,Clear plastic bottle,Plastic,"[483.0, 1509.0, 1858.0, 1818.0]",1198214.0,3120,4160,train
+1741,525,batch_14/000024.jpg,Drink can,Metal,"[1221.0, 2156.0, 806.0, 1030.0]",402971.5,3120,4160,train
+1742,526,batch_14/000025.jpg,Clear plastic bottle,Plastic,"[670.0, 1870.0, 1580.0, 507.0]",638644.0,3120,4160,train
+1749,532,batch_14/000031.jpg,Disposable plastic cup,Plastic,"[1137.0, 2010.0, 1883.0, 1484.0]",2040649.0,3024,4032,train
+1751,533,batch_14/000032.jpg,Paper bag,PaperCardboard,"[2031.0, 2239.0, 369.0, 513.0]",87848.0,4032,3024,train
+1755,537,batch_14/000036.jpg,Drink can,Metal,"[815.0, 1508.0, 848.0, 675.0]",405057.0,3024,4032,train
+1757,538,batch_14/000037.jpg,Clear plastic bottle,Plastic,"[988.0, 1551.0, 1027.0, 1242.0]",559821.5,3024,4032,test
+1760,539,batch_14/000038.jpg,Glass bottle,Glass,"[876.1905, 1597.524, 1109.9998999999998, 809.9998]",300830.84760001,3024,4032,train
+1761,540,batch_14/000039.jpg,Glass bottle,Glass,"[852.0, 1713.0, 1206.0, 1123.0]",452806.5,3024,4032,train
+1764,543,batch_14/000042.jpg,Other plastic bottle,Plastic,"[795.0, 1791.0, 718.0, 849.0]",283295.0,3024,4032,test
+1773,548,batch_14/000047.jpg,Drink can,Metal,"[1596.7557000000002, 1917.7272, 496.00004, 805.9997999999998]",268893.950579992,3024,4032,train
+1775,548,batch_14/000047.jpg,Drink can,Metal,"[1232.2671, 2069.733, 495.3635999999999, 546.0]",189301.12159999995,3024,4032,val
+1777,549,batch_14/000048.jpg,Clear plastic bottle,Plastic,"[171.03125, -1.3166667, 518.35625, 413.4333367]",91982.7861902454,842,474,val
+1782,553,batch_14/000052.jpg,Styrofoam piece,Other,"[913.0, 2031.0, 730.0, 866.0]",423690.0,3024,4032,test
+1783,553,batch_14/000052.jpg,Styrofoam piece,Other,"[1768.0, 1886.0, 661.0, 793.0]",268388.5,3024,4032,val
+1789,559,batch_14/000058.jpg,Styrofoam piece,Other,"[1037.1904, 945.4286999999999, 1453.6668, 1170.3809]",1045767.3804008001,4032,3024,train
+1790,560,batch_14/000059.jpg,Other carton,PaperCardboard,"[1168.0, 1620.0, 440.0, 547.0]",122962.0,3024,4032,train
+1792,562,batch_14/000061.jpg,Normal paper,PaperCardboard,"[638.0, 1790.0, 1467.0, 1216.0]",970862.5,3024,4032,test
+1794,563,batch_14/000062.jpg,Other carton,PaperCardboard,"[836.0, 1572.0, 762.0, 364.0]",269332.5,3024,4032,train
+1798,567,batch_14/000066.jpg,Disposable plastic cup,Plastic,"[386.0, 1415.0, 1562.0, 1231.0]",767427.0,3024,4032,train
+1803,570,batch_14/000069.jpg,Drink can,Metal,"[25.0, 1561.0, 2315.0, 1374.0]",1166035.0,3024,4032,test
+1806,572,batch_14/000071.jpg,Other carton,PaperCardboard,"[1506.0, 1912.0, 266.0, 259.0]",39091.5,3024,4032,train
+1808,573,batch_14/000072.jpg,Normal paper,PaperCardboard,"[221.0, 2237.0, 799.0, 1175.0]",404810.5,3024,4032,train
+1810,575,batch_14/000074.jpg,Styrofoam piece,Other,"[690.0, 2452.0, 813.0, 944.0]",361010.5,3024,4032,test
+1813,578,batch_14/000077.jpg,Other plastic bottle,Plastic,"[1131.0, 2248.0, 1273.0, 806.0]",602194.0,3024,4032,train
+1816,580,batch_14/000079.jpg,Clear plastic bottle,Plastic,"[1324.0, 2005.0, 1017.0, 860.0]",446731.0,3024,4032,train
+1817,580,batch_14/000079.jpg,Drink can,Metal,"[1848.0, 2531.0, 486.0, 582.0]",118425.5,3024,4032,val
+1818,580,batch_14/000079.jpg,Drink can,Metal,"[1074.0, 1449.0, 569.0, 708.0]",172251.5,3024,4032,train
+1821,582,batch_14/000081.jpg,Glass bottle,Glass,"[1031.0, 1798.0, 1774.0, 503.0]",644703.5,3024,4032,train
+1822,582,batch_14/000081.jpg,Glass bottle,Glass,"[2002.0, 1950.0, 1020.0, 1064.0]",434431.5,3024,4032,train
+1823,582,batch_14/000081.jpg,Glass bottle,Glass,"[2527.0, 2803.0, 496.0, 487.0]",177779.5,3024,4032,train
+1824,582,batch_14/000081.jpg,Drink can,Metal,"[313.0, 1993.0, 402.0, 475.0]",70818.5,3024,4032,train
+1845,595,batch_14/000094.jpg,Other plastic bottle,Plastic,"[1631.0, 1972.0, 364.0, 436.0]",78270.0,3024,4032,test
+1849,596,batch_14/000095.jpg,Normal paper,PaperCardboard,"[1328.0, 2677.0, 325.0, 268.0]",48314.0,3024,4032,val
+1850,597,batch_14/000096.jpg,Glass bottle,Glass,"[934.0, 3067.0, 906.0, 587.0]",196153.5,3024,4032,train
+1882,601,batch_15/000000.jpg,Drink can,Metal,"[569.0, 2678.0, 366.0, 196.0]",60296.5,3024,4032,train
+1892,604,batch_15/000003.jpg,Other plastic bottle,Plastic,"[1208.0, 2220.0, 305.0, 518.0]",67560.0,3024,4032,train
+1893,605,batch_15/000004.jpg,Glass bottle,Glass,"[1435.0, 1924.0, 550.0, 322.0]",81259.0,3024,4032,train
+1899,608,batch_15/000007.jpg,Normal paper,PaperCardboard,"[818.0, 1255.0, 538.0, 214.0]",88662.5,3024,4032,val
+1906,610,batch_15/000009.jpg,Other carton,PaperCardboard,"[1108.0, 2319.0, 334.0, 395.0]",71556.0,3024,4032,train
+1917,611,batch_15/000010.jpg,Paper bag,PaperCardboard,"[598.0, 1024.0, 856.0, 784.0]",400407.5,3024,4032,train
+1924,614,batch_15/000013.jpg,Drink can,Metal,"[790.0, 2243.0, 517.0, 541.0]",153841.5,3024,4032,train
+1948,618,batch_15/000017.jpg,Clear plastic bottle,Plastic,"[1206.0, 1590.0, 233.0, 684.0]",132061.5,2448,3264,train
+1952,619,batch_15/000018.jpg,Glass bottle,Glass,"[576.0, 997.0, 455.0, 157.0]",45976.5,1536,2048,train
+1956,620,batch_15/000019.jpg,Clear plastic bottle,Plastic,"[588.0, 770.0, 194.0, 82.0]",10283.0,2048,1536,train
+1961,620,batch_15/000019.jpg,Clear plastic bottle,Plastic,"[1845.0, 892.0, 202.0, 117.0]",13842.0,2048,1536,train
+1965,621,batch_15/000020.jpg,Drink can,Metal,"[980.0, 734.0, 262.0, 333.0]",54047.0,2048,1536,val
+1973,623,batch_15/000022.jpg,Styrofoam piece,Other,"[932.0, 1026.0, 100.0, 240.0]",13100.5,1536,2048,train
+1980,623,batch_15/000022.jpg,Styrofoam piece,Other,"[289.0, 1923.0, 265.0, 120.0]",22668.0,1536,2048,test
+2050,631,batch_15/000030.jpg,Drink can,Metal,"[689.0, 807.0, 234.0, 277.0]",39547.0,1536,2048,train
+2061,636,batch_15/000035.jpg,Drink can,Metal,"[1329.0, 2055.0, 593.0, 636.0]",245284.0,3024,4032,val
+2085,641,batch_15/000040.jpg,Disposable plastic cup,Plastic,"[1231.0, 2246.0, 356.0, 360.0]",78185.5,3024,4032,train
+2088,643,batch_15/000042.jpg,Disposable plastic cup,Plastic,"[1533.0, 2213.0, 312.0, 333.0]",67954.5,3024,4032,train
+2091,646,batch_15/000045.jpg,Styrofoam piece,Other,"[610.0, 1030.0, 223.0, 190.0]",27202.0,1536,2048,train
+2097,649,batch_15/000048.jpg,Disposable plastic cup,Plastic,"[1245.0, 1410.0, 1028.0, 1745.0]",886927.5,3024,4032,val
+2099,650,batch_15/000049.jpg,Clear plastic bottle,Plastic,"[1531.0, 999.0, 825.0, 2017.0]",921773.5,3024,4032,train
+2103,651,batch_15/000050.jpg,Glass bottle,Glass,"[1129.0, 1254.0, 644.0, 2207.0]",1049783.0,3024,4032,val
+2115,654,batch_15/000053.jpg,Clear plastic bottle,Plastic,"[1328.0, 1281.0, 795.0, 1483.0]",758471.5,3024,4032,test
+2117,656,batch_15/000055.jpg,Crisp packet,Other,"[981.0, 1718.0, 1452.0, 1177.0]",1464271.0,3024,4032,train
+2119,657,batch_15/000056.jpg,Clear plastic bottle,Plastic,"[706.0, 478.0, 1270.0, 887.0]",742189.0,3024,4032,train
+2120,657,batch_15/000056.jpg,Normal paper,PaperCardboard,"[1176.0, 1375.0, 266.0, 354.0]",60954.0,3024,4032,train
+2124,658,batch_15/000057.jpg,Clear plastic bottle,Plastic,"[938.0, 1725.0, 1485.0, 982.0]",837692.5,3024,4032,train
+2126,659,batch_15/000058.jpg,Other carton,PaperCardboard,"[1459.493, 1836.7639, 494.0, 851.5556999999999]",373799.49336114,3024,4032,train
+2131,663,batch_15/000062.jpg,Clear plastic bottle,Plastic,"[624.0, 121.0, 324.0, 93.0]",21396.5,2048,1536,train
+2144,666,batch_15/000065.jpg,Drink can,Metal,"[1861.0, 1405.0, 554.0, 709.0]",279392.5,4032,3024,val
+2160,672,batch_15/000071.jpg,Clear plastic bottle,Plastic,"[987.7916, 853.38885, 257.0, 399.9999499999999]",67007.99519999998,2448,3264,val
+2164,673,batch_15/000072.jpg,Clear plastic bottle,Plastic,"[559.0, 954.0, 489.0, 256.0]",62999.5,1536,2048,train
+2165,673,batch_15/000072.jpg,Clear plastic bottle,Plastic,"[149.0, 1136.0, 333.0, 387.0]",59115.5,1536,2048,val
+2167,674,batch_15/000073.jpg,Garbage bag,Other,"[0.0, 1.0, 533.0, 604.0]",83079.5,1536,2048,train
+2168,674,batch_15/000073.jpg,Garbage bag,Other,"[0.0, 1154.0, 301.0, 352.0]",55616.0,1536,2048,train
+2173,677,batch_15/000076.jpg,Drink can,Metal,"[1274.3958, 792.31946, 334.0, 249.00004]",51543.50634,2048,1536,train
+2174,677,batch_15/000076.jpg,Paper bag,PaperCardboard,"[1222.4574, 1022.7329, 411.0, 418.0]",124124.0,2048,1536,train
+2176,677,batch_15/000076.jpg,Disposable plastic cup,Plastic,"[114.53978, 524.4602, 245.00002, 245.0]",24809.002080000002,2048,1536,train
+2177,677,batch_15/000076.jpg,Normal paper,PaperCardboard,"[0.5426178, 631.0057, 601.9999822, 260.0]",60066.497027199985,2048,1536,train
+2178,677,batch_15/000076.jpg,Normal paper,PaperCardboard,"[53.545456, 826.09656, 344.000014, 289.2727400000001]",44561.17383909041,2048,1536,val
+2181,679,batch_15/000078.jpg,Drink can,Metal,"[665.0, 1203.0, 580.0, 795.0]",300423.0,2448,3264,train
+2183,679,batch_15/000078.jpg,Other plastic bottle,Plastic,"[1104.0, 1200.0, 374.0, 490.0]",107151.5,2448,3264,train
+2184,679,batch_15/000078.jpg,Paper bag,PaperCardboard,"[313.0, 1693.5, 855.0, 728.0]",258554.0,2448,3264,train
+2185,679,batch_15/000078.jpg,Paper bag,PaperCardboard,"[387.0, 2187.0, 579.0, 566.0]",200015.5,2448,3264,train
+2186,679,batch_15/000078.jpg,Paper bag,PaperCardboard,"[1311.0, -0.5, 286.0, 589.0]",64399.0,2448,3264,train
+2192,683,batch_15/000082.jpg,Normal paper,PaperCardboard,"[598.0, 971.0, 149.0, 184.0]",14125.0,1536,2048,train
+2194,685,batch_15/000084.jpg,Glass bottle,Glass,"[1059.0, 699.0, 344.0, 1194.0]",306690.0,3264,2448,train
+2195,685,batch_15/000084.jpg,Glass bottle,Glass,"[1632.0, 301.0, 427.0, 1272.0]",326558.5,3264,2448,train
+2198,686,batch_2/000000.JPG,Other plastic bottle,Plastic,"[962.0, 1152.0, 478.0, 871.0]",314528.0,2448,3264,train
+2200,687,batch_2/000001.JPG,Glass bottle,Glass,"[815.0, 369.0, 428.0, 214.0]",67951.0,2448,3264,train
+2201,687,batch_2/000001.JPG,Glass bottle,Glass,"[1189.0, 2344.0, 172.0, 387.0]",50230.5,2448,3264,train
+2205,689,batch_2/000005.JPG,Crisp packet,Other,"[330.0, 769.0, 1160.0, 1110.0]",652220.0,2448,3264,val
+2207,689,batch_2/000005.JPG,Garbage bag,Other,"[848.0, 1983.0, 1276.0, 1155.0]",481815.5,2448,3264,train
+2208,689,batch_2/000005.JPG,Normal paper,PaperCardboard,"[941.0, 2269.0, 749.0, 618.0]",290151.0,2448,3264,train
+2209,689,batch_2/000005.JPG,Other carton,PaperCardboard,"[806.0, 1591.0, 826.0, 492.0]",54788.5,2448,3264,train
+2212,690,batch_2/000006.JPG,Crisp packet,Other,"[1265.0, 1387.0, 524.0, 608.0]",241543.5,2448,3264,train
+2213,691,batch_2/000007.JPG,Drink can,Metal,"[1197.0, 1672.0, 193.0, 275.0]",44266.0,2448,3264,train
+2214,692,batch_2/000008.JPG,Other carton,PaperCardboard,"[431.0, 882.0, 1162.0, 1116.0]",799133.0,2448,3264,test
+2215,692,batch_2/000008.JPG,Other carton,PaperCardboard,"[1173.0, 1398.0, 753.0, 719.0]",258528.0,2448,3264,val
+2227,697,batch_2/000015.JPG,Other carton,PaperCardboard,"[1239.0, 1706.0, 479.0, 338.0]",98012.0,2448,3264,test
+2228,698,batch_2/000016.JPG,Crisp packet,Other,"[1087.0, 1476.0, 471.0, 478.0]",145423.5,2448,3264,val
+2233,703,batch_2/000021.JPG,Disposable plastic cup,Plastic,"[747.0, 815.0, 851.0, 1065.0]",546617.0,2448,3264,train
+2240,705,batch_2/000023.JPG,Crisp packet,Other,"[1549.0, 1081.0, 428.0, 236.0]",77085.5,3264,2448,test
+2241,705,batch_2/000023.JPG,Crisp packet,Other,"[1901.0, 1060.0, 349.0, 234.0]",41005.0,3264,2448,train
+2242,705,batch_2/000023.JPG,Garbage bag,Other,"[1143.0, 751.0, 1344.0, 699.0]",774978.5,3264,2448,train
+2245,706,batch_2/000024.JPG,Glass bottle,Glass,"[1340.0, 166.0, 602.0, 2208.0]",940412.0,2448,3264,train
+2246,706,batch_2/000024.JPG,Glass bottle,Glass,"[1055.0, 1.0, 403.0, 1615.0]",450463.5,2448,3264,train
+2247,707,batch_2/000025.JPG,Glass bottle,Glass,"[1135.0, 1366.0, 177.0, 441.0]",56179.0,2448,3264,val
+2254,708,batch_2/000026.JPG,Crisp packet,Other,"[2617.0, 907.0, 278.0, 180.0]",24360.5,3264,2448,val
+2255,709,batch_2/000027.JPG,Drink can,Metal,"[43.0, 1291.0, 283.0, 260.0]",51450.0,3264,2448,val
+2256,709,batch_2/000027.JPG,Drink can,Metal,"[744.0, 1380.0, 223.0, 380.0]",73041.5,3264,2448,test
+2257,709,batch_2/000027.JPG,Drink can,Metal,"[1406.0, 2071.0, 377.0, 376.0]",96326.5,3264,2448,train
+2258,709,batch_2/000027.JPG,Drink can,Metal,"[2299.0, 1578.0, 339.0, 316.0]",71468.5,3264,2448,train
+2259,709,batch_2/000027.JPG,Drink can,Metal,"[2791.0, 1391.0, 377.0, 282.0]",68964.5,3264,2448,test
+2260,710,batch_2/000029.JPG,Drink can,Metal,"[1084.0, 1784.0, 247.0, 368.0]",65083.5,2448,3264,train
+2261,710,batch_2/000029.JPG,Drink can,Metal,"[1139.0, 924.0, 317.0, 220.0]",45490.5,2448,3264,train
+2267,714,batch_2/000034.JPG,Glass bottle,Glass,"[669.0, 536.0, 151.0, 475.0]",45653.0,2448,3264,train
+2268,715,batch_2/000035.JPG,Drink can,Metal,"[1395.0, 1281.0, 753.0, 606.0]",258465.0,2448,3264,train
+2269,715,batch_2/000035.JPG,Drink can,Metal,"[345.0, 1868.0, 905.0, 654.0]",388417.5,2448,3264,val
+2272,715,batch_2/000035.JPG,Other carton,PaperCardboard,"[1.0, 1951.0, 336.0, 442.0]",83614.5,2448,3264,train
+2273,716,batch_2/000036.JPG,Clear plastic bottle,Plastic,"[1756.0, 2166.0, 191.0, 357.0]",41221.5,2448,3264,test
+2274,717,batch_2/000037.JPG,Clear plastic bottle,Plastic,"[1161.0, 1532.0, 152.0, 320.0]",28616.0,2448,3264,train
+2276,718,batch_2/000038.JPG,Disposable plastic cup,Plastic,"[1626.0, 1571.0, 224.0, 188.0]",27147.5,2448,3264,train
+2278,719,batch_2/000039.JPG,Drink can,Metal,"[1069.0, 1403.0, 202.0, 220.0]",24356.0,2448,3264,train
+2283,722,batch_2/000042.JPG,Drink can,Metal,"[954.0, 1910.0, 288.0, 384.0]",72418.0,2448,3264,test
+2291,727,batch_2/000048.JPG,Drink can,Metal,"[1233.0, 1519.0, 219.0, 279.0]",43599.0,2448,3264,val
+2294,728,batch_2/000050.JPG,Disposable plastic cup,Plastic,"[1040.0, 1190.0, 221.0, 308.0]",53206.0,2448,3264,train
+2314,734,batch_2/000056.JPG,Crisp packet,Other,"[791.0, 1492.0, 323.0, 379.0]",75369.0,2448,3264,train
+2325,742,batch_2/000064.JPG,Normal paper,PaperCardboard,"[0.0, 1503.0, 394.0, 380.0]",77622.0,3264,2448,train
+2328,745,batch_2/000068.JPG,Corrugated carton,PaperCardboard,"[575.0, 1655.0, 327.0, 359.0]",78276.5,2448,3264,train
+2329,745,batch_2/000068.JPG,Corrugated carton,PaperCardboard,"[776.0, 1225.0, 291.0, 255.0]",36140.5,2448,3264,train
+2331,746,batch_2/000069.JPG,Other carton,PaperCardboard,"[1077.0, 1105.0, 699.0, 610.0]",199257.0,3264,2448,train
+2332,747,batch_2/000070.JPG,Crisp packet,Other,"[965.0, 1529.0, 314.0, 365.0]",93257.5,3264,2448,train
+2338,751,batch_2/000074.JPG,Glass bottle,Glass,"[1089.0, 727.0, 137.0, 386.0]",35244.5,3264,2448,train
+2341,752,batch_2/000075.JPG,Drink can,Metal,"[1104.0, 881.0, 231.0, 287.0]",48360.5,3264,2448,train
+2342,753,batch_2/000076.JPG,Clear plastic bottle,Plastic,"[1600.0, 924.0, 469.0, 583.0]",113790.5,3264,2448,train
+2344,754,batch_2/000077.JPG,Paper bag,PaperCardboard,"[298.0, 534.0, 1325.0, 1869.0]",1434753.0,2448,3264,train
+2346,755,batch_2/000079.JPG,Other carton,PaperCardboard,"[772.0, 2276.0, 244.0, 296.0]",45231.0,2448,3264,train
+2349,756,batch_2/000080.JPG,Drink can,Metal,"[1404.0, 2097.0, 262.0, 188.0]",33511.0,2448,3264,test
+2351,757,batch_2/000081.JPG,Crisp packet,Other,"[1022.0, 1632.0, 476.0, 446.0]",101060.0,2448,3264,train
+2352,758,batch_2/000082.JPG,Glass bottle,Glass,"[1270.0, 1295.0, 210.0, 379.0]",29069.0,2448,3264,val
+2359,759,batch_2/000083.JPG,Other carton,PaperCardboard,"[1115.0, 1480.0, 312.0, 257.0]",48364.0,2448,3264,val
+2361,761,batch_2/000086.JPG,Drink can,Metal,"[1329.0, 720.0, 350.0, 167.0]",30381.5,2448,3264,train
+2366,763,batch_2/000030.JPG,Normal paper,PaperCardboard,"[2003.0, 2244.0, 203.0, 346.0]",28103.0,2214,3264,val
+2376,765,batch_2/000088.JPG,Clear plastic bottle,Plastic,"[1488.0, 1407.0, 444.0, 466.0]",93886.5,2448,3264,test
+2383,771,batch_2/000094.JPG,Crisp packet,Other,"[1592.0, 1000.0, 559.0, 450.0]",134686.5,3264,2448,train
+2384,772,batch_2/000095.JPG,Crisp packet,Other,"[1482.0, 711.0, 581.0, 536.0]",202896.0,3264,2448,train
+2487,779,batch_3/IMG_4977.JPG,Drink can,Metal,"[1155.0, 1733.0, 261.0, 265.0]",38243.5,2448,3264,train
+2488,780,batch_3/IMG_4978.JPG,Drink can,Metal,"[1088.0, 1045.0, 320.0, 593.0]",138904.0,2448,3264,train
+2491,782,batch_3/IMG_4992.JPG,Clear plastic bottle,Plastic,"[997.0, 897.0, 453.0, 491.0]",100727.5,2448,3264,train
+2493,783,batch_3/IMG_4994.JPG,Disposable plastic cup,Plastic,"[574.0, 1397.0, 350.0, 432.0]",86067.5,2448,3264,val
+2496,784,batch_3/IMG_4996.JPG,Clear plastic bottle,Plastic,"[1099.0, 1438.0, 297.0, 812.0]",163577.0,2448,3264,train
+2498,784,batch_3/IMG_4996.JPG,Drink can,Metal,"[800.0, 145.0, 631.0, 371.0]",185655.5,2448,3264,train
+2502,786,batch_3/IMG_4998.JPG,Drink can,Metal,"[1129.0, 1456.0, 328.0, 154.0]",40325.0,2448,3264,train
+2511,791,batch_3/IMG_5040.JPG,Crisp packet,Other,"[570.0, 1226.0, 1464.0, 1282.0]",991967.5,2448,3264,train
+2512,792,batch_3/IMG_5041.JPG,Crisp packet,Other,"[1340.0, 989.0, 964.0, 1447.0]",775798.0,2448,3264,train
+2513,793,batch_3/IMG_5042.JPG,Glass bottle,Glass,"[1445.0, 1048.0, 457.0, 1110.0]",343685.5,2448,3264,train
+2514,794,batch_3/IMG_5043.JPG,Clear plastic bottle,Plastic,"[383.0, 1252.0, 1417.0, 699.0]",443664.5,2448,3264,train
+2515,795,batch_3/IMG_5044.JPG,Other carton,PaperCardboard,"[1131.0, 2119.0, 607.0, 937.0]",334603.5,2448,3264,train
+2516,796,batch_3/IMG_5045.JPG,Other carton,PaperCardboard,"[1167.0, 1396.0, 1155.0, 1137.0]",392377.0,2448,3264,train
+2518,797,batch_3/IMG_5046.JPG,Food Can,Metal,"[987.0, 1969.0, 404.0, 439.0]",141567.0,2448,3264,train
+2524,800,batch_3/IMG_5050.JPG,Aerosol,Metal,"[890.0, 676.0, 454.0, 1765.0]",694435.5,2448,3264,train
+2528,803,batch_3/IMG_5053.JPG,Other plastic bottle,Plastic,"[1594.0, 950.0, 248.0, 603.0]",107676.5,2448,3264,val
+2529,803,batch_3/IMG_5053.JPG,Clear plastic bottle,Plastic,"[2357.0, 407.0, 91.0, 565.0]",25332.5,2448,3264,train
+2537,805,batch_3/IMG_5055.JPG,Drink can,Metal,"[1134.0, 1780.0, 332.0, 308.0]",55059.5,2448,3264,train
+2538,805,batch_3/IMG_5055.JPG,Drink can,Metal,"[1213.0, 1146.0, 310.0, 420.0]",63872.0,2448,3264,test
+2540,806,batch_3/IMG_5056.JPG,Disposable plastic cup,Plastic,"[919.0, 1548.0, 387.0, 392.0]",98477.5,2448,3264,train
+2542,808,batch_3/IMG_5058.JPG,Drink can,Metal,"[787.0, 1398.0, 314.0, 245.0]",46368.5,2448,3264,train
+2546,812,batch_3/IMG_4855.JPG,Other carton,PaperCardboard,"[1245.0, 956.0, 349.0, 406.0]",42696.0,3264,2448,val
+2551,815,batch_3/IMG_4860.JPG,Crisp packet,Other,"[519.0, 1226.0, 1055.0, 729.0]",513361.5,2448,3264,test
+2557,817,batch_3/IMG_4865.JPG,Other carton,PaperCardboard,"[1125.0, 1679.0, 899.0, 837.0]",392667.5,2448,3264,train
+2559,818,batch_3/IMG_4868.JPG,Drink can,Metal,"[712.0, 363.0, 692.0, 1147.0]",644809.0,2448,3264,train
+2563,820,batch_3/IMG_4874.JPG,Corrugated carton,PaperCardboard,"[248.0, 1410.0, 2186.0, 1625.0]",2187004.0,2448,3264,train
+2564,821,batch_3/IMG_4875.JPG,Corrugated carton,PaperCardboard,"[227.0, 398.0, 2181.0, 2046.0]",2713943.5,3264,2448,train
+2565,821,batch_3/IMG_4875.JPG,Other carton,PaperCardboard,"[2116.0, 2.0, 792.0, 806.0]",386377.5,3264,2448,train
+2568,823,batch_3/IMG_4877.JPG,Other carton,PaperCardboard,"[323.0, 704.0, 1852.0, 1261.0]",1812929.5,2448,3264,train
+2570,824,batch_3/IMG_4878.JPG,Other carton,PaperCardboard,"[576.0, 30.0, 1507.0, 840.0]",915382.5,3264,2448,test
+2572,825,batch_3/IMG_4879.JPG,Spread tub,Plastic,"[723.0, 688.0, 1325.0, 1844.0]",1856797.0,2448,3264,train
+2577,828,batch_3/IMG_4889.JPG,Drink can,Metal,"[982.0, 1196.0, 262.0, 124.0]",26568.5,2448,3264,train
+2581,830,batch_3/IMG_4893.JPG,Clear plastic bottle,Plastic,"[1083.0, 1815.0, 250.0, 551.0]",107131.5,2448,3264,test
+2609,840,batch_3/IMG_4915.JPG,Other plastic bottle,Plastic,"[774.0, 33.0, 938.0, 2969.0]",2299435.0,2448,3264,val
+2613,843,batch_3/IMG_4919.JPG,Drink can,Metal,"[1117.0, 2163.0, 302.0, 133.0]",33766.0,2448,3264,val
+2620,845,batch_3/IMG_4922.JPG,Disposable plastic cup,Plastic,"[1189.0, 1323.0, 337.0, 442.0]",108963.5,2448,3264,train
+2626,849,batch_3/IMG_4932.JPG,Clear plastic bottle,Plastic,"[943.0, 1186.0, 132.0, 252.0]",24068.5,2448,3264,train
+2627,850,batch_3/IMG_4934.JPG,Normal paper,PaperCardboard,"[115.0, 1658.0, 1697.0, 1194.0]",545767.5,2448,3264,val
+2628,850,batch_3/IMG_4934.JPG,Normal paper,PaperCardboard,"[104.0, 547.0, 2078.0, 1822.0]",2229053.5,2448,3264,train
+2629,850,batch_3/IMG_4934.JPG,Normal paper,PaperCardboard,"[319.0, 619.0, 1872.0, 1433.0]",2201641.0,2448,3264,train
+2634,852,batch_3/IMG_4939.JPG,Paper bag,PaperCardboard,"[0.0, 923.0, 2097.0, 2336.0]",3047088.5,2448,3264,train
+2646,853,batch_3/IMG_4941.JPG,Normal paper,PaperCardboard,"[542.0, 1894.0, 304.0, 160.0]",26232.5,3264,2448,train
+2657,855,batch_3/IMG_4963.JPG,Clear plastic bottle,Plastic,"[1327.0, 1254.0, 293.0, 239.0]",32908.5,3264,2448,train
+2688,866,batch_3/IMG_4948.JPG,Clear plastic bottle,Plastic,"[240.0, 1431.0, 152.0, 252.0]",18226.5,2448,2470,train
+2697,866,batch_3/IMG_4948.JPG,Normal paper,PaperCardboard,"[1903.0, 1191.0, 545.0, 279.0]",96085.5,2448,2470,test
+2706,868,batch_3/IMG_5061.JPG,Garbage bag,Other,"[2959.0, 1776.0, 304.0, 453.0]",109375.0,3264,2448,train
+2708,869,batch_3/IMG_5063.JPG,Other carton,PaperCardboard,"[579.0, 846.0, 1598.0, 1397.0]",1327610.0,3264,2448,val
+2709,870,batch_3/IMG_5064.JPG,Other carton,PaperCardboard,"[1409.0, 1086.0, 1385.0, 866.0]",725124.5,3264,2448,train
+2712,872,batch_3/IMG_5066.JPG,Other plastic container,Plastic,"[1320.0, 1791.0, 616.0, 455.0]",170753.0,2448,3264,train
+2713,872,batch_3/IMG_5066.JPG,Tupperware,Plastic,"[1.0, 664.0, 1220.0, 1334.0]",1298337.0,2448,3264,val
+2715,873,batch_3/IMG_5067.JPG,Other carton,PaperCardboard,"[1530.0, 448.0, 902.0, 629.0]",439301.0,2448,3264,val
+2717,873,batch_3/IMG_5067.JPG,Normal paper,PaperCardboard,"[1131.0, 1450.0, 511.0, 648.0]",163161.5,2448,3264,train
+2719,874,batch_3/IMG_5068.JPG,Magazine paper,PaperCardboard,"[259.0, 1791.0, 731.0, 581.0]",357886.0,3264,2448,train
+2720,874,batch_3/IMG_5068.JPG,Magazine paper,PaperCardboard,"[486.0, 1423.0, 455.0, 313.0]",78378.0,3264,2448,train
+2721,874,batch_3/IMG_5068.JPG,Magazine paper,PaperCardboard,"[434.0, 1217.0, 400.0, 344.0]",80520.5,3264,2448,val
+2722,874,batch_3/IMG_5068.JPG,Magazine paper,PaperCardboard,"[516.0, 681.0, 518.0, 567.0]",162192.0,3264,2448,train
+2723,874,batch_3/IMG_5068.JPG,Magazine paper,PaperCardboard,"[838.0, 865.0, 512.0, 583.0]",91374.0,3264,2448,train
+2724,874,batch_3/IMG_5068.JPG,Magazine paper,PaperCardboard,"[1026.0, 967.0, 644.0, 435.0]",134451.0,3264,2448,train
+2725,874,batch_3/IMG_5068.JPG,Magazine paper,PaperCardboard,"[867.0, 1201.0, 968.0, 1116.0]",569120.5,3264,2448,train
+2763,875,batch_4/000032.JPG,Clear plastic bottle,Plastic,"[805.0, 1839.0, 309.0, 569.0]",97072.5,2448,3264,train
+2778,881,batch_4/000004.JPG,Normal paper,PaperCardboard,"[1573.0, 1029.0, 409.0, 117.0]",30909.0,3264,2448,train
+2780,882,batch_4/000005.JPG,Disposable plastic cup,Plastic,"[1549.0, 855.0, 281.0, 198.0]",35951.5,3264,2448,val
+2804,901,batch_4/000026.JPG,Other plastic cup,Plastic,"[1868.0, 1814.0, 469.0, 240.0]",49008.5,2448,3264,val
+2818,910,batch_4/000039.JPG,Disposable plastic cup,Plastic,"[624.0, 1087.0, 796.0, 338.0]",84724.0,3264,2448,train
+2819,911,batch_4/000040.JPG,Disposable plastic cup,Plastic,"[1163.0, 2064.0, 373.0, 488.0]",70258.0,2448,3264,train
+2821,913,batch_4/000042.JPG,Normal paper,PaperCardboard,"[167.0, 1399.0, 449.0, 340.0]",95817.0,2448,3264,test
+2835,924,batch_4/000054.JPG,Food waste,Organic,"[1611.0, 364.0, 477.0, 406.0]",118239.5,3264,2448,train
+2856,940,batch_4/000072.JPG,Styrofoam piece,Other,"[991.0, 1540.0, 850.0, 648.0]",361461.5,3264,2448,test
+2857,941,batch_4/000073.JPG,Styrofoam piece,Other,"[1579.0, 1327.0, 427.0, 440.0]",94738.5,3264,2448,train
+2866,948,batch_4/000082.JPG,Disposable plastic cup,Plastic,"[708.0, 1109.0, 234.0, 222.0]",25032.0,3264,2448,train
+2888,962,batch_4/000097.JPG,Other plastic bottle,Plastic,"[1567.0, 1375.0, 262.0, 122.0]",26115.5,2448,3264,train
+2889,962,batch_4/000097.JPG,Squeezable tube,Plastic,"[841.0, 1834.0, 426.0, 315.0]",73133.5,2448,3264,train
+2926,964,batch_5/000071.JPG,Clear plastic bottle,Plastic,"[1282.0, 1981.0, 511.0, 394.0]",106509.5,2448,3264,train
+2929,965,batch_5/000072.JPG,Clear plastic bottle,Plastic,"[1463.0, 682.0, 524.0, 466.0]",181959.0,3264,2448,train
+2930,966,batch_5/000073.JPG,Drink can,Metal,"[1085.0, 1901.0, 512.0, 471.0]",120888.5,2448,3264,test
+2941,974,batch_5/000083.JPG,Clear plastic bottle,Plastic,"[1638.0, 972.0, 398.0, 105.0]",32853.5,3264,2448,train
+2944,975,batch_5/000084.JPG,Clear plastic bottle,Plastic,"[1344.0, 1393.0, 564.0, 306.0]",97387.0,3264,2448,train
+2952,980,batch_5/000089.JPG,Styrofoam piece,Other,"[875.0, 1204.0, 303.0, 270.0]",53034.0,3264,2448,train
+2957,983,batch_5/000092.JPG,Paper bag,PaperCardboard,"[617.0, 1443.0, 555.0, 566.0]",210222.0,2448,3264,train
+2960,984,batch_5/000093.JPG,Styrofoam piece,Other,"[1544.0, 676.0, 218.0, 173.0]",26928.5,3264,2448,train
+2963,985,batch_5/000094.JPG,Styrofoam piece,Other,"[1084.0, 1854.0, 222.0, 205.0]",30702.0,3264,2448,test
+2964,986,batch_5/000095.JPG,Disposable plastic cup,Plastic,"[1965.0, 1129.0, 586.0, 338.0]",117545.0,3264,2448,val
+2965,987,batch_5/000096.JPG,Disposable plastic cup,Plastic,"[1668.0, 1068.0, 439.0, 352.0]",134057.0,3264,2448,train
+2966,988,batch_5/000097.JPG,Other carton,PaperCardboard,"[1850.0, 571.0, 314.0, 563.0]",109736.5,3264,2448,train
+2971,993,batch_5/000063.JPG,Garbage bag,Other,"[831.0, 1072.0, 1000.0, 924.0]",386481.0,2448,3264,val
+2972,993,batch_5/000063.JPG,Normal paper,PaperCardboard,"[992.0, 1266.0, 237.0, 205.0]",29854.5,2448,3264,val
+2975,995,batch_5/000066.JPG,Other plastic bottle,Plastic,"[1754.0, 1351.0, 262.0, 534.0]",107681.0,2448,3264,train
+2977,996,batch_5/000067.JPG,Clear plastic bottle,Plastic,"[883.0, 1274.0, 460.0, 415.0]",106842.5,2448,3264,train
+2982,997,batch_5/000068.JPG,Corrugated carton,PaperCardboard,"[879.0, 1475.0, 811.0, 465.0]",283111.0,2448,3264,train
+2984,998,batch_5/000069.JPG,Normal paper,PaperCardboard,"[19.0, 197.0, 238.0, 200.0]",24814.0,2448,3264,train
+2985,999,batch_5/000070.JPG,Clear plastic bottle,Plastic,"[1230.0, 1046.0, 181.0, 424.0]",51873.5,2448,3264,train
+2986,1000,batch_5/000101.JPG,Glass bottle,Glass,"[1460.0, 659.0, 314.0, 624.0]",103757.0,2448,3264,train
+2989,1002,batch_5/000103.JPG,Drink can,Metal,"[2107.0, 1414.0, 237.0, 183.0]",27579.0,3264,2448,val
+2991,1003,batch_5/000104.JPG,Corrugated carton,PaperCardboard,"[716.0, 1329.0, 1153.0, 733.0]",309681.0,3264,2448,train
+3002,1006,batch_5/000107.JPG,Styrofoam piece,Other,"[1720.0, 1104.0, 308.0, 418.0]",88181.5,3264,2448,train
+3006,1008,batch_5/000120.JPG,Glass bottle,Glass,"[1305.0, 2250.0, 312.0, 682.0]",101857.5,2448,3264,train
+3008,1008,batch_5/000120.JPG,Disposable plastic cup,Plastic,"[1246.0, 1225.0, 291.0, 387.0]",75365.0,2448,3264,train
+3021,1013,batch_5/000114.JPG,Clear plastic bottle,Plastic,"[1062.0, 556.0, 534.0, 323.0]",74422.5,2448,3264,train
+3027,1016,batch_5/000117.JPG,Normal paper,PaperCardboard,"[829.0, 1665.0, 686.0, 453.0]",193098.0,3264,2448,test
+3029,1018,batch_5/000000.JPG,Disposable plastic cup,Plastic,"[1001.0, 1872.0, 189.0, 242.0]",31761.0,2448,3264,train
+3032,1019,batch_5/000001.JPG,Clear plastic bottle,Plastic,"[1310.0, 1445.0, 293.0, 212.0]",27658.5,2448,3264,train
+3034,1020,batch_5/000002.JPG,Drink can,Metal,"[1410.0, 1275.0, 236.0, 241.0]",31526.0,2448,3264,train
+3037,1021,batch_5/000004.JPG,Drink can,Metal,"[2127.0, 691.0, 628.0, 518.0]",200557.5,3264,2448,train
+3042,1022,batch_5/000005.JPG,Drink can,Metal,"[613.0, 435.0, 197.0, 430.0]",72637.0,3264,2448,train
+3044,1022,batch_5/000005.JPG,Clear plastic bottle,Plastic,"[436.0, 1828.0, 419.0, 502.0]",32646.5,3264,2448,train
+3047,1024,batch_5/000007.JPG,Drink can,Metal,"[1461.0, 956.0, 332.0, 219.0]",56476.0,3264,2448,train
+3048,1025,batch_5/000008.JPG,Clear plastic bottle,Plastic,"[1032.0, 1443.0, 509.0, 278.0]",67466.0,2448,3264,train
+3054,1028,batch_5/000011.JPG,Drink can,Metal,"[836.0, 1228.0, 594.0, 315.0]",132455.5,2448,3264,val
+3056,1029,batch_5/000012.JPG,Other carton,PaperCardboard,"[1384.0, 985.0, 1064.0, 855.0]",508493.0,2448,3264,test
+3060,1029,batch_5/000012.JPG,Drink can,Metal,"[825.0, 1405.0, 303.0, 434.0]",102396.0,2448,3264,val
+3061,1029,batch_5/000012.JPG,Drink can,Metal,"[1149.0, 1297.0, 261.0, 457.0]",82666.0,2448,3264,train
+3062,1029,batch_5/000012.JPG,Drink can,Metal,"[1277.0, 1590.0, 502.0, 341.0]",101963.5,2448,3264,val
+3065,1031,batch_5/000014.JPG,Styrofoam piece,Other,"[1519.0, 1436.0, 295.0, 241.0]",30391.0,2448,3264,test
+3080,1033,batch_5/000016.JPG,Drink can,Metal,"[1232.0, 1628.0, 234.0, 332.0]",44286.0,2448,3264,train
+3083,1034,batch_5/000017.JPG,Drink can,Metal,"[907.0, 1125.0, 459.0, 321.0]",81697.0,2448,3264,val
+3091,1037,batch_5/000020.JPG,Crisp packet,Other,"[1241.0, 2449.0, 526.0, 434.0]",198498.0,2448,3264,train
+3097,1039,batch_5/000022.JPG,Paper bag,PaperCardboard,"[1399.0, 1017.0, 605.0, 362.0]",102870.5,2448,3264,val
+3100,1041,batch_5/000024.JPG,Paper bag,PaperCardboard,"[420.0, 1722.0, 876.0, 913.0]",468191.5,2448,3264,test
+3103,1044,batch_5/000027.JPG,Glass bottle,Glass,"[1256.0, 234.0, 175.0, 686.0]",84780.0,2448,3264,train
+3106,1045,batch_5/000028.JPG,Clear plastic bottle,Plastic,"[1055.0, 1724.0, 341.0, 661.0]",147600.0,2448,3264,train
+3129,1053,batch_5/000037.JPG,Normal paper,PaperCardboard,"[315.0, 588.0, 557.0, 492.0]",134876.5,2448,3264,train
+3130,1054,batch_5/000038.JPG,Styrofoam piece,Other,"[1459.0, 1186.0, 463.0, 362.0]",79337.0,2448,3264,train
+3133,1056,batch_5/000040.JPG,Drink can,Metal,"[2054.0, 988.0, 470.0, 372.0]",121433.5,3264,2448,train
+3140,1059,batch_5/000043.JPG,Crisp packet,Other,"[981.0, 1431.0, 572.0, 384.0]",164102.0,2448,3264,train
+3146,1061,batch_5/000046.JPG,Food Can,Metal,"[1067.0, 1422.0, 324.0, 372.0]",81216.0,2448,3264,train
+3152,1064,batch_5/000049.JPG,Disposable plastic cup,Plastic,"[1538.0, 2113.0, 266.0, 310.0]",42611.5,2448,3264,train
+3159,1064,batch_5/000049.JPG,Corrugated carton,PaperCardboard,"[790.0, 1129.0, 753.0, 673.0]",316486.5,2448,3264,val
+3160,1064,batch_5/000049.JPG,Corrugated carton,PaperCardboard,"[1935.0, 608.0, 512.0, 715.0]",184952.0,2448,3264,train
+3161,1064,batch_5/000049.JPG,Paper bag,PaperCardboard,"[1451.0, 552.0, 452.0, 267.0]",71923.5,2448,3264,train
+3167,1066,batch_5/000051.JPG,Drink can,Metal,"[865.0, 1143.0, 353.0, 254.0]",51540.5,2448,3264,train
+3178,1072,batch_5/000058.JPG,Crisp packet,Other,"[1092.0, 1262.0, 161.0, 241.0]",25797.0,2448,3264,val
+3179,1073,batch_5/000059.JPG,Crisp packet,Other,"[1077.0, 1612.0, 367.0, 285.0]",64596.0,2448,3264,train
+3180,1074,batch_5/000060.JPG,Disposable plastic cup,Plastic,"[1302.0, 843.0, 147.0, 241.0]",26854.0,2448,3264,train
+3181,1074,batch_5/000060.JPG,Disposable plastic cup,Plastic,"[1360.0, 1304.0, 272.0, 177.0]",32872.5,2448,3264,test
+3229,1076,batch_6/000052.JPG,Disposable plastic cup,Plastic,"[956.0, 1473.0, 154.0, 202.0]",24180.5,2448,3264,train
+3230,1077,batch_6/000104.JPG,Clear plastic bottle,Plastic,"[501.0, 908.0, 630.0, 581.0]",170847.0,2448,3264,train
+3244,1081,batch_6/000100.JPG,Clear plastic bottle,Plastic,"[994.0, 579.0, 608.0, 315.0]",98612.5,3264,2448,train
+3245,1081,batch_6/000100.JPG,Clear plastic bottle,Plastic,"[2478.0, 1995.0, 267.0, 345.0]",48975.5,3264,2448,train
+3246,1082,batch_6/000099.JPG,Clear plastic bottle,Plastic,"[1137.0, 1665.0, 393.0, 247.0]",55294.5,2624,1968,test
+3247,1082,batch_6/000099.JPG,Clear plastic bottle,Plastic,"[1239.0, 1495.0, 161.0, 155.0]",18996.0,2624,1968,train
+3252,1084,batch_6/000097.JPG,Clear plastic bottle,Plastic,"[1450.0, 1257.0, 468.0, 212.0]",70621.5,3680,2760,train
+3253,1084,batch_6/000097.JPG,Clear plastic bottle,Plastic,"[1570.0, 1455.0, 512.0, 227.0]",66812.5,3680,2760,val
+3259,1085,batch_6/000096.JPG,Other carton,PaperCardboard,"[312.0, 1719.0, 300.0, 247.0]",59100.0,2448,3264,val
+3262,1088,batch_6/000093.JPG,Clear plastic bottle,Plastic,"[1619.0, 1508.0, 320.0, 528.0]",125186.5,3264,2448,train
+3268,1091,batch_6/000090.JPG,Clear plastic bottle,Plastic,"[710.0, 1624.0, 208.0, 190.0]",26561.0,3264,2448,train
+3275,1096,batch_6/000085.JPG,Clear plastic bottle,Plastic,"[639.0, 1417.0, 547.0, 530.0]",131665.0,2448,3264,test
+3280,1099,batch_6/000080.JPG,Clear plastic bottle,Plastic,"[737.0, 1948.0, 477.0, 162.0]",52997.5,3264,2448,test
+3283,1101,batch_6/000078.JPG,Aerosol,Metal,"[652.0, 710.0, 309.0, 212.0]",23762.5,2624,1968,train
+3290,1103,batch_6/000076.JPG,Clear plastic bottle,Plastic,"[1150.0, 1286.0, 262.0, 557.0]",108990.0,2275,3235,train
+3291,1103,batch_6/000076.JPG,Glass bottle,Glass,"[886.0, 890.0, 224.0, 651.0]",108619.5,2275,3235,train
+3293,1104,batch_6/000075.JPG,Corrugated carton,PaperCardboard,"[496.0, 1600.0, 717.0, 1037.0]",570203.0,2448,3264,test
+3294,1105,batch_6/000074.JPG,Other plastic bottle,Plastic,"[1548.0, 1298.0, 711.0, 375.0]",143994.5,3264,2448,test
+3295,1105,batch_6/000074.JPG,Corrugated carton,PaperCardboard,"[456.0, 678.0, 905.0, 539.0]",365018.5,3264,2448,train
+3296,1106,batch_6/000073.JPG,Clear plastic bottle,Plastic,"[2058.0, 878.0, 261.0, 782.0]",163222.0,3264,2448,val
+3390,1109,batch_6/000070.JPG,Tupperware,Plastic,"[1101.0, 1473.0, 264.0, 246.0]",36983.5,2624,1968,train
+3391,1110,batch_6/000069.JPG,Clear plastic bottle,Plastic,"[999.0, 586.0, 608.0, 314.0]",96568.0,3264,2448,train
+3392,1110,batch_6/000069.JPG,Clear plastic bottle,Plastic,"[2476.0, 2007.0, 272.0, 328.0]",46281.5,3264,2448,train
+3395,1111,batch_6/000068.JPG,Paper bag,PaperCardboard,"[611.0, 1119.0, 190.0, 242.0]",26917.5,3264,2448,train
+3403,1113,batch_6/000065.JPG,Clear plastic bottle,Plastic,"[1074.0, 1401.0, 203.0, 301.0]",35809.0,2448,3264,val
+3404,1113,batch_6/000065.JPG,Clear plastic bottle,Plastic,"[940.0, 1488.0, 149.0, 306.0]",26488.0,2448,3264,test
+3414,1117,batch_6/000061.JPG,Pizza box,PaperCardboard,"[814.0, 728.0, 1418.0, 722.0]",587099.0,2448,3264,test
+3416,1118,batch_6/000060.JPG,Clear plastic bottle,Plastic,"[867.0, 1265.0, 300.0, 606.0]",135323.0,2448,3264,train
+3417,1119,batch_6/000059.JPG,Corrugated carton,PaperCardboard,"[1979.0, 837.0, 332.0, 308.0]",57184.5,3264,2448,test
+3418,1119,batch_6/000059.JPG,Corrugated carton,PaperCardboard,"[1168.0, 755.0, 585.0, 1104.0]",434551.0,3264,2448,test
+3419,1119,batch_6/000059.JPG,Corrugated carton,PaperCardboard,"[564.0, 618.0, 690.0, 589.0]",157869.0,3264,2448,val
+3420,1120,batch_6/000058.JPG,Clear plastic bottle,Plastic,"[427.0, 296.0, 872.0, 335.0]",252488.0,2448,3264,test
+3421,1120,batch_6/000058.JPG,Clear plastic bottle,Plastic,"[865.0, 649.0, 696.0, 711.0]",206358.0,2448,3264,train
+3425,1121,batch_6/000056.JPG,Other carton,PaperCardboard,"[1151.0, 1206.0, 690.0, 759.0]",429266.0,3264,2448,val
+3426,1121,batch_6/000056.JPG,Clear plastic bottle,Plastic,"[2054.0, 775.0, 526.0, 769.0]",173421.0,3264,2448,train
+3427,1121,batch_6/000056.JPG,Clear plastic bottle,Plastic,"[1254.0, 412.0, 339.0, 391.0]",109447.5,3264,2448,train
+3430,1122,batch_6/000055.JPG,Clear plastic bottle,Plastic,"[970.0, 1538.0, 342.0, 154.0]",31931.0,3264,2448,train
+3431,1122,batch_6/000055.JPG,Glass bottle,Glass,"[2028.0, 1200.0, 375.0, 342.0]",38356.5,3264,2448,test
+3435,1123,batch_6/000057.JPG,Drink can,Metal,"[768.0, 1277.0, 307.0, 514.0]",134156.0,3264,2448,train
+3436,1123,batch_6/000057.JPG,Drink can,Metal,"[725.0, 847.0, 308.0, 524.0]",120557.5,3264,2448,train
+3437,1123,batch_6/000057.JPG,Drink can,Metal,"[671.0, 703.0, 271.0, 668.0]",53257.5,3264,2448,train
+3438,1123,batch_6/000057.JPG,Drink can,Metal,"[1041.0, 639.0, 251.0, 371.0]",61149.5,3264,2448,train
+3439,1123,batch_6/000057.JPG,Drink can,Metal,"[1594.0, 677.0, 208.0, 362.0]",62142.5,3264,2448,val
+3440,1123,batch_6/000057.JPG,Drink can,Metal,"[1880.0, 634.0, 216.0, 345.0]",57849.5,3264,2448,val
+3441,1123,batch_6/000057.JPG,Drink can,Metal,"[2032.0, 559.0, 174.0, 325.0]",35216.5,3264,2448,test
+3442,1123,batch_6/000057.JPG,Drink can,Metal,"[2229.0, 718.0, 246.0, 354.0]",64413.0,3264,2448,train
+3444,1123,batch_6/000057.JPG,Drink can,Metal,"[2198.0, 612.0, 228.0, 320.0]",29118.0,3264,2448,train
+3446,1123,batch_6/000057.JPG,Clear plastic bottle,Plastic,"[441.0, 1185.0, 253.0, 866.0]",88984.0,3264,2448,train
+3455,1124,batch_6/000054.JPG,Disposable plastic cup,Plastic,"[1442.0, 1028.0, 195.0, 229.0]",28085.5,3264,2448,train
+3459,1127,batch_6/000051.JPG,Clear plastic bottle,Plastic,"[1123.0, 836.0, 149.0, 445.0]",49259.5,2448,3264,train
+3464,1131,batch_6/000047.JPG,Clear plastic bottle,Plastic,"[941.0, 799.0, 911.0, 610.0]",286311.5,3264,2448,val
+3466,1132,batch_6/000046.JPG,Clear plastic bottle,Plastic,"[531.0, 552.0, 334.0, 367.0]",80451.5,2448,3264,val
+3467,1133,batch_6/000045.JPG,Clear plastic bottle,Plastic,"[624.0, 1322.0, 225.0, 598.0]",106291.0,3264,2448,train
+3472,1135,batch_6/000042.JPG,Disposable plastic cup,Plastic,"[792.0, 1333.0, 200.0, 231.0]",28099.0,2448,3264,train
+3475,1136,batch_6/000041.JPG,Paper bag,PaperCardboard,"[1303.0, 410.0, 1328.0, 769.0]",466826.0,3264,2448,test
+3484,1140,batch_6/000037.JPG,Clear plastic bottle,Plastic,"[1616.0, 705.0, 261.0, 248.0]",18897.5,2624,1968,train
+3498,1141,batch_6/000036.JPG,Clear plastic bottle,Plastic,"[1176.0, 1170.0, 205.0, 119.0]",17422.0,2624,1968,train
+3505,1143,batch_6/000034.JPG,Clear plastic bottle,Plastic,"[1625.0, 503.0, 368.0, 395.0]",60658.0,2448,3264,train
+3506,1143,batch_6/000034.JPG,Clear plastic bottle,Plastic,"[1289.0, 2018.0, 211.0, 524.0]",70461.0,2448,3264,train
+3520,1147,batch_6/000029.JPG,Clear plastic bottle,Plastic,"[1512.0, 1267.0, 454.0, 218.0]",69020.0,3680,2760,test
+3521,1147,batch_6/000029.JPG,Clear plastic bottle,Plastic,"[1616.0, 1474.0, 505.0, 209.0]",64732.5,3680,2760,train
+3526,1148,batch_6/000028.JPG,Drink can,Metal,"[1159.0, 1753.0, 533.0, 389.0]",112769.5,2448,3264,test
+3527,1149,batch_6/000027.JPG,Disposable plastic cup,Plastic,"[950.0, 1803.0, 534.0, 328.0]",107975.5,3264,2448,val
+3529,1151,batch_6/000025.JPG,Corrugated carton,PaperCardboard,"[1405.0, 894.0, 1275.0, 1182.0]",792336.0,3264,2448,train
+3530,1152,batch_6/000024.JPG,Food Can,Metal,"[1509.0, 1195.0, 219.0, 195.0]",28717.0,2624,1968,train
+3535,1153,batch_6/000023.JPG,Clear plastic bottle,Plastic,"[726.0, 1203.0, 351.0, 453.0]",100485.0,3264,2448,train
+3538,1154,batch_6/000022.JPG,Paper bag,PaperCardboard,"[798.0, 2099.0, 1015.0, 728.0]",390328.0,2448,3264,train
+3545,1155,batch_6/000021.JPG,Clear plastic bottle,Plastic,"[685.0, 422.0, 807.0, 1190.0]",401206.0,2448,3264,train
+3547,1157,batch_6/000019.JPG,Clear plastic bottle,Plastic,"[950.0, 804.0, 904.0, 604.0]",274282.5,3264,2448,train
+3552,1159,batch_6/000017.JPG,Clear plastic bottle,Plastic,"[389.0, 580.0, 698.0, 256.0]",155069.0,2448,3264,val
+3553,1159,batch_6/000017.JPG,Clear plastic bottle,Plastic,"[1042.0, 368.0, 282.0, 727.0]",133251.0,2448,3264,train
+3557,1160,batch_6/000015.JPG,Clear plastic bottle,Plastic,"[1283.0, 1556.0, 491.0, 218.0]",68705.0,2815,2195,train
+3558,1160,batch_6/000015.JPG,Glass bottle,Glass,"[1665.0, 1362.0, 489.0, 444.0]",71955.5,2815,2195,train
+3559,1161,batch_6/000014.JPG,Clear plastic bottle,Plastic,"[718.0, 1321.0, 253.0, 281.0]",32531.0,2448,3264,train
+3560,1162,batch_6/000013.JPG,Drink can,Metal,"[971.0, 703.0, 242.0, 262.0]",38696.0,2448,3264,train
+3561,1162,batch_6/000013.JPG,Crisp packet,Other,"[1036.0, 1105.0, 396.0, 309.0]",116582.5,2448,3264,test
+3562,1162,batch_6/000013.JPG,Crisp packet,Other,"[1306.0, 1481.0, 535.0, 465.0]",155610.5,2448,3264,train
+3564,1164,batch_6/000010.JPG,Clear plastic bottle,Plastic,"[534.0, 1591.0, 610.0, 725.0]",219050.5,2448,3264,train
+3565,1165,batch_6/000009.JPG,Corrugated carton,PaperCardboard,"[766.0, 571.0, 1451.0, 1096.0]",865105.5,3264,2448,train
+3574,1171,batch_6/000002.JPG,Corrugated carton,PaperCardboard,"[1385.0, 1052.0, 1128.0, 531.0]",471336.5,3264,2448,train
+3575,1171,batch_6/000002.JPG,Corrugated carton,PaperCardboard,"[715.0, 578.0, 478.0, 398.0]",115833.0,3264,2448,val
+3579,1172,batch_6/000001.JPG,Normal paper,PaperCardboard,"[1146.0, 1450.0, 527.0, 727.0]",184072.0,2448,3264,train
+3649,1179,batch_7/000006.JPG,Corrugated carton,PaperCardboard,"[1617.0, 2224.0, 1048.0, 1774.0]",89944.0,6000,4000,test
+3657,1184,batch_7/000013.JPG,Magazine paper,PaperCardboard,"[1663.0, 915.0, 736.0, 485.0]",225369.0,3264,2448,val
+3661,1187,batch_7/000016.JPG,Clear plastic bottle,Plastic,"[358.0, 844.0, 345.0, 120.0]",30592.5,2448,3264,train
+3662,1188,batch_7/000017.JPG,Clear plastic bottle,Plastic,"[1436.0, 1742.0, 355.0, 458.0]",76057.0,3264,2448,test
+3663,1189,batch_7/000018.JPG,Styrofoam piece,Other,"[1081.0, 1048.0, 280.0, 271.0]",36645.0,3264,2448,train
+3669,1191,batch_7/000020.JPG,Styrofoam piece,Other,"[2045.0, 1521.0, 335.0, 177.0]",35590.0,3264,2448,val
+3670,1192,batch_7/000021.JPG,Styrofoam piece,Other,"[1199.0, 815.0, 393.0, 220.0]",45746.5,3264,2448,test
+3672,1192,batch_7/000021.JPG,Normal paper,PaperCardboard,"[0.0, 1738.0, 515.0, 663.0]",248080.5,3264,2448,train
+3683,1193,batch_7/000022.JPG,Clear plastic bottle,Plastic,"[902.0, 1100.0, 626.0, 801.0]",272256.5,3264,2448,train
+3684,1193,batch_7/000022.JPG,Clear plastic bottle,Plastic,"[458.0, 1449.0, 779.0, 473.0]",217746.5,3264,2448,test
+3691,1196,batch_7/000025.JPG,Drink can,Metal,"[616.0, 1380.0, 317.0, 183.0]",47132.0,3264,2448,train
+3696,1198,batch_7/000030.JPG,Disposable plastic cup,Plastic,"[125.0, 565.0, 455.0, 575.0]",193776.0,960,1280,train
+3701,1200,batch_7/000033.JPG,Disposable plastic cup,Plastic,"[733.0, 889.0, 427.0, 261.0]",87091.5,2448,3264,test
+3704,1202,batch_7/000035.JPG,Garbage bag,Other,"[1473.0, 1217.0, 597.0, 679.0]",275321.5,3264,2448,train
+3713,1203,batch_7/000036.JPG,Food Can,Metal,"[1881.0, 1158.0, 318.0, 395.0]",96434.0,3264,2448,val
+3730,1209,batch_7/000044.JPG,Clear plastic bottle,Plastic,"[837.0, 1183.0, 459.0, 219.0]",50105.5,2448,3264,test
+3742,1212,batch_7/000048.JPG,Normal paper,PaperCardboard,"[1497.0, 1822.0, 177.0, 553.0]",73906.5,2448,3264,train
+3751,1213,batch_7/000049.JPG,Clear plastic bottle,Plastic,"[614.0, 1589.0, 200.0, 494.0]",66955.5,2448,3264,train
+3778,1215,batch_7/000051.JPG,Pizza box,PaperCardboard,"[488.0, 1679.0, 1331.0, 805.0]",366905.5,2448,3264,train
+3781,1216,batch_7/000052.JPG,Egg carton,PaperCardboard,"[1317.0, 1432.0, 554.0, 438.0]",140107.0,3264,2448,train
+3788,1220,batch_7/000056.JPG,Spread tub,Plastic,"[850.0, 1603.0, 164.0, 283.0]",24672.5,2448,3264,val
+3790,1222,batch_7/000058.JPG,Clear plastic bottle,Plastic,"[1371.0, 1814.0, 187.0, 281.0]",25047.5,2448,3264,train
+3791,1222,batch_7/000058.JPG,Normal paper,PaperCardboard,"[2109.0, 2677.0, 264.0, 237.0]",36410.0,2448,3264,train
+3825,1234,batch_7/000072.JPG,Clear plastic bottle,Plastic,"[1070.0, 1284.0, 443.0, 317.0]",85238.0,2448,3264,train
+3826,1234,batch_7/000072.JPG,Other plastic bottle,Plastic,"[2033.0, 2806.0, 337.0, 282.0]",42516.0,2448,3264,train
+3834,1238,batch_7/000077.JPG,Clear plastic bottle,Plastic,"[618.0, 1456.0, 164.0, 282.0]",32066.0,2448,3264,val
+3835,1239,batch_7/000078.JPG,Garbage bag,Other,"[172.0, 2.0, 1120.0, 592.0]",396363.5,2448,3264,train
+3836,1239,batch_7/000078.JPG,Garbage bag,Other,"[222.0, 208.0, 739.0, 598.0]",268128.5,2448,3264,train
+3837,1239,batch_7/000078.JPG,Garbage bag,Other,"[177.0, 538.0, 1694.0, 1455.0]",1508296.0,2448,3264,val
+3838,1239,batch_7/000078.JPG,Garbage bag,Other,"[0.0, 527.0, 579.0, 623.0]",247561.0,2448,3264,train
+3841,1239,batch_7/000078.JPG,Crisp packet,Other,"[1633.0, 1734.0, 228.0, 218.0]",27303.0,2448,3264,train
+3843,1239,batch_7/000078.JPG,Other carton,PaperCardboard,"[5.0, 1445.0, 1014.0, 1044.0]",430313.0,2448,3264,train
+3844,1239,batch_7/000078.JPG,Other carton,PaperCardboard,"[2179.0, 1805.0, 227.0, 269.0]",32347.5,2448,3264,train
+3848,1239,batch_7/000078.JPG,Other carton,PaperCardboard,"[932.0, 2042.0, 327.0, 186.0]",49045.0,2448,3264,train
+3853,1239,batch_7/000078.JPG,Clear plastic bottle,Plastic,"[1236.0, 1809.0, 145.0, 442.0]",47429.5,2448,3264,train
+3855,1240,batch_7/000079.JPG,Clear plastic bottle,Plastic,"[1003.0, 1762.0, 364.0, 143.0]",29448.0,2448,3264,test
+3856,1240,batch_7/000079.JPG,Clear plastic bottle,Plastic,"[564.0, 1821.0, 382.0, 145.0]",33658.0,2448,3264,train
+3865,1242,batch_7/000081.JPG,Paper bag,PaperCardboard,"[1090.0, 1764.0, 255.0, 270.0]",36900.5,2448,3264,train
+3869,1243,batch_7/000082.JPG,Clear plastic bottle,Plastic,"[886.0, 1343.0, 265.0, 220.0]",33837.5,3264,2448,train
+3874,1246,batch_7/000085.JPG,Clear plastic bottle,Plastic,"[694.0, 2484.0, 428.0, 334.0]",56582.0,2448,3264,test
+3875,1246,batch_7/000085.JPG,Clear plastic bottle,Plastic,"[927.0, 1786.0, 361.0, 231.0]",33639.0,2448,3264,val
+3876,1246,batch_7/000085.JPG,Clear plastic bottle,Plastic,"[461.0, 1196.0, 367.0, 109.0]",29903.5,2448,3264,train
+3899,1248,batch_7/000087.JPG,Disposable plastic cup,Plastic,"[777.0, 1474.0, 198.0, 243.0]",27898.5,3264,2448,val
+3900,1248,batch_7/000087.JPG,Disposable plastic cup,Plastic,"[996.0, 1550.0, 184.0, 208.0]",24412.0,3264,2448,train
+3901,1248,batch_7/000087.JPG,Clear plastic bottle,Plastic,"[1772.0, 1345.0, 321.0, 163.0]",32461.0,3264,2448,val
+3907,1251,batch_7/000090.JPG,Clear plastic bottle,Plastic,"[1510.0, 2313.0, 322.0, 644.0]",107507.0,2448,3264,train
+3909,1252,batch_7/000091.JPG,Clear plastic bottle,Plastic,"[1741.0, 1200.0, 222.0, 660.0]",115150.5,3264,2448,val
+3912,1253,batch_7/000092.JPG,Drink can,Metal,"[1254.0, 493.0, 426.0, 729.0]",223226.0,3264,2448,train
+3913,1253,batch_7/000092.JPG,Food Can,Metal,"[1063.0, 1043.0, 551.0, 607.0]",253532.5,3264,2448,train
+3916,1254,batch_7/000093.JPG,Disposable plastic cup,Plastic,"[987.0, 1147.0, 375.0, 306.0]",63550.5,2448,3264,train
+3918,1256,batch_7/000095.JPG,Drink can,Metal,"[919.0, 1627.0, 305.0, 178.0]",46588.5,2448,3264,train
+3919,1257,batch_7/000096.JPG,Glass bottle,Glass,"[1016.0, 1352.0, 442.0, 185.0]",40982.5,2448,2448,train
+3932,1268,batch_7/000109.JPG,Clear plastic bottle,Plastic,"[1884.0, 942.0, 162.0, 339.0]",32972.5,3264,2448,train
+3935,1269,batch_7/000110.JPG,Other plastic bottle,Plastic,"[663.0, 1655.0, 670.0, 452.0]",213406.0,2448,3264,train
+3937,1270,batch_7/000111.JPG,Disposable plastic cup,Plastic,"[1529.0, 1554.0, 283.0, 288.0]",41863.0,3264,2448,test
+3942,1273,batch_7/000114.JPG,Drink can,Metal,"[1767.0, 1397.0, 248.0, 191.0]",28612.5,3264,2448,train
+3946,1274,batch_7/000115.JPG,Styrofoam piece,Other,"[1654.0, 827.0, 227.0, 190.0]",27453.5,3264,2448,train
+3947,1275,batch_7/000117.JPG,Styrofoam piece,Other,"[2285.0, 873.0, 346.0, 304.0]",63002.5,3264,2448,train
+3948,1276,batch_7/000118.JPG,Drink can,Metal,"[1674.0, 1217.0, 223.0, 267.0]",38512.0,3264,2448,train
+3949,1277,batch_7/000119.JPG,Glass bottle,Glass,"[1826.0, 1285.0, 575.0, 221.0]",59705.5,3264,2448,train
+3953,1278,batch_7/000120.JPG,Styrofoam piece,Other,"[2479.0, 966.0, 553.0, 365.0]",124173.5,3264,2448,train
+3962,1281,batch_7/000123.JPG,Styrofoam piece,Other,"[900.0, 1339.0, 297.0, 250.0]",50174.5,3264,2448,train
+3964,1283,batch_7/000125.JPG,Clear plastic bottle,Plastic,"[1774.0, 884.0, 258.0, 490.0]",69731.5,3264,2448,val
+3965,1283,batch_7/000125.JPG,Styrofoam piece,Other,"[1778.0, 1338.0, 327.0, 293.0]",50302.0,3264,2448,train
+3987,1292,batch_7/000135.JPG,Clear plastic bottle,Plastic,"[1343.0, 1577.0, 160.0, 401.0]",38615.0,3264,2448,val
+4043,1301,batch_8/000001.jpg,Squeezable tube,Plastic,"[1053.0, 970.0, 164.0, 365.0]",25946.5,2448,3264,train
+4047,1304,batch_8/000004.jpg,Clear plastic bottle,Plastic,"[1851.9999999999998, 721.9999999999999, 291.0000000000002, 233.0]",31114.000000000004,3264,2448,train
+4052,1307,batch_8/000007.jpg,Clear plastic bottle,Plastic,"[232.0, 1278.0, 670.0, 269.0]",142513.5,2448,3264,test
+4053,1307,batch_8/000007.jpg,Clear plastic bottle,Plastic,"[883.0, 871.0, 1227.0, 1023.0]",466527.5,2448,3264,test
+4054,1307,batch_8/000007.jpg,Clear plastic bottle,Plastic,"[28.0, 1860.0, 1505.0, 637.0]",370934.0,2448,3264,train
+4055,1307,batch_8/000007.jpg,Clear plastic bottle,Plastic,"[858.0, 2057.0, 893.0, 422.0]",268955.5,2448,3264,val
+4056,1307,batch_8/000007.jpg,Clear plastic bottle,Plastic,"[1546.0, 1816.0, 593.0, 431.0]",196136.0,2448,3264,train
+4058,1307,batch_8/000007.jpg,Clear plastic bottle,Plastic,"[1.0, 2929.0, 254.0, 331.0]",71478.5,2448,3264,val
+4060,1308,batch_8/000008.jpg,Drink can,Metal,"[1357.9999999999998, 1141.9999999999998, 382.0000000000002, 596.0]",172906.50000000003,2448,3264,train
+4066,1309,batch_8/000009.jpg,Drink can,Metal,"[1076.0, 1559.0, 272.0, 279.0]",49065.5,2448,3264,train
+4068,1310,batch_8/000010.jpg,Glass bottle,Glass,"[1509.0, 1011.0, 258.0, 327.0]",33050.5,2448,3264,test
+4070,1311,batch_8/000011.jpg,Clear plastic bottle,Plastic,"[1039.0, 1681.0, 158.0, 512.0]",58566.5,2448,3264,train
+4073,1312,batch_8/000012.jpg,Clear plastic bottle,Plastic,"[964.3333, 1254.4286, 400.0, 323.0]",48469.0,2448,3264,train
+4077,1313,batch_8/000013.jpg,Clear plastic bottle,Plastic,"[1064.8572, 442.14285, 335.0, 205.99994999999996]",33053.987449999986,2448,3264,test
+4079,1314,batch_8/000014.jpg,Drink can,Metal,"[794.9999999999998, 1101.9999999999998, 152.0, 303.0000000000002]",39278.5,3264,2448,train
+4080,1314,batch_8/000014.jpg,Drink can,Metal,"[932.9999999999998, 1057.9999999999998, 154.0, 333.9999999999998]",41199.99999999997,3264,2448,val
+4081,1314,batch_8/000014.jpg,Drink can,Metal,"[1066.0, 1068.9999999999998, 158.99999999999977, 353.9999999999998]",44883.99999999996,3264,2448,train
+4082,1314,batch_8/000014.jpg,Drink can,Metal,"[1217.0, 1155.9999999999998, 160.0, 304.0]",39049.000000000015,3264,2448,train
+4083,1314,batch_8/000014.jpg,Drink can,Metal,"[1355.0, 1104.9999999999998, 160.0, 341.0]",42072.499999999956,3264,2448,val
+4084,1314,batch_8/000014.jpg,Drink can,Metal,"[1495.9999999999995, 1071.0, 141.00000000000045, 320.0]",35610.99999999998,3264,2448,train
+4085,1314,batch_8/000014.jpg,Drink can,Metal,"[1631.0, 1053.0, 140.99999999999955, 355.9999999999998]",43701.99999999989,3264,2448,train
+4086,1314,batch_8/000014.jpg,Drink can,Metal,"[1762.9999999999995, 1115.0, 153.0, 357.99999999999955]",45085.999999999985,3264,2448,test
+4087,1314,batch_8/000014.jpg,Clear plastic bottle,Plastic,"[1901.9999999999995, 1057.9999999999998, 141.00000000000023, 475.0]",51907.99999999998,3264,2448,train
+4088,1314,batch_8/000014.jpg,Drink can,Metal,"[2091.0, 1198.0, 202.0, 329.0]",43153.50000000005,3264,2448,train
+4089,1314,batch_8/000014.jpg,Drink can,Metal,"[1511.9999999999998, 1447.0, 372.0, 148.99999999999955]",48329.00000000002,3264,2448,train
+4090,1314,batch_8/000014.jpg,Drink can,Metal,"[1184.9999999999998, 1451.9999999999995, 327.0, 133.00000000000023]",38082.50000000006,3264,2448,train
+4091,1314,batch_8/000014.jpg,Drink can,Metal,"[804.0, 1435.0, 372.0, 147.99999999999955]",43660.500000000015,3264,2448,train
+4120,1321,batch_8/000021.jpg,Glass bottle,Glass,"[1986.0, 1011.0, 225.0, 285.0]",39533.5,3264,2448,train
+4193,1325,batch_8/000025.jpg,Other carton,PaperCardboard,"[407.0, 2351.0, 455.0, 518.0]",140753.0,2448,3264,train
+4195,1325,batch_8/000025.jpg,Disposable plastic cup,Plastic,"[1778.0, 550.0, 373.0, 454.0]",134235.0,2448,3264,train
+4198,1326,batch_8/000026.jpg,Disposable plastic cup,Plastic,"[1316.0, 775.0, 241.0, 278.0]",40894.0,2448,3264,train
+4200,1327,batch_8/000027.jpg,Clear plastic bottle,Plastic,"[1044.0, 1469.0, 210.0, 306.0]",42167.0,2448,3264,train
+4205,1328,batch_8/000028.jpg,Clear plastic bottle,Plastic,"[1050.0, 2077.0, 505.0, 407.0]",88999.5,2448,3264,train
+4210,1328,batch_8/000028.jpg,Drink can,Metal,"[1152.0, 463.0, 273.0, 228.0]",42279.0,2448,3264,train
+4220,1329,batch_8/000029.jpg,Drink can,Metal,"[1297.0, 420.0, 148.99999999999977, 278.0]",26237.999999999967,2448,3264,val
+4225,1329,batch_8/000029.jpg,Other carton,PaperCardboard,"[766.9999999999999, 2325.0, 303.0000000000001, 328.99999999999955]",52326.49999999998,2448,3264,train
+4226,1330,batch_8/000030.jpg,Clear plastic bottle,Plastic,"[1210.0, 911.0, 164.0, 350.0]",35907.0,2448,3264,train
+4228,1331,batch_8/000031.jpg,Other plastic bottle,Plastic,"[1326.0, 1056.0, 325.0, 331.0]",56972.5,2448,3264,train
+4238,1332,batch_8/000032.jpg,Egg carton,PaperCardboard,"[1611.0, 490.0, 853.0, 869.0]",319780.0,3264,2448,train
+4239,1333,batch_8/000033.jpg,Clear plastic bottle,Plastic,"[888.0, 710.0, 258.0, 212.0]",34749.0,2448,3264,test
+4259,1335,batch_8/000035.jpg,Glass bottle,Glass,"[896.0, 1983.9999999999998, 669.0, 341.9999999999998]",124007.49999999999,2448,3264,train
+4264,1336,batch_8/000036.jpg,Glass bottle,Glass,"[646.0, 444.9999999999999, 603.0, 465.9999999999998]",122219.49999999987,2448,3264,train
+4266,1336,batch_8/000036.jpg,Glass bottle,Glass,"[1270.0, 601.9999999999999, 668.9999999999993, 264.9999999999998]",122567.49999999996,2448,3264,val
+4269,1337,batch_8/000037.jpg,Glass bottle,Glass,"[1039.5238, 1186.8572, 529.0, 971.0]",252058.4447,2448,3264,train
+4271,1338,batch_8/000038.jpg,Glass bottle,Glass,"[875.9999999999999, 775.0, 267.0000000000001, 665.0]",109136.50000000001,2448,3264,train
+4272,1338,batch_8/000038.jpg,Glass bottle,Glass,"[1362.9999999999998, 2133.0, 292.0, 570.0]",84516.00000000006,2448,3264,train
+4274,1339,batch_8/000039.jpg,Glass bottle,Glass,"[946.0, 2079.0, 498.0, 207.0]",51373.0,2448,3264,train
+4275,1340,batch_8/000040.jpg,Clear plastic bottle,Plastic,"[1296.5, 1905.0, 336.0, 270.0]",35814.5,2448,3264,val
+4277,1340,batch_8/000040.jpg,Glass bottle,Glass,"[2268.0, 2691.0, 148.0, 419.0]",25238.5,2448,3264,test
+4279,1341,batch_8/000041.jpg,Clear plastic bottle,Plastic,"[1129.0, 735.0, 357.0, 298.0]",75217.0,3264,2448,train
+4284,1343,batch_8/000043.jpg,Clear plastic bottle,Plastic,"[1646.0, 1083.0, 416.0, 128.0]",41037.0,3264,2448,train
+4295,1347,batch_8/000047.jpg,Other plastic bottle,Plastic,"[695.9999999999999, 1224.0, 426.0000000000001, 160.99999999999977]",50474.50000000001,3264,2448,test
+4296,1347,batch_8/000047.jpg,Egg carton,PaperCardboard,"[2287.0, 1185.9999999999998, 295.99999999999955, 188.00000000000023]",35820.49999999999,3264,2448,val
+4298,1348,batch_8/000048.jpg,Clear plastic bottle,Plastic,"[1750.7143999999998, 1768.0475999999999, 606.0, 181.0]",89701.0,3264,2448,train
+4303,1351,batch_8/000051.jpg,Clear plastic bottle,Plastic,"[1729.0, 1598.0, 540.0, 228.0]",74363.0,2448,3264,train
+4312,1352,batch_8/000052.jpg,Styrofoam piece,Other,"[1915.0, 1111.0, 867.0, 230.99999999999977]",108885.50000000001,3264,2448,train
+4313,1353,batch_8/000053.jpg,Garbage bag,Other,"[0.0, 0.0, 468.99999999999994, 92.99999999999999]",37028.999999999985,3264,2448,train
+4335,1354,batch_8/000054.jpg,Garbage bag,Other,"[184.0, 524.0, 412.0, 341.0]",98105.0,1280,960,train
+4336,1354,batch_8/000054.jpg,Garbage bag,Other,"[607.0, 320.0, 244.0, 199.0]",35073.0,1280,960,train
+4337,1354,batch_8/000054.jpg,Garbage bag,Other,"[404.0, 351.0, 67.0, 183.0]",6381.0,1280,960,train
+4338,1354,batch_8/000054.jpg,Garbage bag,Other,"[618.0, 404.0, 364.0, 384.0]",98696.5,1280,960,val
+4339,1354,batch_8/000054.jpg,Garbage bag,Other,"[812.0, 301.0, 136.0, 134.0]",10137.5,1280,960,test
+4343,1355,batch_8/000055.jpg,Garbage bag,Other,"[572.0, 676.0, 130.0, 136.0]",11406.5,1280,960,train
+4353,1359,batch_8/000059.jpg,Food Can,Metal,"[592.0, 662.0, 110.0, 83.0]",6726.5,1200,1600,train
+4356,1361,batch_8/000061.jpg,Clear plastic bottle,Plastic,"[562.0, 801.0000000000001, 97.0, 193.9999999999999]",13604.499999999996,1200,1600,train
+4361,1364,batch_8/000064.jpg,Corrugated carton,PaperCardboard,"[467.0, 1046.0, 213.0, 66.0]",6650.0,1200,1600,train
+4392,1366,batch_8/000066.jpg,Drink can,Metal,"[808.0, 1671.0, 290.0, 391.0]",59011.5,2448,3264,test
+4393,1366,batch_8/000066.jpg,Disposable plastic cup,Plastic,"[1030.0, 941.0, 321.0, 339.0]",68819.0,2448,3264,train
+4397,1367,batch_8/000067.jpg,Crisp packet,Other,"[1938.7999999999997, 1246.2000999999998, 382.0, 333.0000000000002]",69705.00000000004,3264,2448,train
+4399,1369,batch_8/000069.jpg,Clear plastic bottle,Plastic,"[2087.9999999999995, 1079.0, 316.00000000000045, 456.0]",70617.5,3264,2448,train
+4405,1372,batch_8/000072.jpg,Drink can,Metal,"[549.0, 2932.9524, 216.0, 234.0]",39171.0,2448,3264,train
+4407,1372,batch_8/000072.jpg,Disposable plastic cup,Plastic,"[2159.0952, 1838.6666, 284.0, 283.0001000000002]",48428.51810000003,2448,3264,test
+4410,1373,batch_8/000073.jpg,Glass bottle,Glass,"[1023.0, 1780.0, 241.0, 742.0]",112640.0,2448,3264,train
+4415,1373,batch_8/000073.jpg,Disposable plastic cup,Plastic,"[560.0, 1448.0, 473.0, 316.0]",105083.0,2448,3264,train
+4427,1375,batch_8/000075.jpg,Other carton,PaperCardboard,"[788.0, 1784.0, 509.0, 525.0]",111792.0,2268,4032,val
+4434,1378,batch_8/000078.jpg,Other carton,PaperCardboard,"[679.0, 2124.0, 244.0, 288.0]",53638.5,2268,4032,train
+4438,1380,batch_8/000080.jpg,Other plastic cup,Plastic,"[732.5, 2424.0, 258.0, 303.0]",63169.0,2268,4032,train
+4439,1381,batch_8/000081.jpg,Normal paper,PaperCardboard,"[776.0, 2463.0, 185.0, 254.0]",35621.5,2268,4032,train
+4443,1384,batch_8/000084.jpg,Normal paper,PaperCardboard,"[982.9999999999999, 2049.9999999999995, 262.0000000000001, 263.0]",39338.99999999999,2268,4032,train
+4446,1385,batch_8/000085.jpg,Clear plastic bottle,Plastic,"[835.8, 1831.8, 189.0, 623.0000000000002]",100530.50000000003,2268,4032,train
+4449,1387,batch_8/000087.jpg,Drink can,Metal,"[803.0, 2011.0, 327.0, 391.0]",78314.5,2268,4032,test
+4450,1388,batch_8/000088.jpg,Clear plastic bottle,Plastic,"[1014.0, 1996.0, 196.0, 357.0]",53284.5,2268,4032,val
+4451,1388,batch_8/000088.jpg,Drink can,Metal,"[965.0, 2562.0, 214.0, 387.0]",56564.5,2268,4032,train
+4452,1389,batch_8/000089.jpg,Glass bottle,Glass,"[1432.9999999999998, 575.0, 451.0, 492.0]",61795.999999999985,2268,4032,val
+4456,1390,batch_8/000090.jpg,Paper bag,PaperCardboard,"[937.0, 2004.0, 454.0, 702.0]",154438.5,2268,4032,train
+4461,1393,batch_8/000093.jpg,Other carton,PaperCardboard,"[882.0, 2454.0, 435.9999999999998, 476.99999999999864]",104311.50000000001,2268,4032,test
+4463,1394,batch_8/000094.jpg,Normal paper,PaperCardboard,"[971.0, 2143.0, 453.0, 478.0]",110975.0,2268,4032,train
+4464,1395,batch_8/000095.jpg,Drink can,Metal,"[671.9999999999999, 2391.0, 715.9999999999999, 345.0]",164249.00000000006,2268,4032,train
+4466,1396,batch_8/000096.jpg,Other carton,PaperCardboard,"[908.9999999999999, 1783.0, 274.0000000000001, 203.0]",41461.50000000002,2268,4032,test
+4467,1397,batch_8/000097.jpg,Drink can,Metal,"[657.0, 1018.0, 329.0, 233.0]",32559.5,2268,4032,train
+4468,1397,batch_8/000097.jpg,Drink can,Metal,"[1082.0, 1279.0, 313.0, 353.0]",60568.0,2268,4032,train
+4477,1401,batch_9/000001.jpg,Drink can,Metal,"[2333.0, 913.0, 400.0, 449.9999999999998]",95123.50000000003,3264,2448,test
+4485,1404,batch_9/000004.jpg,Clear plastic bottle,Plastic,"[2341.0, 1265.0, 280.0, 401.0]",52737.5,3264,2448,train
+4487,1405,batch_9/000005.jpg,Clear plastic bottle,Plastic,"[1198.0, 1063.0, 445.0, 313.0]",70664.5,2448,3264,train
+4493,1408,batch_9/000008.jpg,Other plastic bottle,Plastic,"[1137.0, 1217.0, 605.9999999999998, 458.0]",168308.00000000003,2448,3264,train
+4495,1408,batch_9/000008.jpg,Garbage bag,Other,"[0.9999999999999999, 406.99999999999994, 964.9999999999999, 812.0]",553011.5,2448,3264,train
+4498,1408,batch_9/000008.jpg,Clear plastic bottle,Plastic,"[82.99999999999999, 1214.9999999999998, 602.9999999999999, 266.0]",96525.49999999999,2448,3264,train
+4501,1408,batch_9/000008.jpg,Clear plastic bottle,Plastic,"[0.9999999999999999, 1553.9999999999998, 126.0, 846.9999999999998]",66811.49999999999,2448,3264,train
+4594,1450,batch_9/000050.jpg,Corrugated carton,PaperCardboard,"[349.0, 726.9999999999999, 1736.0, 1320.9999999999995]",1177262.4999999995,3264,2448,train
+4649,1463,batch_9/000063.jpg,Other carton,PaperCardboard,"[1287.9999999999998, 1589.9999999999998, 235.0, 198.0]",27895.499999999978,2448,3264,train
+4655,1465,batch_9/000065.jpg,Disposable plastic cup,Plastic,"[833.0, 1392.9999999999998, 257.9999999999998, 327.0]",51193.99999999999,2448,3264,train
+4657,1466,batch_9/000066.jpg,Disposable plastic cup,Plastic,"[812.0, 1855.0, 384.0, 302.0]",71106.0,2448,3264,val
+4658,1467,batch_9/000067.jpg,Clear plastic bottle,Plastic,"[763.0, 2068.0, 680.0, 479.0]",147930.0,1824,4000,train
+4664,1469,batch_9/000069.jpg,Clear plastic bottle,Plastic,"[893.0, 1915.0, 254.0, 191.0]",25121.5,1824,4000,train
+4666,1470,batch_9/000070.jpg,Clear plastic bottle,Plastic,"[822.0, 1317.0, 310.0, 141.0]",24943.0,1824,4000,train
+4672,1471,batch_9/000071.jpg,Clear plastic bottle,Plastic,"[1083.0, 2470.0, 186.0, 491.0]",57219.0,1824,4000,train
+4677,1473,batch_9/000073.jpg,Corrugated carton,PaperCardboard,"[1088.5, 1761.0, 280.0, 215.0]",33077.5,1824,4000,test
+4686,1476,batch_9/000076.jpg,Glass bottle,Glass,"[857.0, 1155.0, 147.0, 385.0]",33192.0,4000,1824,train
+4712,1483,batch_9/000083.jpg,Drink can,Metal,"[719.0, 1199.0, 494.0, 709.0]",272909.0,1824,4000,train
+4713,1484,batch_9/000084.jpg,Clear plastic bottle,Plastic,"[1008.0, 1778.0, 310.0, 207.0]",28865.5,1824,4000,train
+4714,1484,batch_9/000084.jpg,Clear plastic bottle,Plastic,"[808.0, 1941.0, 294.0, 123.0]",25603.5,1824,4000,train
+4722,1484,batch_9/000084.jpg,Styrofoam piece,Other,"[923.0, 1631.0, 294.0, 225.0]",38483.5,1824,4000,test
+4741,1488,batch_9/000088.jpg,Corrugated carton,PaperCardboard,"[1377.0, 0.0, 446.0, 762.0]",207376.0,1824,4000,train
+4756,1490,batch_9/000090.jpg,Clear plastic bottle,Plastic,"[835.0, 2467.0, 535.0, 418.0]",91920.0,1824,4000,train
+4758,1491,batch_9/000091.jpg,Clear plastic bottle,Plastic,"[1260.0, 1274.0, 517.0, 310.0]",83537.0,4000,1824,train
+4763,1494,batch_9/000094.jpg,Clear plastic bottle,Plastic,"[2258.0, 766.0, 364.0, 235.0]",53779.5,4000,1824,test
+4765,1494,batch_9/000094.jpg,Glass bottle,Glass,"[1459.0, 1094.0, 232.0, 270.0]",23477.0,4000,1824,train
+4776,1497,batch_9/000097.jpg,Glass bottle,Glass,"[354.0, 575.0, 294.0, 621.0]",116023.5,4000,1824,test
+4777,1497,batch_9/000097.jpg,Glass bottle,Glass,"[776.0, 355.0, 231.0, 591.0]",94465.0,4000,1824,val
+4782,1499,batch_9/000099.jpg,Other carton,PaperCardboard,"[966.0, 1996.0, 211.0, 336.0]",28675.0,1824,4000,train
+4783,1499,batch_9/000099.jpg,Glass bottle,Glass,"[1125.0, 1858.0, 234.0, 510.0]",68589.5,1824,4000,test

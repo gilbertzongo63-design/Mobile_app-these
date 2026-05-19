@@ -1,0 +1,50 @@
+{
+  "dataset": "TrashNet",
+  "final_classes": [
+    "Plastic",
+    "Glass",
+    "PaperCardboard",
+    "Metal",
+    "Organic",
+    "Other"
+  ],
+  "source_counts": {
+    "plastic": 482,
+    "glass": 501,
+    "paper": 594,
+    "cardboard": 403,
+    "metal": 410,
+    "trash": 137
+  },
+  "final_counts": {
+    "Plastic": 482,
+    "Glass": 501,
+    "PaperCardboard": 997,
+    "Metal": 410,
+    "Other": 137
+  },
+  "split_counts": {
+    "train": {
+      "Plastic": 337,
+      "Glass": 350,
+      "PaperCardboard": 697,
+      "Metal": 287,
+      "Other": 95
+    },
+    "val": {
+      "Plastic": 72,
+      "Glass": 75,
+      "PaperCardboard": 149,
+      "Metal": 61,
+      "Other": 20
+    },
+    "test": {
+      "Plastic": 73,
+      "Glass": 76,
+      "PaperCardboard": 151,
+      "Metal": 62,
+      "Other": 22
+    }
+  },
+  "excluded": []
+}

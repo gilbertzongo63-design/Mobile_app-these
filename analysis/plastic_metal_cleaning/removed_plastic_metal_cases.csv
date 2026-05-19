@@ -1,0 +1,14 @@
+sample_id,split,image_path,predicted_class,predicted_probability,top2_class,top2_probability
+train_Plastic_000015_ann1476.jpg,train,train/Plastic/000015_ann1476.jpg,Metal,0.4995,Plastic,0.4611
+train_Plastic_000026_ann751.jpg,train,train/Plastic/000026_ann751.jpg,Metal,0.5,Plastic,0.4202
+train_Plastic_IMG_5056_ann2540.jpg,train,train/Plastic/IMG_5056_ann2540.jpg,Metal,0.35,PaperCardboard,0.1867
+train_Plastic_plastic189.jpg,train,train/Plastic/plastic189.jpg,Metal,0.5787,Plastic,0.4051
+train_Plastic_plastic33.jpg,train,train/Plastic/plastic33.jpg,Metal,0.6411,Plastic,0.3478
+train_Plastic_plastic426.jpg,train,train/Plastic/plastic426.jpg,Metal,0.506,Plastic,0.4571
+train_Plastic_plastic457.jpg,train,train/Plastic/plastic457.jpg,Metal,0.3035,Plastic,0.2747
+train_Plastic_plastic467.jpg,train,train/Plastic/plastic467.jpg,Metal,0.6876,Plastic,0.1288
+val_Plastic_000007_ann1710.jpg,val,val/Plastic/000007_ann1710.jpg,Metal,0.5219,Plastic,0.2542
+val_Plastic_000026_ann1545.jpg,val,val/Plastic/000026_ann1545.jpg,Metal,0.6638,Other,0.2697
+val_Plastic_IMG_5053_ann2528.jpg,val,val/Plastic/IMG_5053_ann2528.jpg,Metal,0.5502,Plastic,0.1963
+val_Plastic_plastic196.jpg,val,val/Plastic/plastic196.jpg,Metal,0.5869,Plastic,0.3815
+val_Plastic_plastic369.jpg,val,val/Plastic/plastic369.jpg,Metal,0.3615,Plastic,0.3157

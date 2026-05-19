@@ -1,0 +1,73 @@
+{
+  "final_classes": [
+    "Plastic",
+    "Glass",
+    "PaperCardboard",
+    "Metal",
+    "Organic",
+    "Other"
+  ],
+  "fieldnames": [
+    "sample_id",
+    "source_dataset",
+    "annotation_type",
+    "split",
+    "final_class",
+    "source_label",
+    "image_path",
+    "crop_path",
+    "source_image_path",
+    "image_width",
+    "image_height",
+    "bbox_x",
+    "bbox_y",
+    "bbox_width",
+    "bbox_height",
+    "image_id",
+    "annotation_id"
+  ],
+  "total_samples": 3456,
+  "combined_dataset_root": "prepared_datasets/combined_6class",
+  "split_counts": {
+    "train": {
+      "Plastic": 563,
+      "Glass": 394,
+      "PaperCardboard": 847,
+      "Metal": 426,
+      "Other": 181,
+      "Organic": 2
+    },
+    "val": {
+      "Plastic": 120,
+      "Glass": 84,
+      "PaperCardboard": 181,
+      "Metal": 90,
+      "Other": 38
+    },
+    "test": {
+      "Plastic": 122,
+      "Glass": 87,
+      "PaperCardboard": 184,
+      "Metal": 93,
+      "Other": 42,
+      "Organic": 2
+    }
+  },
+  "source_counts": {
+    "TrashNet": {
+      "Plastic": 482,
+      "Glass": 501,
+      "PaperCardboard": 997,
+      "Metal": 410,
+      "Other": 137
+    },
+    "TACO": {
+      "Glass": 64,
+      "PaperCardboard": 215,
+      "Plastic": 323,
+      "Metal": 199,
+      "Other": 124,
+      "Organic": 4
+    }
+  }
+}

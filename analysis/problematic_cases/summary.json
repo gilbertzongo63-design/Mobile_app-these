@@ -1,0 +1,12 @@
+{
+  "focus_classes": [
+    "Plastic",
+    "Glass",
+    "Other"
+  ],
+  "low_confidence_threshold": 0.55,
+  "total_cases": 362,
+  "misclassified_cases": 186,
+  "low_confidence_cases": 140,
+  "focus_class_cases": 334
+}

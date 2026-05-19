@@ -1,0 +1,73 @@
+{
+  "model_a": {
+    "run_name": "stage2_combined_resnet18_plastic_papercardboard_cleaned",
+    "accuracy": 0.6332,
+    "loss": 1.0944,
+    "class_names": [
+      "Plastic",
+      "Glass",
+      "PaperCardboard",
+      "Metal",
+      "Other"
+    ],
+    "per_class_accuracy": {
+      "Plastic": 0.4836,
+      "PaperCardboard": 0.712,
+      "Glass": 0.4607,
+      "Metal": 0.7383,
+      "Other": 0.7538
+    }
+  },
+  "model_b": {
+    "run_name": "stage2_combined_resnet18_all_key_classes_cleaned",
+    "accuracy": 0.6491,
+    "loss": 1.0416,
+    "class_names": [
+      "Plastic",
+      "Glass",
+      "PaperCardboard",
+      "Metal",
+      "Other"
+    ],
+    "per_class_accuracy": {
+      "Plastic": 0.4426,
+      "PaperCardboard": 0.6739,
+      "Glass": 0.8161,
+      "Metal": 0.6989,
+      "Other": 0.6818
+    }
+  },
+  "overall_winner": "model_b",
+  "class_winners": {
+    "Plastic": {
+      "winner": "model_a",
+      "stage2_combined_resnet18_plastic_papercardboard_cleaned": 0.4836,
+      "stage2_combined_resnet18_all_key_classes_cleaned": 0.4426,
+      "delta": 0.041
+    },
+    "PaperCardboard": {
+      "winner": "model_a",
+      "stage2_combined_resnet18_plastic_papercardboard_cleaned": 0.712,
+      "stage2_combined_resnet18_all_key_classes_cleaned": 0.6739,
+      "delta": 0.0381
+    },
+    "Glass": {
+      "winner": "model_b",
+      "stage2_combined_resnet18_plastic_papercardboard_cleaned": 0.4607,
+      "stage2_combined_resnet18_all_key_classes_cleaned": 0.8161,
+      "delta": -0.3554
+    },
+    "Metal": {
+      "winner": "model_a",
+      "stage2_combined_resnet18_plastic_papercardboard_cleaned": 0.7383,
+      "stage2_combined_resnet18_all_key_classes_cleaned": 0.6989,
+      "delta": 0.0394
+    },
+    "Other": {
+      "winner": "model_a",
+      "stage2_combined_resnet18_plastic_papercardboard_cleaned": 0.7538,
+      "stage2_combined_resnet18_all_key_classes_cleaned": 0.6818,
+      "delta": 0.072
+    }
+  }
+}

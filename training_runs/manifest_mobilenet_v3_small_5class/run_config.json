@@ -1,0 +1,42 @@
+{
+  "device": "cpu",
+  "model": "mobilenet_v3_small",
+  "epochs": 3,
+  "batch_size": 16,
+  "image_size": 224,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "use_balanced_sampler": true,
+  "merge_organic_into_other": true,
+  "class_names": [
+    "Plastic",
+    "Glass",
+    "PaperCardboard",
+    "Metal",
+    "Other"
+  ],
+  "train_size": 3148,
+  "val_size": 672,
+  "test_size": 686,
+  "train_distribution": {
+    "Plastic": 1013,
+    "Glass": 408,
+    "PaperCardboard": 951,
+    "Metal": 493,
+    "Other": 283
+  },
+  "val_distribution": {
+    "Plastic": 217,
+    "Glass": 87,
+    "PaperCardboard": 203,
+    "Metal": 105,
+    "Other": 60
+  },
+  "test_distribution": {
+    "Plastic": 219,
+    "Glass": 89,
+    "PaperCardboard": 206,
+    "Metal": 107,
+    "Other": 65
+  }
+}

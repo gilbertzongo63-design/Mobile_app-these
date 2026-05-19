@@ -1,0 +1,138 @@
+{
+  "weights": {
+    "Plastic": 0.3,
+    "PaperCardboard": 0.25,
+    "Glass": 0.15,
+    "Metal": 0.15,
+    "Other": 0.15
+  },
+  "recommended_model": {
+    "run_name": "stage3_confusion_cleaned_resnet18",
+    "run_dir": "training_runs\\stage3_confusion_cleaned_resnet18",
+    "overall_accuracy": 0.6434,
+    "loss": 1.4445,
+    "weighted_business_score": 0.6325,
+    "raw_weighted_sum": 0.6325,
+    "class_breakdown": {
+      "Plastic": {
+        "weight": 0.3,
+        "accuracy": 0.4672131147540984,
+        "contribution": 0.1402
+      },
+      "PaperCardboard": {
+        "weight": 0.25,
+        "accuracy": 0.6847826086956522,
+        "contribution": 0.1712
+      },
+      "Glass": {
+        "weight": 0.15,
+        "accuracy": 0.7241379310344828,
+        "contribution": 0.1086
+      },
+      "Metal": {
+        "weight": 0.15,
+        "accuracy": 0.6666666666666666,
+        "contribution": 0.1
+      },
+      "Other": {
+        "weight": 0.15,
+        "accuracy": 0.75,
+        "contribution": 0.1125
+      }
+    },
+    "class_names": [
+      "Plastic",
+      "Glass",
+      "PaperCardboard",
+      "Metal",
+      "Other"
+    ]
+  },
+  "ranking": [
+    {
+      "run_name": "stage3_confusion_cleaned_resnet18",
+      "run_dir": "training_runs\\stage3_confusion_cleaned_resnet18",
+      "overall_accuracy": 0.6434,
+      "loss": 1.4445,
+      "weighted_business_score": 0.6325,
+      "raw_weighted_sum": 0.6325,
+      "class_breakdown": {
+        "Plastic": {
+          "weight": 0.3,
+          "accuracy": 0.4672131147540984,
+          "contribution": 0.1402
+        },
+        "PaperCardboard": {
+          "weight": 0.25,
+          "accuracy": 0.6847826086956522,
+          "contribution": 0.1712
+        },
+        "Glass": {
+          "weight": 0.15,
+          "accuracy": 0.7241379310344828,
+          "contribution": 0.1086
+        },
+        "Metal": {
+          "weight": 0.15,
+          "accuracy": 0.6666666666666666,
+          "contribution": 0.1
+        },
+        "Other": {
+          "weight": 0.15,
+          "accuracy": 0.75,
+          "contribution": 0.1125
+        }
+      },
+      "class_names": [
+        "Plastic",
+        "Glass",
+        "PaperCardboard",
+        "Metal",
+        "Other"
+      ]
+    },
+    {
+      "run_name": "stage2_combined_resnet18_all_key_classes_cleaned",
+      "run_dir": "training_runs\\stage2_combined_resnet18_all_key_classes_cleaned",
+      "overall_accuracy": 0.6491,
+      "loss": 1.0416,
+      "weighted_business_score": 0.6308,
+      "raw_weighted_sum": 0.6308,
+      "class_breakdown": {
+        "Plastic": {
+          "weight": 0.3,
+          "accuracy": 0.4426229508196721,
+          "contribution": 0.1328
+        },
+        "PaperCardboard": {
+          "weight": 0.25,
+          "accuracy": 0.6739130434782609,
+          "contribution": 0.1685
+        },
+        "Glass": {
+          "weight": 0.15,
+          "accuracy": 0.8160919540229885,
+          "contribution": 0.1224
+        },
+        "Metal": {
+          "weight": 0.15,
+          "accuracy": 0.6989247311827957,
+          "contribution": 0.1048
+        },
+        "Other": {
+          "weight": 0.15,
+          "accuracy": 0.6818181818181818,
+          "contribution": 0.1023
+        }
+      },
+      "class_names": [
+        "Plastic",
+        "Glass",
+        "PaperCardboard",
+        "Metal",
+        "Other"
+      ]
+    }
+  ],
+  "selection_rule": "Highest weighted business score, then overall accuracy, then lower loss."
+}
