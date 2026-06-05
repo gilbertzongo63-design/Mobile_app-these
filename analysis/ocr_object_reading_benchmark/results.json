@@ -1,0 +1,103 @@
+[
+  {
+    "class_name": "Plastic",
+    "image_path": "analysis\\ocr_object_reading_benchmark\\images\\plastic_written_object.png",
+    "expected_text": "plastic pet bottle recyclable packaging bouteille plastique",
+    "ocr_text": "plastic pet bottle recyclable packaging bouteille plastique",
+    "similarity_percent": 100.0,
+    "ocr_predicted_class": "Plastic",
+    "ocr_confidence": 0.97,
+    "average_word_confidence": 0.9271,
+    "preprocess_variant": "full:otsu",
+    "matched_keywords": {
+      "Plastic": [
+        "bottle",
+        "bouteille",
+        "pet",
+        "plastic",
+        "plastique"
+      ]
+    }
+  },
+  {
+    "class_name": "Glass",
+    "image_path": "analysis\\ocr_object_reading_benchmark\\images\\glass_written_object.png",
+    "expected_text": "glass jar bocal en verre recyclable",
+    "ocr_text": "glass jar bocal en verre recyclable",
+    "similarity_percent": 100.0,
+    "ocr_predicted_class": "Glass",
+    "ocr_confidence": 0.97,
+    "average_word_confidence": 0.9417,
+    "preprocess_variant": "center_object:adaptive_gaussian",
+    "matched_keywords": {
+      "Glass": [
+        "bocal",
+        "glass",
+        "jar",
+        "verre"
+      ]
+    }
+  },
+  {
+    "class_name": "PaperCardboard",
+    "image_path": "analysis\\ocr_object_reading_benchmark\\images\\papercardboard_written_object.png",
+    "expected_text": "cardboard box carton papier paper pack",
+    "ocr_text": "cardboard box carton papier paper pack",
+    "similarity_percent": 100.0,
+    "ocr_predicted_class": "PaperCardboard",
+    "ocr_confidence": 0.97,
+    "average_word_confidence": 0.9433,
+    "preprocess_variant": "full:adaptive_gaussian",
+    "matched_keywords": {
+      "PaperCardboard": [
+        "box",
+        "cardboard",
+        "carton",
+        "pack",
+        "paper",
+        "papier"
+      ]
+    }
+  },
+  {
+    "class_name": "Metal",
+    "image_path": "analysis\\ocr_object_reading_benchmark\\images\\metal_written_object.png",
+    "expected_text": "metal can aluminium canette recyclable",
+    "ocr_text": "metal can aluminium canette recyclable",
+    "similarity_percent": 100.0,
+    "ocr_predicted_class": "Metal",
+    "ocr_confidence": 0.97,
+    "average_word_confidence": 0.952,
+    "preprocess_variant": "center_object:sharpened",
+    "matched_keywords": {
+      "Metal": [
+        "aluminium",
+        "aluminum~aluminium",
+        "can",
+        "canette",
+        "metal"
+      ]
+    }
+  },
+  {
+    "class_name": "Other",
+    "image_path": "analysis\\ocr_object_reading_benchmark\\images\\other_written_object.png",
+    "expected_text": "snack wrapper sachet chips film mousse",
+    "ocr_text": "snack wrapper sachet chips film mousse",
+    "similarity_percent": 100.0,
+    "ocr_predicted_class": "Other",
+    "ocr_confidence": 0.97,
+    "average_word_confidence": 0.9517,
+    "preprocess_variant": "full:inverted_adaptive",
+    "matched_keywords": {
+      "Other": [
+        "chips",
+        "film",
+        "mousse",
+        "sachet",
+        "snack",
+        "wrapper"
+      ]
+    }
+  }
+]

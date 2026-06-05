@@ -6,7 +6,9 @@ from pathlib import Path
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, File, Header, HTTPException, Query, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
@@ -91,11 +93,45 @@ class FeedbackRequest(BaseModel):
     comment: str = Field(default="", max_length=2000)
 
 
+class UpdateProfileRequest(BaseModel):
+    full_name: str = Field(min_length=2, max_length=255)
+
+
+class UpdatePredictionRequest(BaseModel):
+    predicted_class: str
+
+    @field_validator("predicted_class")
+    @classmethod
+    def validate_predicted_class(cls, value: str):
+        normalized = value.strip()
+        allowed = {item["name"] for item in CATEGORY_SEED}
+        if normalized not in allowed:
+            raise ValueError(f"Invalid class. Allowed values: {', '.join(sorted(allowed))}")
+        return normalized
+
+
 app = FastAPI(
     title="Waste Sorting Recommendation API",
     version="2.0.0",
     description="Backend API for image-based waste sorting using vision, OCR, fusion rules, auth, and SQL database storage.",
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 
 vision_classifier = VisionClassifier(
     ACTIVE_MODEL_PROFILE["checkpoint"],
@@ -107,6 +143,21 @@ ocr_analyzer = OCRAnalyzer()
 def initialize_database():
     Base.metadata.create_all(engine)
     with Session(engine) as db:
+        # Lightweight migration for local databases created before profile images existed.
+        if engine.url.get_backend_name().startswith("postgres"):
+            columns = db.execute(
+                text("SELECT column_name FROM information_schema.columns WHERE table_name='users'")
+            ).all()
+            column_names = {row[0] for row in columns}
+            if "profile_image_path" not in column_names:
+                db.execute(text("ALTER TABLE users ADD COLUMN profile_image_path TEXT"))
+                db.commit()
+        elif engine.url.get_backend_name().startswith("sqlite"):
+            columns = db.execute(text("PRAGMA table_info(users)")).all()
+            column_names = {row[1] for row in columns}
+            if "profile_image_path" not in column_names:
+                db.execute(text("ALTER TABLE users ADD COLUMN profile_image_path TEXT"))
+                db.commit()
         existing = {item.name for item in db.scalars(select(Category)).all()}
         missing = [Category(**item) for item in CATEGORY_SEED if item["name"] not in existing]
         if missing:
@@ -137,11 +188,17 @@ def _store_upload(upload: UploadFile):
 
 
 def _serialize_prediction(prediction: Prediction):
+    image_url = None
+    if prediction.stored_image_path:
+        stored_name = Path(prediction.stored_image_path).name
+        image_url = f"/uploads/{stored_name}"
+
     return {
         "id": prediction.id,
         "created_at": prediction.created_at.isoformat(),
         "image_filename": prediction.image_filename,
         "stored_image_path": prediction.stored_image_path,
+        "image_url": image_url,
         "model_profile": prediction.model_profile,
         "predicted_class": prediction.predicted_class,
         "final_confidence": prediction.final_confidence,
@@ -152,10 +209,15 @@ def _serialize_prediction(prediction: Prediction):
 
 
 def _serialize_user(user: User):
+    profile_image_url = None
+    if user.profile_image_path:
+        profile_image_url = f"/uploads/{Path(user.profile_image_path).name}"
+
     return {
         "id": user.id,
         "email": user.email,
         "full_name": user.full_name,
+        "profile_image_url": profile_image_url,
         "created_at": user.created_at.isoformat(),
     }
 
@@ -263,6 +325,33 @@ def get_me(current_user: User = Depends(get_current_user)):
     return _serialize_user(current_user)
 
 
+@app.patch("/users/me")
+def update_me(
+    payload: UpdateProfileRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    current_user.full_name = payload.full_name.strip()
+    db.add(current_user)
+    db.commit()
+    db.refresh(current_user)
+    return _serialize_user(current_user)
+
+
+@app.post("/users/me/photo")
+def update_profile_photo(
+    image: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    stored_path = _store_upload(image)
+    current_user.profile_image_path = str(stored_path)
+    db.add(current_user)
+    db.commit()
+    db.refresh(current_user)
+    return _serialize_user(current_user)
+
+
 @app.post("/images")
 def upload_image(
     image: UploadFile = File(...),
@@ -365,6 +454,7 @@ def predict_image(
             "analysis_id": prediction.id,
             "image_filename": image.filename or stored_path.name,
             "stored_image_path": str(stored_path),
+            "image_url": f"/uploads/{stored_path.name}",
             "model_profile": ACTIVE_MODEL_PROFILE["name"],
             "vision": vision_result,
             "ocr": ocr_result,
@@ -412,6 +502,51 @@ def get_prediction(
     if prediction is None:
         raise HTTPException(status_code=404, detail="Prediction not found")
     return _serialize_prediction(prediction)
+
+
+@app.patch("/predictions/{prediction_id}")
+def update_prediction(
+    prediction_id: int,
+    payload: UpdatePredictionRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    prediction = db.scalar(
+        select(Prediction).where(Prediction.id == prediction_id, Prediction.user_id == current_user.id)
+    )
+    if prediction is None:
+        raise HTTPException(status_code=404, detail="Prediction not found")
+
+    decision = json.loads(prediction.decision_json)
+    decision["recommended_class"] = payload.predicted_class
+    decision["status"] = "accepted"
+    decision["reason"] = "user_correction"
+    decision["final_confidence"] = 1.0
+
+    prediction.predicted_class = payload.predicted_class
+    prediction.final_confidence = 1.0
+    prediction.decision_json = json.dumps(decision, ensure_ascii=False)
+    db.add(prediction)
+    db.commit()
+    db.refresh(prediction)
+    return _serialize_prediction(prediction)
+
+
+@app.delete("/predictions/{prediction_id}")
+def delete_prediction(
+    prediction_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    prediction = db.scalar(
+        select(Prediction).where(Prediction.id == prediction_id, Prediction.user_id == current_user.id)
+    )
+    if prediction is None:
+        raise HTTPException(status_code=404, detail="Prediction not found")
+
+    db.delete(prediction)
+    db.commit()
+    return {"message": "Prediction deleted successfully", "prediction_id": prediction_id}
 
 
 @app.get("/history")

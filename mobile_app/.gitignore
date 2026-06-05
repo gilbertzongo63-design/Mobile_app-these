@@ -1,0 +1,19 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+.packages
+build/
+
+# IDE
+.idea/
+.vscode/
+
+# Generated platform folders can be added later with `flutter create .`
+android/
+ios/
+linux/
+macos/
+web/
+windows/

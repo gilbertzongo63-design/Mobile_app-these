@@ -4,8 +4,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 
 ACTIVE_MODEL_PROFILE = {
-    "name": "stage2_combined_resnet18_plastic_refined",
-    "checkpoint": ROOT / "training_runs" / "stage2_combined_resnet18_plastic_refined" / "best_model.pt",
+    "name": "stage2_combined_resnet18_all_key_classes_cleaned",
+    "checkpoint": ROOT / "training_runs" / "stage2_combined_resnet18_all_key_classes_cleaned" / "best_model.pt",
     "policy": {
         "high_confidence_threshold": 0.80,
         "medium_confidence_threshold": 0.55,
@@ -33,17 +33,17 @@ ACTIVE_MODEL_PROFILE = {
             },
         },
         "strong_keep_classes": {
-            "PaperCardboard": 0.82,
-            "Metal": 0.80,
-            "Glass": 0.84,
-            "Plastic": 0.86,
+            "PaperCardboard": 0.80,
+            "Metal": 0.78,
+            "Glass": 0.80,
+            "Plastic": 0.82,
         },
         "class_bias": {
-            "Plastic": 1.10,
-            "Glass": 1.08,
-            "PaperCardboard": 1.06,
-            "Metal": 1.01,
-            "Other": 0.95,
+            "Plastic": 0.98,
+            "Glass": 1.04,
+            "PaperCardboard": 1.03,
+            "Metal": 1.03,
+            "Other": 0.98,
         },
     },
 }
