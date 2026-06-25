@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../services/export_helper.dart';
+
 import '../models/prediction_result.dart';
 import '../services/api_client.dart';
 import '../services/prediction_service.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 import '../widgets/app_logo.dart';
+import '../l10n.dart';
 import 'auth_screen.dart';
 import 'home_screen.dart';
 import 'result_screen.dart';
@@ -27,6 +30,28 @@ class _HistoryScreenState extends State<HistoryScreen> {
   String? _error;
   bool _requiresAuth = false;
   List<PredictionResult> _predictions = const [];
+  String _searchQuery = '';
+  String _statusFilter = 'all';
+
+  List<PredictionResult> get _filteredPredictions {
+    return _predictions.where((prediction) {
+      final query = _searchQuery.trim().toLowerCase();
+      final matchesQuery = query.isEmpty ||
+          [
+            prediction.imageFilename,
+            prediction.classLabel,
+            prediction.triageLabel,
+            prediction.reasonLabel,
+          ].join(' ').toLowerCase().contains(query);
+      final matchesFilter = switch (_statusFilter) {
+        'recyclable' => prediction.isRecyclable,
+        'non_recyclable' => prediction.isNonRecyclable,
+        'review' => prediction.requiresReview,
+        _ => true,
+      };
+      return matchesQuery && matchesFilter;
+    }).toList();
+  }
 
   @override
   void initState() {
@@ -63,7 +88,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         return;
       }
       setState(() {
-        _error = 'Impossible de charger votre historique pour le moment.';
+        _error = AppLocalizations.of(context).t('history.load_error');
         _predictions = const [];
       });
     } finally {
@@ -86,6 +111,107 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
+  bool _isNetworkError(Object error) {
+    final message = error.toString().toLowerCase();
+    return message.contains('socketexception') ||
+        message.contains('failed host lookup') ||
+        message.contains('failed to fetch') ||
+        message.contains('clientexception') ||
+        message.contains('connection refused') ||
+        message.contains('connection reset') ||
+        message.contains('network is unreachable') ||
+        message.contains('timed out') ||
+        message.contains('timeout') ||
+        message.contains('network');
+  }
+
+  String _getExportErrorMessage(Object error) {
+    if (error is ApiException) {
+      if (error.statusCode == 401) {
+        return AppLocalizations.of(context).t('history.export_unauthorized');
+      }
+      if (error.statusCode >= 500) {
+        return AppLocalizations.of(context)
+            .t('history.export_server_error');
+      }
+      return '${AppLocalizations.of(context).t('history.export_error')} (${error.statusCode})';
+    }
+    if (_isNetworkError(error)) {
+      return AppLocalizations.of(context).t('history.export_network_error');
+    }
+    return '${AppLocalizations.of(context).t('history.export_unexpected')}: $error';
+  }
+
+  Future<void> _exportHistory() async {
+    if (_predictions.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).t('history.export_none')),
+        ),
+      );
+      return;
+    }
+
+    try {
+      final response = await ApiClient().getRawResponse(
+        '/history/export',
+        queryParameters: {'format': 'csv'},
+        authRequired: true,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      if (response.statusCode == 401) {
+        throw ApiException(
+          message:
+              AppLocalizations.of(context).t('history.export_unauthorized'),
+          statusCode: response.statusCode,
+        );
+      }
+      if (response.statusCode != 200) {
+        throw ApiException(
+          message:
+              AppLocalizations.of(context).t('history.export_server_error'),
+          statusCode: response.statusCode,
+        );
+      }
+
+      final filename =
+          'history_export_${DateTime.now().toIso8601String().replaceAll(RegExp(r'[:.]'), '_')}.csv';
+
+      final savedPath = await saveExportFile(filename, response.body);
+
+      if (!mounted) return;
+      final displayPath = savedPath ?? filename;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)
+                .t('history.exported_file')
+                .replaceAll('{file}', displayPath),
+          ),
+        ),
+      );
+    } on ApiException catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_getExportErrorMessage(error)),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_getExportErrorMessage(error)),
+        ),
+      );
+    }
+  }
+
   Future<void> _editPrediction(PredictionResult prediction) async {
     if (_editingPredictionId != null) {
       return;
@@ -98,12 +224,32 @@ class _HistoryScreenState extends State<HistoryScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (context) {
-        const classes = [
-          ('Plastic', 'Plastique', Icons.local_drink_outlined),
-          ('Glass', 'Verre', Icons.wine_bar_outlined),
-          ('PaperCardboard', 'Papier / Carton', Icons.inventory_2_outlined),
-          ('Metal', 'Métal', Icons.sports_bar_outlined),
-          ('Other', 'Autre déchet', Icons.delete_outline_rounded),
+        final classes = [
+          {
+            'value': 'Plastic',
+            'label': AppLocalizations.of(context).t('classes.plastic'),
+            'icon': Icons.local_drink_outlined,
+          },
+          {
+            'value': 'Glass',
+            'label': AppLocalizations.of(context).t('classes.glass'),
+            'icon': Icons.wine_bar_outlined,
+          },
+          {
+            'value': 'PaperCardboard',
+            'label': AppLocalizations.of(context).t('classes.paper_cardboard'),
+            'icon': Icons.inventory_2_outlined,
+          },
+          {
+            'value': 'Metal',
+            'label': AppLocalizations.of(context).t('classes.metal'),
+            'icon': Icons.sports_bar_outlined,
+          },
+          {
+            'value': 'Other',
+            'label': AppLocalizations.of(context).t('classes.other'),
+            'icon': Icons.delete_outline_rounded,
+          },
         ];
 
         return SafeArea(
@@ -121,9 +267,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ),
                 ),
                 const SizedBox(height: 22),
-                const Text(
-                  'Modifier la classe',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context).t('history.edit_class_title'),
+                  style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFF17211C),
@@ -132,15 +278,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 const SizedBox(height: 12),
                 ...classes.map(
                   (item) => ListTile(
-                    leading: Icon(item.$3, color: const Color(0xFF0A8A52)),
-                    title: Text(item.$2),
-                    trailing: prediction.recommendedClass == item.$1
-                        ? const Icon(
-                            Icons.check_circle_rounded,
-                            color: Color(0xFF0A8A52),
-                          )
-                        : null,
-                    onTap: () => Navigator.of(context).pop(item.$1),
+                    leading: Icon(item['icon'] as IconData,
+                        color: const Color(0xFF0A8A52)),
+                    title: Text(item['label'] as String),
+                    trailing:
+                        prediction.recommendedClass == (item['value'] as String)
+                            ? const Icon(
+                                Icons.check_circle_rounded,
+                                color: Color(0xFF0A8A52),
+                              )
+                            : null,
+                    onTap: () =>
+                        Navigator.of(context).pop(item['value'] as String),
                   ),
                 ),
               ],
@@ -179,7 +328,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
             .toList();
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Historique modifié.')),
+        SnackBar(
+            content: Text(AppLocalizations.of(context).t('history.modified'))),
       );
     } on ApiException catch (error) {
       if (!mounted) {
@@ -193,7 +343,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Impossible de modifier cet historique.')),
+        SnackBar(
+            content:
+                Text(AppLocalizations.of(context).t('history.modify_failed'))),
       );
     } finally {
       if (mounted) {
@@ -213,14 +365,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Supprimer ce scan ?'),
-          content: const Text(
-            'Cette action retirera ce scan de votre historique. Elle ne pourra pas être annulée.',
-          ),
+          title: Text(
+              AppLocalizations.of(context).t('history.confirm_delete.title')),
+          content: Text(
+              AppLocalizations.of(context).t('history.confirm_delete.body')),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Annuler'),
+              child: Text(AppLocalizations.of(context).t('common.cancel')),
             ),
             FilledButton(
               style: FilledButton.styleFrom(
@@ -228,7 +380,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 foregroundColor: Colors.white,
               ),
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Supprimer'),
+              child: Text(AppLocalizations.of(context)
+                  .t('history.confirm_delete.action')),
             ),
           ],
         );
@@ -254,7 +407,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
             .toList();
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Scan supprimé.')),
+        SnackBar(
+            content: Text(AppLocalizations.of(context).t('history.deleted'))),
       );
     } on ApiException catch (error) {
       if (!mounted) {
@@ -268,7 +422,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Impossible de supprimer ce scan.')),
+        SnackBar(
+            content:
+                Text(AppLocalizations.of(context).t('history.delete_failed'))),
       );
     } finally {
       if (mounted) {
@@ -328,26 +484,62 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       ],
                     ),
                     const SizedBox(height: 28),
-                    const Text(
-                      'Historique des analyses',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context).t('history.title'),
+                      style: const TextStyle(
                         fontSize: 29,
                         height: 1.15,
                         fontWeight: FontWeight.w800,
                         color: Color(0xFF17211C),
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      _requiresAuth
-                          ? 'Connectez-vous pour retrouver vos scans récents et votre impact écologique.'
-                          : 'Consultez vos scans récents et votre impact écologique.',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        height: 1.45,
-                        color: Color(0xFF56635B),
-                      ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _requiresAuth
+                                ? AppLocalizations.of(context)
+                                    .t('history.require_auth')
+                                : AppLocalizations.of(context)
+                                    .t('history.intro'),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              height: 1.45,
+                              color: Color(0xFF56635B),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        TextButton.icon(
+                          onPressed: !_loading && _predictions.isNotEmpty
+                              ? _exportHistory
+                              : null,
+                          icon: const Icon(Icons.download_rounded,
+                              color: Color(0xFF0A8A52)),
+                          label: Text(
+                            AppLocalizations.of(context).t('history.export'),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF0A8A52),
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 12),
+                            backgroundColor:
+                                !_loading && _predictions.isNotEmpty
+                                    ? const Color(0xFFE8F4E8)
+                                    : const Color(0xFFF2F5F1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 14),
                     const SizedBox(height: 26),
                     if (_loading)
                       const _LoadingHistoryCard()
@@ -356,31 +548,49 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     else if (_predictions.isEmpty)
                       const _EmptyHistoryCard()
                     else ...[
-                      ..._predictions.map(
-                        (prediction) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: _HistoryCard(
-                            prediction: prediction,
-                            editing: _editingPredictionId ==
-                                prediction.predictionId,
-                            deleting: _deletingPredictionId ==
-                                prediction.predictionId,
-                            onTap: () {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (_) => ResultScreen(
-                                    prediction: prediction,
+                      _HistoryFilters(
+                        searchQuery: _searchQuery,
+                        statusFilter: _statusFilter,
+                        onSearchChanged: (value) {
+                          setState(() {
+                            _searchQuery = value;
+                          });
+                        },
+                        onFilterChanged: (value) {
+                          setState(() {
+                            _statusFilter = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      if (_filteredPredictions.isEmpty)
+                        const _EmptyFilterCard()
+                      else
+                        ..._filteredPredictions.map(
+                          (prediction) => Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: _HistoryCard(
+                              prediction: prediction,
+                              editing: _editingPredictionId ==
+                                  prediction.predictionId,
+                              deleting: _deletingPredictionId ==
+                                  prediction.predictionId,
+                              onTap: () {
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (_) => ResultScreen(
+                                      prediction: prediction,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            onEdit: () => _editPrediction(prediction),
-                            onDelete: () => _deletePrediction(prediction),
+                                );
+                              },
+                              onEdit: () => _editPrediction(prediction),
+                              onDelete: () => _deletePrediction(prediction),
+                            ),
                           ),
                         ),
-                      ),
                       const SizedBox(height: 12),
-                      _ImpactSummaryCard(predictions: _predictions),
+                      _ImpactSummaryCard(predictions: _filteredPredictions),
                     ],
                     if (_error != null && !_requiresAuth) ...[
                       const SizedBox(height: 20),
@@ -446,20 +656,9 @@ class _HistoryCard extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  String get _title {
-    switch (prediction.recommendedClass.toLowerCase()) {
-      case 'plastic':
-        return 'Plastique détecté';
-      case 'glass':
-        return 'Verre détecté';
-      case 'metal':
-        return 'Métal détecté';
-      case 'papercardboard':
-        return 'Papier / Carton';
-      default:
-        return prediction.requiresReview ? 'Objet à vérifier' : 'Autre déchet';
-    }
-  }
+  String get _title => prediction.requiresReview
+      ? 'Objet à vérifier'
+      : '${prediction.classLabel} détecté';
 
   String get _actionText {
     if (prediction.requiresReview) {
@@ -696,6 +895,129 @@ class _Badge extends StatelessWidget {
   }
 }
 
+class _HistoryFilters extends StatelessWidget {
+  const _HistoryFilters({
+    required this.searchQuery,
+    required this.statusFilter,
+    required this.onSearchChanged,
+    required this.onFilterChanged,
+  });
+
+  final String searchQuery;
+  final String statusFilter;
+  final ValueChanged<String> onSearchChanged;
+  final ValueChanged<String> onFilterChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    const filters = [
+      ('all', 'Tout'),
+      ('recyclable', 'Recyclable'),
+      ('non_recyclable', 'Non recyclable'),
+      ('review', 'À vérifier'),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          onChanged: onSearchChanged,
+          controller: TextEditingController(text: searchQuery)
+            ..selection = TextSelection.collapsed(offset: searchQuery.length),
+          decoration: InputDecoration(
+            hintText: 'Rechercher par classe, statut ou raison...',
+            prefixIcon: const Icon(Icons.search_rounded),
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: filters.map((filter) {
+              final selected = statusFilter == filter.$1;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: ChoiceChip(
+                  label: Text(filter.$2),
+                  selected: selected,
+                  onSelected: (_) => onFilterChanged(filter.$1),
+                  selectedColor: const Color(0xFFDDF6E4),
+                  backgroundColor: Colors.white,
+                  labelStyle: TextStyle(
+                    color: selected
+                        ? const Color(0xFF0A8A52)
+                        : const Color(0xFF4C5B52),
+                    fontWeight: FontWeight.w700,
+                  ),
+                  side: BorderSide(
+                    color: selected
+                        ? const Color(0xFF33CB72)
+                        : const Color(0xFFE0E9DD),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _EmptyFilterCard extends StatelessWidget {
+  const _EmptyFilterCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.filter_alt_off_outlined,
+            color: Color(0xFF0A8A52),
+            size: 30,
+          ),
+          SizedBox(height: 12),
+          Text(
+            'Aucun résultat',
+            style: TextStyle(
+              fontSize: 19,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF17211C),
+            ),
+          ),
+          SizedBox(height: 6),
+          Text(
+            'Essayez un autre mot-clé ou un autre filtre de statut.',
+            style: TextStyle(
+              fontSize: 15,
+              height: 1.4,
+              color: Color(0xFF58655D),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ImpactSummaryCard extends StatelessWidget {
   const _ImpactSummaryCard({required this.predictions});
 
@@ -703,7 +1025,11 @@ class _ImpactSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recyclableCount = predictions.where((item) => item.isRecyclable).length;
+    final recyclableCount =
+        predictions.where((item) => item.isRecyclable).length;
+    final nonRecyclableCount =
+        predictions.where((item) => item.isNonRecyclable).length;
+    final reviewCount = predictions.where((item) => item.requiresReview).length;
     final estimatedKg = (recyclableCount * 0.8).toStringAsFixed(1);
 
     return Container(
@@ -762,6 +1088,24 @@ class _ImpactSummaryCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 18),
+          Row(
+            children: [
+              Expanded(
+                child: _ImpactMiniMetric(
+                  value: '$nonRecyclableCount',
+                  label: 'non recyclables',
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _ImpactMiniMetric(
+                  value: '$reviewCount',
+                  label: 'à vérifier',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
           Align(
             alignment: Alignment.centerRight,
             child: Container(
@@ -778,6 +1122,48 @@ class _ImpactSummaryCard extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ImpactMiniMetric extends StatelessWidget {
+  const _ImpactMiniMetric({
+    required this.value,
+    required this.label,
+  });
+
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Color(0xFFE1F5E7),
             ),
           ),
         ],

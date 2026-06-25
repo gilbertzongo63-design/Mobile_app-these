@@ -28,16 +28,25 @@ class UserService {
   }
 
   Future<UserModel> uploadProfilePhoto({
-    required Uint8List bytes,
+    Uint8List? bytes,
+    String? filePath,
     required String filename,
   }) async {
-    final payload = await _client.postMultipart(
-      '/users/me/photo',
-      fileField: 'image',
-      bytes: bytes,
-      filename: filename,
-      authRequired: true,
-    );
+    final payload = filePath != null
+        ? await _client.postMultipartFile(
+            '/users/me/photo',
+            fileField: 'image',
+            filePath: filePath,
+            filename: filename,
+            authRequired: true,
+          )
+        : await _client.postMultipart(
+            '/users/me/photo',
+            fileField: 'image',
+            bytes: bytes,
+            filename: filename,
+            authRequired: true,
+          );
     _normalizeProfileImageUrl(payload);
     return UserModel.fromJson(payload);
   }

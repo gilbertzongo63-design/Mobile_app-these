@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 import '../widgets/app_logo.dart';
 import 'history_screen.dart';
@@ -29,7 +30,8 @@ class RecyclingTipsScreen extends StatelessWidget {
                     Row(
                       children: [
                         IconButton(
-                          onPressed: () => Navigator.of(context).pushReplacement(
+                          onPressed: () =>
+                              Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (_) => const SettingsScreen(),
                             ),
@@ -41,10 +43,10 @@ class RecyclingTipsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'Conseils de tri',
-                            style: TextStyle(
+                            AppLocalizations.of(context).t('recycling.title'),
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
                               color: darkGreen,
@@ -55,9 +57,9 @@ class RecyclingTipsScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    const Text(
-                      'Astuces de tri',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context).t('recycling.tips_title'),
+                      style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF17211C),
@@ -66,24 +68,26 @@ class RecyclingTipsScreen extends StatelessWidget {
                     const SizedBox(height: 18),
                     const _HeroTipCard(),
                     const SizedBox(height: 16),
-                    const Row(
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: _MiniTipCard(
                             icon: Icons.call_split_rounded,
-                            title: 'Ne pas emboîter',
-                            body:
-                                'Laissez les déchets séparés pour faciliter le tri automatique en centre.',
+                            title: AppLocalizations.of(context)
+                                .t('recycling.tip_no_nesting.title'),
+                            body: AppLocalizations.of(context)
+                                .t('recycling.tip_no_nesting.body'),
                           ),
                         ),
-                        SizedBox(width: 14),
+                        const SizedBox(width: 14),
                         Expanded(
                           child: _MiniTipCard(
                             icon: Icons.auto_awesome_rounded,
-                            title: 'Videz tout',
-                            body:
-                                'Assurez-vous que les contenants soient bien vides avant de les jeter.',
+                            title: AppLocalizations.of(context)
+                                .t('recycling.tip_empty.title'),
+                            body: AppLocalizations.of(context)
+                                .t('recycling.tip_empty.body'),
                           ),
                         ),
                       ],
@@ -91,38 +95,47 @@ class RecyclingTipsScreen extends StatelessWidget {
                     const SizedBox(height: 28),
                     const _ScanSuccessCard(),
                     const SizedBox(height: 28),
-                    const Text(
-                      'Guide de recyclage rapide',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)
+                          .t('recycling.quick_guide_title'),
+                      style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF17211C),
                       ),
                     ),
                     const SizedBox(height: 18),
-                    const _SortingGuideCard(
-                      title: 'Recyclable',
-                      description:
-                          'Métal, Papier, Carton,\nPlastique (PET/PEHD)',
-                      badge: 'BAC\nJAUNE',
+                    _SortingGuideCard(
+                      title: AppLocalizations.of(context)
+                          .t('recycling.sorting.recyclable.title'),
+                      description: AppLocalizations.of(context)
+                          .t('recycling.sorting.recyclable.description'),
+                      badge: AppLocalizations.of(context)
+                          .t('recycling.sorting.recyclable.badge'),
                       leadingIcon: Icons.recycling_rounded,
-                      accent: Color(0xFF0E8A57),
+                      accent: const Color(0xFF0E8A57),
                     ),
                     const SizedBox(height: 14),
-                    const _SortingGuideCard(
-                      title: 'À vérifier',
-                      description: 'Objets ambigus ou incertains\nVérifiez avant de jeter',
-                      badge: 'BAC\nÀ VÉRIFIER',
+                    _SortingGuideCard(
+                      title: AppLocalizations.of(context)
+                          .t('recycling.sorting.check.title'),
+                      description: AppLocalizations.of(context)
+                          .t('recycling.sorting.check.description'),
+                      badge: AppLocalizations.of(context)
+                          .t('recycling.sorting.check.badge'),
                       leadingIcon: Icons.help_outline_rounded,
-                      accent: Color(0xFFF09A2D),
+                      accent: const Color(0xFFF09A2D),
                     ),
                     const SizedBox(height: 14),
-                    const _SortingGuideCard(
-                      title: 'Non Recyclable',
-                      description: 'Restes repas, couches,\nmouchoirs sales',
-                      badge: 'BAC\nGRIS',
+                    _SortingGuideCard(
+                      title: AppLocalizations.of(context)
+                          .t('recycling.sorting.non_recyclable.title'),
+                      description: AppLocalizations.of(context)
+                          .t('recycling.sorting.non_recyclable.description'),
+                      badge: AppLocalizations.of(context)
+                          .t('recycling.sorting.non_recyclable.badge'),
                       leadingIcon: Icons.delete_outline_rounded,
-                      accent: Color(0xFF707C74),
+                      accent: const Color(0xFF707C74),
                     ),
                     const SizedBox(height: 22),
                     const _ClosingBanner(),
@@ -196,22 +209,22 @@ class _HeroTipCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 18),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Rincer les emballages',
-                  style: TextStyle(
+                  AppLocalizations.of(context).t('recycling.hero.title'),
+                  style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF17211C),
                   ),
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(
-                  'Évitez les restes alimentaires pour ne\npas souiller les autres déchets\nrecyclables.',
-                  style: TextStyle(
+                  AppLocalizations.of(context).t('recycling.hero.body'),
+                  style: const TextStyle(
                     fontSize: 16,
                     height: 1.45,
                     color: Color(0xFF39473E),
@@ -296,18 +309,18 @@ class _ScanSuccessCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Réussir son scan',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).t('recycling.scan_success.title'),
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w800,
               color: Colors.white,
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'Obtenez une reconnaissance instantanée en\nsuivant ces quelques règles simples lors de la\nprise de vue.',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).t('recycling.scan_success.body'),
+            style: const TextStyle(
               fontSize: 16,
               height: 1.45,
               color: Color(0xFFF0FFF4),
@@ -315,25 +328,28 @@ class _ScanSuccessCard extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Row(
-            children: const [
+            children: [
               Expanded(
                 child: _ScanHint(
                   icon: Icons.wb_sunny_outlined,
-                  label: 'Éclairage',
+                  label: AppLocalizations.of(context)
+                      .t('recycling.scan_hint.light'),
                 ),
               ),
-              SizedBox(width: 14),
+              const SizedBox(width: 14),
               Expanded(
                 child: _ScanHint(
                   icon: Icons.filter_center_focus_outlined,
-                  label: 'Objet centré',
+                  label: AppLocalizations.of(context)
+                      .t('recycling.scan_hint.centered'),
                 ),
               ),
-              SizedBox(width: 14),
+              const SizedBox(width: 14),
               Expanded(
                 child: _ScanHint(
                   icon: Icons.grid_on_rounded,
-                  label: 'Fond neutre',
+                  label: AppLocalizations.of(context)
+                      .t('recycling.scan_hint.neutral_background'),
                 ),
               ),
             ],
@@ -552,9 +568,9 @@ class _ClosingBanner extends StatelessWidget {
               ),
             ),
           ),
-          const Text(
-            "Le tri simplifie l'avenir de notre planète.",
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).t('recycling.closing_banner'),
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Colors.white,

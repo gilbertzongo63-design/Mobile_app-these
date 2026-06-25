@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../l10n.dart';
+import '../services/api_client.dart';
 import '../services/prediction_service.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 import '../widgets/app_logo.dart';
@@ -16,10 +18,12 @@ class ScanScreen extends StatefulWidget {
   const ScanScreen({
     super.key,
     this.initialImageBytes,
+    this.initialImagePath,
     this.initialImageName,
   });
 
   final Uint8List? initialImageBytes;
+  final String? initialImagePath;
   final String? initialImageName;
 
   @override
@@ -27,11 +31,6 @@ class ScanScreen extends StatefulWidget {
 }
 
 class _ScanScreenState extends State<ScanScreen> {
-  static const String _title = 'Analyser un dechet';
-  static const String _tip = "Assurez-vous que l'objet est bien eclaire\n"
-      'et centre pour une reconnaissance IA\n'
-      'optimale.';
-
   final _predictionService = PredictionService();
   final _imagePicker = ImagePicker();
 
@@ -45,7 +44,7 @@ class _ScanScreenState extends State<ScanScreen> {
   void initState() {
     super.initState();
     _selectedImageBytes = widget.initialImageBytes;
-    _selectedImagePath = null;
+    _selectedImagePath = widget.initialImagePath;
     _selectedImageName = widget.initialImageName;
     _recoverLostImageIfAny();
   }
@@ -62,11 +61,23 @@ class _ScanScreenState extends State<ScanScreen> {
         return;
       }
 
-      setState(() {
-        _selectedImageBytes = null;
-        _selectedImagePath = file.path;
-        _selectedImageName = file.name.isNotEmpty ? file.name : 'capture.jpg';
-      });
+      try {
+        final bytes = await file.readAsBytes();
+        if (!mounted) return;
+        setState(() {
+          _selectedImageBytes = bytes;
+          _selectedImagePath = null;
+          _selectedImageName = file.name.isNotEmpty ? file.name : 'capture.jpg';
+        });
+      } catch (e) {
+        // Fallback to path if bytes can't be read; keep app stable.
+        if (!mounted) return;
+        setState(() {
+          _selectedImageBytes = null;
+          _selectedImagePath = file.path;
+          _selectedImageName = file.name.isNotEmpty ? file.name : 'capture.jpg';
+        });
+      }
     } catch (_) {
       // If Android recreates the activity while the picker is open,
       // the user can simply import the image again.
@@ -103,18 +114,31 @@ class _ScanScreenState extends State<ScanScreen> {
         return;
       }
 
-      setState(() {
-        _selectedImageBytes = null;
-        _selectedImagePath = file.path;
-        _selectedImageName = file.name.isNotEmpty ? file.name : 'capture.jpg';
-      });
+      try {
+        final bytes = await file.readAsBytes();
+        if (!mounted) return;
+        setState(() {
+          _selectedImageBytes = bytes;
+          _selectedImagePath = null;
+          _selectedImageName = file.name.isNotEmpty ? file.name : 'capture.jpg';
+        });
+      } catch (e) {
+        if (!mounted) return;
+        setState(() {
+          _selectedImageBytes = null;
+          _selectedImagePath = file.path;
+          _selectedImageName = file.name.isNotEmpty ? file.name : 'capture.jpg';
+        });
+      }
     } catch (error) {
       if (!mounted) {
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Impossible de recuperer l image : $error'),
+          content: Text(
+            '${AppLocalizations.of(context).t('scan.error.image_retrieval')} $error',
+          ),
         ),
       );
     } finally {
@@ -131,8 +155,10 @@ class _ScanScreenState extends State<ScanScreen> {
     final hasPath = _selectedImagePath != null;
     if (_selectedImageName == null || (!hasBytes && !hasPath)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Veuillez d'abord selectionner une image."),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).t('scan.error.no_image_selected'),
+          ),
         ),
       );
       return;
@@ -161,13 +187,35 @@ class _ScanScreenState extends State<ScanScreen> {
           ),
         ),
       );
+    } on OfflineQueuedException {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).t('scan.offline.queued'),
+          ),
+        ),
+      );
+    } on ApiException catch (error) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_friendlyAnalyzeError(context, error.message)),
+        ),
+      );
     } catch (error) {
       if (!mounted) {
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Analyse impossible : $error'),
+          content: Text(
+            '${AppLocalizations.of(context).t('scan.error.analysis_failed')} $error',
+          ),
         ),
       );
     } finally {
@@ -177,6 +225,17 @@ class _ScanScreenState extends State<ScanScreen> {
         });
       }
     }
+  }
+
+  String _friendlyAnalyzeError(BuildContext context, String message) {
+    if (message.contains('Unsupported image MIME type') ||
+        message.contains('Invalid or corrupted image file')) {
+      return AppLocalizations.of(context).t('scan.error.image_unrecognized');
+    }
+    if (message.contains('Image file is too large')) {
+      return AppLocalizations.of(context).t('scan.error.image_too_large');
+    }
+    return '${AppLocalizations.of(context).t('scan.error.analysis_failed')} $message';
   }
 
   @override
@@ -233,9 +292,9 @@ class _ScanScreenState extends State<ScanScreen> {
                       ],
                     ),
                     const SizedBox(height: 26),
-                    const Text(
-                      _title,
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context).t('scan.title'),
+                      style: const TextStyle(
                         fontSize: 31,
                         height: 1.15,
                         fontWeight: FontWeight.w800,
@@ -303,7 +362,8 @@ class _ScanScreenState extends State<ScanScreen> {
                         Expanded(
                           child: _ActionTile(
                             icon: Icons.camera_alt_outlined,
-                            label: 'Prendre une photo',
+                            label: AppLocalizations.of(context)
+                                .t('scan.action.take_photo'),
                             onTap: _pickFromCamera,
                           ),
                         ),
@@ -311,7 +371,8 @@ class _ScanScreenState extends State<ScanScreen> {
                         Expanded(
                           child: _ActionTile(
                             icon: Icons.image_outlined,
-                            label: 'Importer depuis la galerie',
+                            label: AppLocalizations.of(context)
+                                .t('scan.action.pick_gallery'),
                             onTap: _pickFromGallery,
                           ),
                         ),
@@ -335,10 +396,10 @@ class _ScanScreenState extends State<ScanScreen> {
                         ),
                         border: Border.all(color: const Color(0xFFD0EFCF)),
                       ),
-                      child: const Row(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 42,
                             height: 42,
                             child: DecoratedBox(
@@ -353,23 +414,24 @@ class _ScanScreenState extends State<ScanScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 14),
+                          const SizedBox(width: 14),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Conseil de tri',
-                                  style: TextStyle(
+                                  AppLocalizations.of(context)
+                                      .t('scan.tip_card.title'),
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     color: darkGreen,
                                   ),
                                 ),
-                                SizedBox(height: 6),
+                                const SizedBox(height: 6),
                                 Text(
-                                  _tip,
-                                  style: TextStyle(
+                                  AppLocalizations.of(context).t('scan.tip'),
+                                  style: const TextStyle(
                                     fontSize: 15,
                                     height: 1.45,
                                     color: Color(0xFF39503C),
@@ -409,7 +471,13 @@ class _ScanScreenState extends State<ScanScreen> {
                                 ),
                               )
                             : const Icon(Icons.auto_awesome_outlined),
-                        label: Text(_analyzing ? 'Analyse...' : 'Analyser'),
+                        label: Text(
+                          _analyzing
+                              ? AppLocalizations.of(context)
+                                  .t('scan.action.analyzing')
+                              : AppLocalizations.of(context)
+                                  .t('scan.action.analyze'),
+                        ),
                       ),
                     ),
                   ],
@@ -464,7 +532,7 @@ class _PreviewPlaceholder extends StatelessWidget {
         ),
         const SizedBox(height: 30),
         const Text(
-          "Pret pour l'analyse",
+          "Prêt pour l'analyse",
           style: TextStyle(
             fontSize: 19,
             fontWeight: FontWeight.w700,

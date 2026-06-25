@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../app.dart';
+import '../l10n.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 import 'history_screen.dart';
 import 'home_screen.dart';
@@ -14,19 +16,42 @@ class LanguageScreen extends StatefulWidget {
 }
 
 class _LanguageScreenState extends State<LanguageScreen> {
-  String _selectedLanguage = 'Fran\u00e7ais';
+  String _selectedLanguageCode = 'fr';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final locale = Localizations.localeOf(context);
+      if (mounted && ['fr', 'en'].contains(locale.languageCode)) {
+        setState(() {
+          _selectedLanguageCode = locale.languageCode;
+        });
+      }
+    });
+  }
+
+  Future<void> _saveLanguage() async {
+    final locale = Locale(_selectedLanguageCode);
+    await WasteSortingMobileApp.of(context)?.setLocale(locale);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context).t('language.saved')),
+      ),
+    );
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
     const background = Color(0xFFF5F9F0);
     const darkGreen = Color(0xFF0A8A52);
 
-    const options = [
-      (_Flags.fr, 'Fran\u00e7ais'),
-      (_Flags.gb, 'English'),
-      (_Flags.es, 'Espa\u00f1ol'),
-      (_Flags.de, 'Deutsch'),
-      (_Flags.it, 'Italiano'),
+    final translations = AppLocalizations.of(context);
+    final options = [
+      {'flag': _Flags.fr, 'code': 'fr'},
+      {'flag': _Flags.gb, 'code': 'en'},
     ];
 
     return Scaffold(
@@ -64,10 +89,10 @@ class _LanguageScreenState extends State<LanguageScreen> {
                             ),
                           ),
                           const SizedBox(width: 6),
-                          const Expanded(
+                          Expanded(
                             child: Text(
-                              'Langue',
-                              style: TextStyle(
+                              translations.t('language.title'),
+                              style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w700,
                                 color: darkGreen,
@@ -90,9 +115,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Choisissez votre langue préférée pour\nl'interface de l'application.",
-                            style: TextStyle(
+                          Text(
+                            translations.t('language.description'),
+                            style: const TextStyle(
                               fontSize: 18,
                               height: 1.45,
                               color: Color(0xFF344239),
@@ -100,26 +125,29 @@ class _LanguageScreenState extends State<LanguageScreen> {
                           ),
                           const SizedBox(height: 28),
                           ...options.map(
-                            (option) => Padding(
-                              padding: const EdgeInsets.only(bottom: 18),
-                              child: _LanguageOption(
-                                flag: option.$1,
-                                label: option.$2,
-                                selected: _selectedLanguage == option.$2,
-                                onTap: () {
-                                  setState(() {
-                                    _selectedLanguage = option.$2;
-                                  });
-                                },
-                              ),
-                            ),
+                            (option) {
+                              final code = option['code'] as String;
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 18),
+                                child: _LanguageOption(
+                                  flag: option['flag'] as String,
+                                  label: translations.t('language.label.$code'),
+                                  selected: _selectedLanguageCode == code,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedLanguageCode = code;
+                                    });
+                                  },
+                                ),
+                              );
+                            },
                           ),
                           const SizedBox(height: 28),
                           SizedBox(
                             width: double.infinity,
                             height: 82,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: _saveLanguage,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: darkGreen,
                                 foregroundColor: Colors.white,
@@ -133,7 +161,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
                                   letterSpacing: 0.5,
                                 ),
                               ),
-                              child: const Text('ENREGISTRER LES MODIFICATIONS'),
+                              child:
+                                  Text(translations.t('language.save_button')),
                             ),
                           ),
                           const SizedBox(height: 34),
@@ -146,8 +175,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Padding(
+                              children: [
+                                const Padding(
                                   padding: EdgeInsets.only(top: 6),
                                   child: Icon(
                                     Icons.translate_rounded,
@@ -155,24 +184,24 @@ class _LanguageScreenState extends State<LanguageScreen> {
                                     size: 36,
                                   ),
                                 ),
-                                SizedBox(width: 18),
+                                const SizedBox(width: 18),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Traduction manquante ?',
-                                        style: TextStyle(
+                                        translations.t('language.help_title'),
+                                        style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w700,
                                           color: Color(0xFF0B6E42),
                                         ),
                                       ),
-                                      SizedBox(height: 8),
+                                      const SizedBox(height: 8),
                                       Text(
-                                        'Aidez-nous à améliorer EcoSort dans\nvotre langue.',
-                                        style: TextStyle(
+                                        translations.t('language.help_body'),
+                                        style: const TextStyle(
                                           fontSize: 17,
                                           height: 1.45,
                                           color: Color(0xFF0B6E42),
@@ -299,7 +328,4 @@ class _LanguageOption extends StatelessWidget {
 abstract final class _Flags {
   static const fr = '\u{1F1EB}\u{1F1F7}';
   static const gb = '\u{1F1EC}\u{1F1E7}';
-  static const es = '\u{1F1EA}\u{1F1F8}';
-  static const de = '\u{1F1E9}\u{1F1EA}';
-  static const it = '\u{1F1EE}\u{1F1F9}';
 }

@@ -26,12 +26,20 @@ OCR_CLASS_KEYWORDS = {
         "bouteille",
         "flacon",
         "emballage plastique",
+        "recyclable",
+        "recycle",
+        "recycling",
+        "eau",
+        "water",
+        "soda",
+        "boisson",
     ],
     "Glass": [
         "glass",
         "verre",
         "bocal",
         "jar",
+        "bouteille en verre",
     ],
     "PaperCardboard": [
         "paper",
@@ -46,6 +54,10 @@ OCR_CLASS_KEYWORDS = {
         "tetrapak",
         "brick",
         "brique",
+        "lait",
+        "milk",
+        "juice",
+        "jus",
     ],
     "Metal": [
         "metal",
@@ -59,6 +71,9 @@ OCR_CLASS_KEYWORDS = {
         "canette",
         "conserve",
         "tin",
+        "cannette",
+        "canette alu",
+        "aluminium can",
     ],
     "Other": [
         "styrofoam",
@@ -69,8 +84,45 @@ OCR_CLASS_KEYWORDS = {
         "wrapper",
         "sachet",
         "film",
+        "pouch",
+        "barquette",
+        "polystyrene",
     ],
 }
+
+LABEL_INDICATOR_KEYWORDS = [
+    "coca",
+    "cola",
+    "cocacola",
+    "pepsi",
+    "fanta",
+    "sprite",
+    "nestle",
+    "evian",
+    "vittel",
+    "cristaline",
+    "volvic",
+    "danone",
+    "lait",
+    "milk",
+    "eau",
+    "water",
+    "jus",
+    "juice",
+    "soda",
+    "pet",
+    "hdpe",
+    "pp",
+    "alu",
+    "aluminium",
+    "carton",
+    "papier",
+    "verre",
+    "glass",
+    "metal",
+    "recyclable",
+    "tri",
+]
 
 TESSERACT_CONFIGS = [
     "--oem 3 --psm 6 -c preserve_interword_spaces=1",
@@ -118,6 +170,16 @@ OCR_TOKEN_CORRECTIONS = {
     "papler": "papier",
     "tetra pak": "tetrapak",
     "tetra pack": "tetrapak",
+    "coca cola": "cocacola",
+    "coca-cola": "cocacola",
+    "c0ca": "coca",
+    "coia": "cola",
+    "pepsl": "pepsi",
+    "fanta.": "fanta",
+    "sprlte": "sprite",
+    "evlan": "evian",
+    "cristaiine": "cristaline",
+    "recyciable": "recyclable",
 }
 
 
@@ -163,10 +225,21 @@ def _resize_for_ocr(image):
 def _candidate_regions(image):
     height, width = image.shape[:2]
     regions = [("full", image)]
+    if height > 0 and width > 0:
+        regions.extend(
+            [
+                ("full_rot90_cw", cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)),
+                ("full_rot90_ccw", cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)),
+                ("full_rot180", cv2.rotate(image, cv2.ROTATE_180)),
+            ]
+        )
     crop_specs = [
         ("center_object", 0.14, 0.12, 0.86, 0.88),
         ("middle_label", 0.08, 0.24, 0.92, 0.76),
         ("lower_label", 0.10, 0.45, 0.90, 0.95),
+        ("upper_label", 0.10, 0.05, 0.90, 0.55),
+        ("left_label", 0.00, 0.15, 0.58, 0.90),
+        ("right_label", 0.42, 0.15, 1.00, 0.90),
     ]
 
     for name, left, top, right, bottom in crop_specs:
@@ -266,6 +339,16 @@ def match_keywords(clean_text: str):
     return scores, matched_keywords
 
 
+def match_label_indicators(clean_text: str):
+    tokens = clean_text.split()
+    hits = []
+    for keyword in LABEL_INDICATOR_KEYWORDS:
+        hit = _keyword_hit(keyword, clean_text, tokens)
+        if hit:
+            hits.append(hit)
+    return sorted(set(hits))
+
+
 def _keyword_weight(hit: str):
     keyword = hit.split("~", 1)[0]
     if keyword in WEAK_SINGLE_TOKEN_KEYWORDS:
@@ -333,13 +416,22 @@ class OCRAnalyzer:
                 raw_text, words, average_word_confidence = _safe_tesseract_words(processed, config=config)
                 clean_text = normalize_text(raw_text)
                 scores, matched_keywords = match_keywords(clean_text)
+                label_indicators = match_label_indicators(clean_text)
                 rank = _attempt_rank(clean_text, scores, average_word_confidence)
+                if label_indicators:
+                    rank = (
+                        rank[0],
+                        rank[1],
+                        rank[2] + min(len(label_indicators), 4),
+                        rank[3],
+                    )
                 attempts.append(
                     {
                         "raw_text": raw_text.strip(),
                         "clean_text": clean_text,
                         "scores": scores,
                         "matched_keywords": matched_keywords,
+                        "label_indicators": label_indicators,
                         "preprocess_variant": variant_name,
                         "tesseract_config": config,
                         "average_word_confidence": round(average_word_confidence, 4),
@@ -353,6 +445,7 @@ class OCRAnalyzer:
         best = max(attempts, key=lambda attempt: attempt["_rank"])
         scores = best["scores"]
         matched_keywords = best["matched_keywords"]
+        label_indicators = best["label_indicators"]
 
         if scores:
             predicted_class = max(scores, key=scores.get)
@@ -374,6 +467,8 @@ class OCRAnalyzer:
             "confidence": round(confidence, 4),
             "scores": scores,
             "matched_keywords": matched_keywords,
+            "label_indicators": label_indicators,
+            "useful_text_signal": bool(scores or label_indicators),
             "has_text_signal": bool(scores),
             "preprocess_variant": best["preprocess_variant"],
             "tesseract_config": best["tesseract_config"],
@@ -386,6 +481,7 @@ class OCRAnalyzer:
                     "clean_text": attempt["clean_text"],
                     "average_word_confidence": attempt["average_word_confidence"],
                     "scores": attempt["scores"],
+                    "label_indicators": attempt["label_indicators"],
                 }
                 for attempt in top_attempts
             ],

@@ -1,9 +1,19 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import '../services/google_sign_in_button.dart';
 
+import '../models/auth_response.dart';
 import '../models/user_model.dart';
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
+import '../services/google_web_client_id.dart';
+import '../services/push_service.dart';
+import '../l10n.dart';
 import '../widgets/app_logo.dart';
+import 'password_reset_screen.dart';
+import 'verify_email_screen.dart';
 
 enum AuthMode { register, login }
 
@@ -23,10 +33,21 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final _authService = AuthService();
+  final _pushService = PushService();
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _mfaCodeController = TextEditingController();
+  late final GoogleSignIn _googleSignIn;
+  String _webGoogleClientId = '';
+  StreamSubscription<GoogleSignInAccount?>? _googleSignInSubscription;
+  bool _googleSignInProcessing = false;
+
+  String? _mfaToken;
+  String? _mfaMethod;
+  String? _pendingGoogleIdToken;
+  String? _pendingGoogleDisplayName;
 
   late AuthMode _mode;
   bool _submitting = false;
@@ -39,14 +60,92 @@ class _AuthScreenState extends State<AuthScreen> {
   void initState() {
     super.initState();
     _mode = widget.initialMode;
+    _webGoogleClientId = kIsWeb ? getGoogleWebClientId() : '';
+    _googleSignIn = GoogleSignIn(
+      scopes: ['email'],
+      clientId: _webGoogleClientId.isNotEmpty ? _webGoogleClientId : null,
+    );
+    _googleSignInSubscription = _googleSignIn.onCurrentUserChanged.listen(
+      (GoogleSignInAccount? account) {
+        if (account != null) {
+          _handleGoogleSignInAccount(account);
+        }
+      },
+    );
   }
 
   @override
   void dispose() {
+    _googleSignInSubscription?.cancel();
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _mfaCodeController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleGoogleSignInAccount(
+      GoogleSignInAccount googleUser) async {
+    if (_googleSignInProcessing) {
+      return;
+    }
+    _googleSignInProcessing = true;
+    setState(() {
+      _submitting = true;
+      _error = null;
+      _pendingGoogleIdToken = null;
+      _pendingGoogleDisplayName = null;
+    });
+
+    try {
+      final googleAuth = await googleUser.authentication;
+      final idToken = googleAuth.idToken;
+      if (idToken == null || idToken.isEmpty) {
+        throw const ApiException(
+          message: 'Impossible de récupérer le jeton Google.',
+          statusCode: 400,
+        );
+      }
+
+      final result = await _authService.googleLogin(
+        idToken: idToken,
+        displayName: googleUser.displayName,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      if (result.mfaRequired) {
+        _pendingGoogleIdToken = idToken;
+        _pendingGoogleDisplayName = googleUser.displayName;
+        await _handleMfaChallenge(result, isGoogle: true);
+        return;
+      }
+
+      await _goToNextScreen(result.authResponse!.user);
+    } on ApiException catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _error = error.message;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _error = _getAuthErrorMessage(error);
+      });
+    } finally {
+      _googleSignInProcessing = false;
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+        });
+      }
+    }
   }
 
   Future<void> _submit() async {
@@ -57,11 +156,13 @@ class _AuthScreenState extends State<AuthScreen> {
     setState(() {
       _submitting = true;
       _error = null;
+      _pendingGoogleIdToken = null;
+      _pendingGoogleDisplayName = null;
     });
 
     try {
       if (_registerMode) {
-        await _authService.register(
+        final response = await _authService.register(
           email: _emailController.text.trim(),
           fullName: _nameController.text.trim(),
           password: _passwordController.text,
@@ -79,16 +180,19 @@ class _AuthScreenState extends State<AuthScreen> {
         });
 
         messenger.showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'Compte créé avec succès. Connectez-vous maintenant.',
+              response.verificationToken != null &&
+                      response.verificationToken!.isNotEmpty
+                  ? 'Compte créé. Votre token de vérification est : ${response.verificationToken}'
+                  : 'Compte créé avec succès. Connectez-vous maintenant.',
             ),
           ),
         );
         return;
       }
 
-      final response = await _authService.login(
+      final result = await _authService.login(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
@@ -97,7 +201,12 @@ class _AuthScreenState extends State<AuthScreen> {
         return;
       }
 
-      _goToNextScreen(response.user);
+      if (result.mfaRequired) {
+        await _handleMfaChallenge(result, isGoogle: false);
+        return;
+      }
+
+      await _goToNextScreen(result.authResponse!.user);
     } on ApiException catch (error) {
       if (!mounted) {
         return;
@@ -105,13 +214,12 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         _error = error.message;
       });
-    } catch (_) {
+    } catch (error) {
       if (!mounted) {
         return;
       }
       setState(() {
-        _error =
-            "Connexion impossible au serveur. Sur téléphone, utilisez l'IP locale du PC pour l'API.";
+        _error = _getAuthErrorMessage(error);
       });
     } finally {
       if (mounted) {
@@ -122,7 +230,17 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  void _goToNextScreen(UserModel user) {
+  Future<void> _goToNextScreen(UserModel user) async {
+    try {
+      await _pushService.registerTokenWithServer();
+    } catch (_) {
+      // Push registration should not block navigation.
+    }
+
+    if (!mounted) {
+      return;
+    }
+
     final messenger = ScaffoldMessenger.of(context);
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => widget.redirectTo),
@@ -136,12 +254,211 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  void _showGooglePlaceholder() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Connexion Google bientôt disponible.'),
-      ),
+  String _getAuthErrorMessage(Object error) {
+    final message = error.toString().toLowerCase();
+    if (message.contains('origin is not allowed') ||
+        message.contains('given origin is not allowed') ||
+        message.contains('origin is not authorized') ||
+        message.contains('google sign-in') ||
+        message.contains('google.accounts.id')) {
+      return AppLocalizations.of(context).t('auth.google_origin_error');
+    }
+    if (message.contains('socketexception') ||
+        message.contains('failed host lookup') ||
+        message.contains('connection refused') ||
+        message.contains('connection reset') ||
+        message.contains('network is unreachable') ||
+        message.contains('timed out') ||
+        message.contains('timeout') ||
+        message.contains('network')) {
+      return AppLocalizations.of(context).t('auth.network_error');
+    }
+    return AppLocalizations.of(context).t('auth.connection_error');
+  }
+
+  Future<void> _handleMfaChallenge(AuthResult result,
+      {required bool isGoogle}) async {
+    _mfaToken = result.mfaToken;
+    _mfaMethod = result.mfaMethod;
+    _mfaCodeController.clear();
+
+    final enteredCode = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context).t('mfa.title')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(result.mfaCode != null
+                  ? AppLocalizations.of(context)
+                      .t('mfa.code_received')
+                      .replaceAll('{code}', result.mfaCode!)
+                  : AppLocalizations.of(context)
+                      .t('mfa.enter_code_via')
+                      .replaceAll('{method}', _mfaMethod ?? 'email')),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _mfaCodeController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Code MFA',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(AppLocalizations.of(context).t('common.cancel')),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final value = _mfaCodeController.text.trim();
+                if (value.isNotEmpty) {
+                  Navigator.of(context).pop(value);
+                }
+              },
+              child: Text(AppLocalizations.of(context).t('common.ok')),
+            ),
+          ],
+        );
+      },
     );
+
+    if (enteredCode == null || enteredCode.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+
+    try {
+      AuthResult challengeResult;
+      if (isGoogle) {
+        challengeResult = await _authService.googleLogin(
+          idToken: _pendingGoogleIdToken!,
+          displayName: _pendingGoogleDisplayName,
+          mfaToken: _mfaToken,
+          mfaCode: enteredCode,
+        );
+      } else {
+        challengeResult = await _authService.login(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          mfaToken: _mfaToken,
+          mfaCode: enteredCode,
+        );
+      }
+
+      if (!mounted) {
+        return;
+      }
+
+      if (challengeResult.mfaRequired) {
+        setState(() {
+          _error = 'Le code MFA est invalide ou a expiré.';
+        });
+        return;
+      }
+
+      await _goToNextScreen(challengeResult.authResponse!.user);
+    } on ApiException catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _error = error.message;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _error = _getAuthErrorMessage(error);
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _submitting = true;
+      _error = null;
+      _pendingGoogleIdToken = null;
+      _pendingGoogleDisplayName = null;
+    });
+
+    if (kIsWeb && _webGoogleClientId.isEmpty) {
+      setState(() {
+        _submitting = false;
+        _error =
+            'Google web client ID est manquant. Vérifiez mobile_app/web/index.html et .env.';
+      });
+      return;
+    }
+
+    try {
+      final googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        return;
+      }
+
+      final googleAuth = await googleUser.authentication;
+      final idToken = googleAuth.idToken;
+      if (idToken == null || idToken.isEmpty) {
+        throw const ApiException(
+          message: 'Impossible de récupérer le jeton Google.',
+          statusCode: 400,
+        );
+      }
+
+      final result = await _authService.googleLogin(
+        idToken: idToken,
+        displayName: googleUser.displayName,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      if (result.mfaRequired) {
+        _pendingGoogleIdToken = idToken;
+        _pendingGoogleDisplayName = googleUser.displayName;
+        await _handleMfaChallenge(result, isGoogle: true);
+        return;
+      }
+
+      await _goToNextScreen(result.authResponse!.user);
+    } on ApiException catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _error = error.message;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _error = _getAuthErrorMessage(error);
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+        });
+      }
+    }
   }
 
   @override
@@ -214,11 +531,13 @@ class _AuthScreenState extends State<AuthScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (_registerMode) ...[
-                      const _AuthFieldLabel('Nom et prénom'),
+                      _AuthFieldLabel(AppLocalizations.of(context)
+                          .t('auth.full_name_label')),
                       const SizedBox(height: 14),
                       _AuthTextField(
                         controller: _nameController,
-                        hintText: 'Ex: Jean Dupont',
+                        hintText: AppLocalizations.of(context)
+                            .t('auth.full_name_hint'),
                         prefixIcon: Icons.person_outline_rounded,
                         validator: (value) {
                           if (value == null || value.trim().length < 2) {
@@ -229,29 +548,35 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                       const SizedBox(height: 28),
                     ],
-                    const _AuthFieldLabel('Adresse email'),
+                    _AuthFieldLabel(
+                        AppLocalizations.of(context).t('auth.email_label')),
                     const SizedBox(height: 14),
                     _AuthTextField(
                       controller: _emailController,
-                      hintText: 'jean.dupont@email.com',
+                      hintText:
+                          AppLocalizations.of(context).t('auth.email_hint'),
                       prefixIcon: Icons.mail_outline_rounded,
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Veuillez entrer votre adresse email.';
+                          return AppLocalizations.of(context)
+                              .t('auth.validation.enter_email');
                         }
                         if (!value.contains('@')) {
-                          return 'Adresse email invalide.';
+                          return AppLocalizations.of(context)
+                              .t('auth.validation.invalid_email');
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 28),
-                    const _AuthFieldLabel('Mot de passe'),
+                    _AuthFieldLabel(
+                        AppLocalizations.of(context).t('auth.password_label')),
                     const SizedBox(height: 14),
                     _AuthTextField(
                       controller: _passwordController,
-                      hintText: '••••••••',
+                      hintText:
+                          AppLocalizations.of(context).t('auth.password_hint'),
                       prefixIcon: Icons.lock_outline_rounded,
                       obscureText: _obscurePassword,
                       suffix: IconButton(
@@ -269,7 +594,8 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.length < 6) {
-                          return 'Le mot de passe doit contenir au moins 6 caractères.';
+                          return AppLocalizations.of(context)
+                              .t('auth.validation.password_min');
                         }
                         return null;
                       },
@@ -319,9 +645,40 @@ class _AuthScreenState extends State<AuthScreen> {
                                   color: Colors.white,
                                 ),
                               )
-                            : Text(_registerMode ? "S'inscrire" : 'Se connecter'),
+                            : Text(
+                                _registerMode ? "S'inscrire" : 'Se connecter'),
                       ),
                     ),
+                    if (!_registerMode) ...[
+                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const PasswordResetScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text('Mot de passe oublié ?'),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const VerifyEmailScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text('Vérifier mon email'),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 34),
                     const Row(
                       children: [
@@ -343,29 +700,8 @@ class _AuthScreenState extends State<AuthScreen> {
                     SizedBox(
                       width: double.infinity,
                       height: 74,
-                      child: OutlinedButton.icon(
-                        onPressed: _showGooglePlaceholder,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFF161C19),
-                          backgroundColor: Colors.white,
-                          side: const BorderSide(color: Color(0xFFD3DED0)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          textStyle: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        icon: const Text(
-                          'G',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFFEA4335),
-                          ),
-                        ),
-                        label: const Text('Continuer avec Google'),
+                      child: buildGoogleSignInButton(
+                        _submitting ? () {} : _signInWithGoogle,
                       ),
                     ),
                     const SizedBox(height: 34),
@@ -375,8 +711,10 @@ class _AuthScreenState extends State<AuthScreen> {
                         children: [
                           Text(
                             _registerMode
-                                ? "J'ai déjà un compte ? "
-                                : "Vous n'avez pas de compte ? ",
+                                ? AppLocalizations.of(context)
+                                    .t('auth.already_have_account')
+                                : AppLocalizations.of(context)
+                                    .t('auth.no_account'),
                             style: const TextStyle(
                               fontSize: 17,
                               color: Color(0xFF303732),
@@ -392,7 +730,10 @@ class _AuthScreenState extends State<AuthScreen> {
                               });
                             },
                             child: Text(
-                              _registerMode ? 'Se connecter' : "S'inscrire",
+                              _registerMode
+                                  ? AppLocalizations.of(context).t('auth.login')
+                                  : AppLocalizations.of(context)
+                                      .t('auth.register'),
                               style: const TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w800,

@@ -2,7 +2,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+import '../l10n.dart';
 import '../models/prediction_result.dart';
+import '../services/api_client.dart';
+import '../services/prediction_service.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 import 'history_screen.dart';
 import 'home_screen.dart';
@@ -19,61 +22,20 @@ class ResultScreen extends StatelessWidget {
   final PredictionResult? prediction;
   final Uint8List? imageBytes;
 
-  String get _recommendedClass =>
-      prediction?.recommendedClass.isNotEmpty == true
-          ? prediction!.recommendedClass
-          : 'Other';
+  String get _detectedTitle => prediction?.classLabel ?? 'Objet inconnu';
 
-  String get _detectedTitle {
-    switch (_recommendedClass.toLowerCase()) {
-      case 'plastic':
-        return 'Plastique';
-      case 'glass':
-        return 'Verre';
-      case 'metal':
-        return 'Métal';
-      case 'papercardboard':
-        return 'Papier / Carton';
-      default:
-        return 'Autre déchet';
-    }
-  }
-
-  String get _instruction {
-    if (_requiresReview) {
-      return "L'image semble floue, incomplète ou ambiguë. Reprenez une photo plus nette, bien cadrée et mieux éclairée pour confirmer le tri.";
-    }
-
-    switch (_recommendedClass.toLowerCase()) {
-      case 'plastic':
-        return "À déposer dans le bac de tri adapté aux plastiques selon les consignes de votre commune. Videz l'objet avant de le jeter.";
-      case 'glass':
-        return "À déposer dans le conteneur à verre si l'objet est compatible. Retirez les éléments non verriers si nécessaire.";
-      case 'metal':
-        return "À déposer dans le bac recyclable ou la filière métal adaptée. Videz bien le contenant avant le tri.";
-      case 'papercardboard':
-        return "À déposer dans le bac papier/carton si le déchet est propre et majoritairement fibreux. Pliez le carton si nécessaire.";
-      default:
-        return "Cet objet ne correspond pas clairement aux catégories recyclables principales. Vérifiez les consignes locales avant de le jeter.";
-    }
-  }
-
+  String get _instruction =>
+      prediction?.sortInstruction ??
+      "Analyse indisponible. Lancez un nouveau scan pour obtenir une consigne de tri.";
   String get _statusLabel => prediction?.triageLabel ?? 'À vérifier';
 
   bool get _isRecyclable => prediction?.isRecyclable ?? false;
   bool get _isNonRecyclable => prediction?.isNonRecyclable ?? false;
   bool get _requiresReview => prediction?.requiresReview ?? false;
 
-  String get _confidenceLabel {
-    final confidence = ((prediction?.finalConfidence ?? 0) * 100).round();
-    return '$confidence%';
-  }
+  String get _confidenceLabel => prediction?.formattedConfidence ?? '0%';
 
-  String get _binBadge {
-    if (_requiresReview) return 'BAC À VÉRIFIER';
-    if (_isNonRecyclable) return 'BAC GRIS';
-    return 'BAC JAUNE';
-  }
+  String get _binBadge => prediction?.binLabel ?? 'BAC À VÉRIFIER';
 
   Color get _binAccentColor {
     if (_requiresReview) return const Color(0xFFF09A2D);
@@ -81,28 +43,10 @@ class ResultScreen extends StatelessWidget {
     return const Color(0xFF0E8A57);
   }
 
-  String get _decisionLabel {
-    if (_requiresReview) {
-      return 'Incertain';
-    }
-    if (_isNonRecyclable) {
-      return 'Résiduel';
-    }
-    return 'Validé';
-  }
+  String get _decisionLabel => prediction?.decisionLabel ?? 'À valider';
 
-  String get _decisionReason {
-    final reason = prediction?.reason ?? 'vision_top1';
-    switch (reason) {
-      case 'low_confidence_vision':
-        return 'Confiance modérée';
-      case 'vision_top1':
-        return 'Vision dominante';
-      default:
-        return reason.replaceAll('_', ' ');
-    }
-  }
-
+  String get _decisionReason =>
+      prediction?.reasonLabel ?? 'Décision automatique';
   String get _visionClass {
     final predictedClass = prediction?.vision['predicted_class'] as String?;
     if (predictedClass != null && predictedClass.isNotEmpty) {
@@ -149,11 +93,11 @@ class ResultScreen extends StatelessWidget {
 
   String get _ocrRawText {
     if (!_hasReliableOcr) {
-      return "Aucun texte fiable detecte sur l'objet.";
+      return "Aucun texte fiable détecté sur l'objet.";
     }
     final text = prediction?.ocr['raw_text'] as String? ?? '';
     return text.trim().isEmpty
-        ? "Aucun texte fiable detecte sur l'objet."
+        ? "Aucun texte fiable détecté sur l'objet."
         : text.trim();
   }
 
@@ -185,11 +129,11 @@ class ResultScreen extends StatelessWidget {
 
   String get _ocrKeywords {
     if (!_hasReliableOcr) {
-      return 'Aucun mot-cle fiable';
+      return 'Aucun mot-clé fiable';
     }
     final matched = prediction?.ocr['matched_keywords'];
     if (matched is! Map || matched.isEmpty) {
-      return 'Aucun mot-cle detecte';
+      return 'Aucun mot-clé détecté';
     }
 
     final keywords = <String>[];
@@ -199,7 +143,15 @@ class ResultScreen extends StatelessWidget {
       }
     }
 
-    return keywords.isEmpty ? 'Aucun mot-cle detecte' : keywords.join(', ');
+    return keywords.isEmpty ? 'Aucun mot-clé détecté' : keywords.join(', ');
+  }
+
+  String get _ocrLabelIndicators {
+    final indicators = prediction?.ocr['label_indicators'];
+    if (indicators is! List || indicators.isEmpty) {
+      return 'Aucun indice utile repéré';
+    }
+    return indicators.take(12).map((item) => item.toString()).join(', ');
   }
 
   String get _ocrQuality {
@@ -246,6 +198,124 @@ class ResultScreen extends StatelessWidget {
     return words.isEmpty ? 'Aucun mot lisible' : words.take(12).join(', ');
   }
 
+  Future<void> _reportIssue(BuildContext context) async {
+    final currentPrediction = prediction;
+    if (currentPrediction == null || currentPrediction.predictionId == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              AppLocalizations.of(context).t('result.no_report_available')),
+        ),
+      );
+      return;
+    }
+
+    var rating = 2;
+    final commentController = TextEditingController();
+    final submitted = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text(
+                  AppLocalizations.of(context).t('result.report_error_title')),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(AppLocalizations.of(context)
+                        .t('result.report_error_description')),
+                    const SizedBox(height: 18),
+                    Text(
+                      AppLocalizations.of(context)
+                          .t('result.report_error.trust_label'),
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    Slider(
+                      min: 1,
+                      max: 5,
+                      divisions: 4,
+                      label: '$rating/5',
+                      value: rating.toDouble(),
+                      onChanged: (value) {
+                        setDialogState(() {
+                          rating = value.round();
+                        });
+                      },
+                    ),
+                    TextField(
+                      controller: commentController,
+                      maxLines: 4,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)
+                            .t('result.report_error.comment_label'),
+                        hintText: AppLocalizations.of(context)
+                            .t('result.report_error.comment_hint'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                  child: Text(AppLocalizations.of(context).t('common.cancel')),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                  child: Text(AppLocalizations.of(context).t('common.ok')),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (submitted != true || !context.mounted) {
+      commentController.dispose();
+      return;
+    }
+
+    try {
+      await PredictionService().submitFeedback(
+        predictionId: currentPrediction.predictionId,
+        rating: rating,
+        comment: commentController.text.trim(),
+      );
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              AppLocalizations.of(context).t('result.report_success_message')),
+        ),
+      );
+    } on ApiException catch (error) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.message)),
+      );
+    } catch (_) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              AppLocalizations.of(context).t('result.report_failure_message')),
+        ),
+      );
+    } finally {
+      commentController.dispose();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     const background = Color(0xFFF5F9F0);
@@ -265,11 +335,11 @@ class ResultScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Expanded(
+                        Expanded(
                           child: Center(
                             child: Text(
-                              "Résultat de l'analyse",
-                              style: TextStyle(
+                              AppLocalizations.of(context).t('result.title'),
+                              style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w700,
                                 color: darkGreen,
@@ -321,7 +391,8 @@ class ResultScreen extends StatelessWidget {
                             icon: Icons.verified_outlined,
                             iconColor: darkGreen,
                             value: _confidenceLabel,
-                            label: 'Confiance du modèle',
+                            label: AppLocalizations.of(context)
+                                .t('result.model_confidence'),
                             valueColor: const Color(0xFF158854),
                           ),
                         ),
@@ -351,10 +422,36 @@ class ResultScreen extends StatelessWidget {
                       ocrRawText: _ocrRawText,
                       ocrCleanText: _ocrCleanText,
                       ocrKeywords: _ocrKeywords,
+                      ocrLabelIndicators: _ocrLabelIndicators,
                       ocrQuality: _ocrQuality,
                       ocrBestPass: _ocrBestPass,
                       ocrDetectedWords: _ocrDetectedWords,
                       decisionReason: _decisionReason,
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 58,
+                      child: OutlinedButton.icon(
+                        onPressed: () => _reportIssue(context),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFFB04D26),
+                          backgroundColor: const Color(0xFFFFF6EF),
+                          side: const BorderSide(
+                            color: Color(0xFFF0D6BF),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        icon: const Icon(Icons.report_problem_outlined),
+                        label: Text(AppLocalizations.of(context)
+                            .t('result.report_button_label')),
+                      ),
                     ),
                     const SizedBox(height: 16),
                     _BinRecommendation(
@@ -384,7 +481,8 @@ class ResultScreen extends StatelessWidget {
                           ),
                         ),
                         icon: const Icon(Icons.add_a_photo_outlined),
-                        label: const Text('Nouvelle analyse'),
+                        label: Text(AppLocalizations.of(context)
+                            .t('result.new_analysis_button')),
                       ),
                     ),
                     const SizedBox(height: 18),
@@ -413,7 +511,8 @@ class ResultScreen extends StatelessWidget {
                           ),
                         ),
                         icon: const Icon(Icons.home_outlined),
-                        label: const Text("Retour à l'accueil"),
+                        label: Text(AppLocalizations.of(context)
+                            .t('result.back_home_button')),
                       ),
                     ),
                   ],
@@ -858,6 +957,7 @@ class _AnalysisDetailsCard extends StatelessWidget {
     required this.ocrRawText,
     required this.ocrCleanText,
     required this.ocrKeywords,
+    required this.ocrLabelIndicators,
     required this.ocrQuality,
     required this.ocrBestPass,
     required this.ocrDetectedWords,
@@ -871,6 +971,7 @@ class _AnalysisDetailsCard extends StatelessWidget {
   final String ocrRawText;
   final String ocrCleanText;
   final String ocrKeywords;
+  final String ocrLabelIndicators;
   final String ocrQuality;
   final String ocrBestPass;
   final String ocrDetectedWords;
@@ -942,18 +1043,23 @@ class _AnalysisDetailsCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _AnalysisTextBlock(
-            title: 'Texte nettoye',
+            title: 'Texte nettoyé',
             text: ocrCleanText,
             compact: true,
           ),
           const SizedBox(height: 14),
-          _AnalysisLine(label: 'Qualite OCR', value: ocrQuality),
+          _AnalysisLine(label: 'Qualité OCR', value: ocrQuality),
           const SizedBox(height: 8),
           _AnalysisLine(label: 'Passe OCR', value: ocrBestPass),
           const SizedBox(height: 8),
           _AnalysisLine(label: 'Mots lus', value: ocrDetectedWords),
           const SizedBox(height: 8),
-          _AnalysisLine(label: 'Mots-cles detectes', value: ocrKeywords),
+          _AnalysisLine(label: 'Mots-clés détectés', value: ocrKeywords),
+          const SizedBox(height: 8),
+          _AnalysisLine(
+            label: 'Indices utiles',
+            value: ocrLabelIndicators,
+          ),
           const SizedBox(height: 8),
           _AnalysisLine(label: 'Fusion', value: decisionReason),
         ],

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 
 
 TOKEN_SECRET = os.getenv("APP_SECRET", "dev-secret-change-me")
-TOKEN_TTL_HOURS = int(os.getenv("TOKEN_TTL_HOURS", "24"))
+TOKEN_TTL_HOURS = int(os.getenv("TOKEN_TTL_HOURS", "1"))
 
 
 def hash_password(password: str):

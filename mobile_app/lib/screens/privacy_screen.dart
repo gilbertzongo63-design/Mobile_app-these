@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n.dart';
 import '../widgets/app_bottom_nav_bar.dart';
-import '../widgets/app_logo.dart';
 import 'history_screen.dart';
 import 'home_screen.dart';
 import 'scan_screen.dart';
@@ -62,17 +62,21 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                             ),
                           ),
                           const SizedBox(width: 6),
-                          const Expanded(
+                          Expanded(
                             child: Text(
-                              'Confidentialité',
-                              style: TextStyle(
+                              AppLocalizations.of(context).t('privacy.title'),
+                              style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w700,
                                 color: darkGreen,
                               ),
                             ),
                           ),
-                          const AppLogo(size: 30),
+                          const Icon(
+                            Icons.eco_outlined,
+                            color: darkGreen,
+                            size: 32,
+                          ),
                         ],
                       ),
                     ),
@@ -81,7 +85,8 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const _SectionTitle('DONNÉES PERSONNELLES'),
+                          _SectionTitle(AppLocalizations.of(context)
+                              .t('privacy.section.personal_data')),
                           const SizedBox(height: 18),
                           Container(
                             decoration: BoxDecoration(
@@ -95,35 +100,57 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                                 ),
                               ],
                             ),
-                            child: const Column(
+                            child: Column(
                               children: [
                                 _ActionRow(
                                   icon: Icons.manage_search_rounded,
-                                  label: 'Consulter mes données',
+                                  label: AppLocalizations.of(context)
+                                      .t('privacy.actions.view_data'),
+                                  onTap: () {
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (_) => const HistoryScreen(),
+                                      ),
+                                    );
+                                  },
                                 ),
-                                Divider(height: 1, color: Color(0xFFE1E9E0)),
+                                const Divider(
+                                    height: 1, color: Color(0xFFE1E9E0)),
                                 _ActionRow(
                                   icon: Icons.download_rounded,
-                                  label: 'Exporter mes données',
+                                  label: AppLocalizations.of(context)
+                                      .t('privacy.actions.export_data'),
+                                  onTap: () {
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (_) => const HistoryScreen(),
+                                      ),
+                                    );
+                                  },
                                 ),
-                                Divider(height: 1, color: Color(0xFFE1E9E0)),
+                                const Divider(
+                                    height: 1, color: Color(0xFFE1E9E0)),
                                 _ActionRow(
                                   icon: Icons.delete_outline_rounded,
-                                  label: 'Supprimer mon compte',
+                                  label: AppLocalizations.of(context)
+                                      .t('privacy.actions.delete_account'),
                                   destructive: true,
                                 ),
                               ],
                             ),
                           ),
                           const SizedBox(height: 40),
-                          const _SectionTitle('PERMISSIONS'),
+                          _SectionTitle(AppLocalizations.of(context)
+                              .t('privacy.section.permissions')),
                           const SizedBox(height: 18),
                           _ToggleCard(
                             children: [
                               _ToggleRow(
                                 icon: Icons.photo_camera_outlined,
-                                title: 'Appareil photo',
-                                subtitle: 'Requis pour le scan de déchets',
+                                title: AppLocalizations.of(context)
+                                    .t('privacy.camera.title'),
+                                subtitle: AppLocalizations.of(context)
+                                    .t('privacy.camera.subtitle'),
                                 value: _cameraEnabled,
                                 onChanged: (value) {
                                   setState(() {
@@ -134,8 +161,10 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                               const SizedBox(height: 18),
                               _ToggleRow(
                                 icon: Icons.location_on_outlined,
-                                title: 'Localisation',
-                                subtitle: 'Trouver les points de collecte',
+                                title: AppLocalizations.of(context)
+                                    .t('privacy.location.title'),
+                                subtitle: AppLocalizations.of(context)
+                                    .t('privacy.location.subtitle'),
                                 value: _locationEnabled,
                                 onChanged: (value) {
                                   setState(() {
@@ -145,15 +174,17 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 40),
-                          const _SectionTitle('SÉCURITÉ'),
+                          _SectionTitle(AppLocalizations.of(context)
+                              .t('privacy.section.security')),
                           const SizedBox(height: 18),
                           _ToggleCard(
                             children: [
                               _ToggleRow(
                                 icon: Icons.fingerprint_rounded,
-                                title: 'Authentification biométrique',
-                                subtitle: "Sécuriser l'accès à l'app",
+                                title: AppLocalizations.of(context)
+                                    .t('privacy.biometrics.title'),
+                                subtitle: AppLocalizations.of(context)
+                                    .t('privacy.biometrics.subtitle'),
                                 value: _biometricEnabled,
                                 onChanged: (value) {
                                   setState(() {
@@ -164,8 +195,10 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                               const SizedBox(height: 18),
                               _ToggleRow(
                                 icon: Icons.lock_outline_rounded,
-                                title: 'Verrouillage automatique',
-                                subtitle: "Après 5 minutes d'inactivité",
+                                title: AppLocalizations.of(context)
+                                    .t('privacy.auto_lock.title'),
+                                subtitle: AppLocalizations.of(context)
+                                    .t('privacy.auto_lock.subtitle'),
                                 value: _autoLockEnabled,
                                 onChanged: (value) {
                                   setState(() {
@@ -176,11 +209,12 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                             ],
                           ),
                           const SizedBox(height: 56),
-                          const Center(
+                          Center(
                             child: Text(
-                              'Lire notre politique de confidentialité\ncomplète',
+                              AppLocalizations.of(context)
+                                  .t('privacy.read_policy'),
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 18,
                                 height: 1.55,
                                 fontWeight: FontWeight.w600,
@@ -189,11 +223,11 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                             ),
                           ),
                           const SizedBox(height: 26),
-                          const Center(
+                          Center(
                             child: Text(
-                              'Version 2.4.0 — EcoSort France',
+                              AppLocalizations.of(context).t('privacy.version'),
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 color: Color(0xFF364239),
                               ),
@@ -259,11 +293,13 @@ class _ActionRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool destructive;
+  final VoidCallback? onTap;
 
   const _ActionRow({
     required this.icon,
     required this.label,
     this.destructive = false,
+    this.onTap,
   });
 
   @override
@@ -273,28 +309,35 @@ class _ActionRow extends StatelessWidget {
     final arrowColor =
         destructive ? const Color(0xFFE28D8D) : const Color(0xFFC5D1C6);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-      child: Row(
-        children: [
-          Icon(icon, size: 32, color: color),
-          const SizedBox(width: 22),
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                color: color,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          child: Row(
+            children: [
+              Icon(icon, size: 32, color: color),
+              const SizedBox(width: 22),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: color,
+                  ),
+                ),
               ),
-            ),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 34,
+                color: arrowColor,
+              ),
+            ],
           ),
-          Icon(
-            Icons.chevron_right_rounded,
-            size: 34,
-            color: arrowColor,
-          ),
-        ],
+        ),
       ),
     );
   }

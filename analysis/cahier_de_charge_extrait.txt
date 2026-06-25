@@ -1,0 +1,570 @@
+CAHIER DES CHARGES
+Projet de fin d'études — Mémoire
+Conception et implémentation d'un système intelligent de classification des déchets par vision par ordinateur, complétée par la reconnaissance optique de caractères (OCR), pour l'optimisation du tri sélectif. 
+Conception et implémentation d'un système intelligent de reconnaissance des déchets recyclables fondé sur la vision par ordinateur et l'OCR pour optimiser le tri sélectif.
+Application de gestion en ligne — Mobile & Web
+Version 2.0 — Cahier des charges enrichi
+Date : Juin 2026
+Table des matières
+1. Présentation du projet
+Le présent projet vise à concevoir et à implémenter un système intelligent de reconnaissance de déchets et d'objets recyclables. La solution se compose d'une application mobile destinée aux utilisateurs finaux et d'une plateforme web d'administration et de gestion en ligne. À partir d'une image soumise par l'utilisateur, le système identifie l'objet et le classe dans l'une des catégories de tri, en s'appuyant conjointement sur la vision par ordinateur (analyse visuelle de l'objet) et sur la reconnaissance optique de caractères (OCR) lorsque l'objet porte des inscriptions, logos ou consignes de tri.
+Au-delà de la simple classification, le système constitue une plateforme de gestion complète : il collecte et historise les analyses, alimente des tableaux de bord statistiques, gère les utilisateurs et leurs rôles, permet l'amélioration continue du modèle d'intelligence artificielle, et applique un niveau de sécurité élevé conforme aux bonnes pratiques de protection des données personnelles.
+1.1. Document et objet
+Ce cahier des charges définit le périmètre, les exigences fonctionnelles et non fonctionnelles, l'architecture, les contraintes de sécurité et les critères d'acceptation du système. Il sert de référence contractuelle et technique pour la conception, le développement, les tests et la recette du produit.
+2. Contexte et problématique
+Le tri des déchets demeure une difficulté quotidienne pour de nombreux citoyens. Les consignes varient selon les matériaux, les emballages combinent plusieurs matières, et les symboles de recyclage sont souvent mal compris. Ces incertitudes provoquent des erreurs de tri qui dégradent la qualité du recyclage, augmentent les coûts de traitement et réduisent le taux de valorisation des déchets.
+Pour répondre à ce problème, le projet propose une solution numérique capable d'analyser une image grâce à la vision par ordinateur et, lorsque l'objet contient du texte, grâce à l'OCR. La combinaison de ces deux approches permet d'orienter l'utilisateur de manière simple, fiable et rapide, tout en collectant des données utiles au pilotage de la gestion des déchets.
+2.1. Justification du caractère « gestion en ligne »
+Le système ne se limite pas à une fonction de reconnaissance : il s'agit d'une application de gestion en ligne multi-utilisateurs. Il centralise les comptes, les historiques, les statistiques, le référentiel de catégories et le cycle de vie du modèle d'IA. Cette dimension impose des exigences fortes en matière de disponibilité, d'intégrité des données et surtout de sécurité, qui sont détaillées dans ce document.
+3. Objectifs
+3.1. Objectif général
+Concevoir et déployer un système intelligent, fiable et sécurisé permettant de reconnaître automatiquement les déchets et objets recyclables à partir d'une image, afin d'optimiser le tri et d'améliorer la valorisation des déchets.
+3.2. Objectifs spécifiques
+Fournir une classification automatique d'un objet à partir d'une image (capture ou import).
+Combiner vision par ordinateur et OCR pour fiabiliser la décision de tri.
+Gérer les utilisateurs, leurs rôles et leurs droits via une plateforme en ligne sécurisée.
+Conserver un historique consultable et exploitable des analyses effectuées.
+Offrir aux administrateurs un tableau de bord de supervision et des statistiques décisionnelles.
+Permettre l'amélioration continue du modèle (collecte de retours, ré-entraînement, gestion du dataset).
+Garantir un niveau de sécurité élevé et la conformité à la réglementation sur la protection des données.
+4. Périmètre du projet
+4.1. Périmètre inclus
+L'application mobile (utilisateur final).
+L'interface web d'administration et de gestion.
+Le backend applicatif et l'API sécurisée.
+La base de données et le stockage des images.
+Le module de traitement intelligent (prétraitement, vision par ordinateur, OCR, moteur de décision).
+La gestion des comptes, des rôles et des droits d'accès.
+La gestion des résultats, de l'historique et des statistiques.
+Le dispositif de sécurité, de journalisation et de conformité.
+4.2. Périmètre exclu (hors projet)
+La collecte physique des déchets et la logistique de ramassage.
+L'automatisation robotique du tri (bras mécanique, convoyeur).
+La fabrication de matériel ou de capteurs dédiés.
+L'intégration avec les systèmes d'information des collectivités (envisagée comme évolution).
+5. Acteurs et rôles
+Le système distingue plusieurs profils d'utilisateurs auxquels sont associés des droits différenciés, conformément au principe du moindre privilège.
+Acteur
+Description
+Droits principaux
+Visiteur
+Personne non authentifiée.
+Consultation des informations publiques, inscription.
+Utilisateur
+Citoyen authentifié utilisant l'application mobile/web.
+Soumettre des images, consulter ses résultats et son historique, gérer son profil, signaler une erreur.
+Gestionnaire / Modérateur
+Agent en charge du suivi opérationnel et de la validation.
+Valider/corriger les classifications « À vérifier », gérer le référentiel de catégories, consulter les statistiques.
+Administrateur
+Responsable technique et fonctionnel de la plateforme.
+Gérer les comptes et rôles, superviser le système, gérer le dataset et le modèle, consulter les journaux d'audit.
+Système / IA
+Composant automatique de traitement.
+Exécuter le pipeline d'analyse, produire un résultat et un score de confiance.
+6. Description fonctionnelle générale
+L'utilisateur s'authentifie sur l'application mobile ou sur l'interface web, puis soumet une image (capture en direct ou import depuis la galerie). L'image est transmise de façon sécurisée au backend, qui exécute le pipeline de traitement : prétraitement de l'image, analyse par vision par ordinateur, et OCR si du texte est détecté. Le moteur de décision combine ces résultats et produit un statut accompagné d'un score de confiance.
+Le résultat appartient à l'une des catégories suivantes : Recyclable, Non recyclable, ou À vérifier lorsque la confiance est insuffisante. L'utilisateur peut consulter le détail du résultat, l'enregistrer dans son historique, signaler une erreur, et accéder à des informations complémentaires sur la bonne consigne de tri. Les cas « À vérifier » peuvent être soumis à un gestionnaire pour validation manuelle, ce qui enrichit en retour le jeu de données d'apprentissage.
+7. Exigences fonctionnelles détaillées
+Les exigences sont organisées par module. Chaque exigence est identifiée par un code (EF-xx) facilitant la traçabilité avec les tests d'acceptation. Le niveau de priorité suit la méthode MoSCoW : Must (indispensable), Should (souhaitable), Could (optionnel).
+7.1. Gestion des comptes et authentification
+Réf.
+Exigence
+Priorité
+EF-01
+Inscription d'un utilisateur avec validation de l'adresse e-mail (lien ou code de confirmation).
+Must
+EF-02
+Connexion sécurisée par identifiant/mot de passe avec gestion des tentatives échouées.
+Must
+EF-03
+Authentification multifacteur (MFA) optionnelle ou obligatoire pour les rôles à privilèges.
+Must
+EF-04
+Réinitialisation de mot de passe par lien sécurisé à durée de validité limitée.
+Must
+EF-05
+Connexion via fournisseur d'identité externe (OAuth2 / Google) optionnelle.
+Could
+EF-06
+Gestion du profil utilisateur (informations, préférences, langue, suppression de compte).
+Must
+EF-07
+Déconnexion et révocation des sessions/jetons actifs.
+Must
+7.2. Capture et soumission d'images
+Réf.
+Exigence
+Priorité
+EF-08
+Capture d'une image via l'appareil photo du terminal mobile.
+Must
+EF-09
+Import d'une image depuis la galerie ou le système de fichiers.
+Must
+EF-10
+Contrôle de la qualité de l'image (résolution, netteté) et invitation à reprendre la photo si insuffisante.
+Should
+EF-11
+Validation du type, de la taille et du format des fichiers avant envoi.
+Must
+EF-12
+Compression/optimisation de l'image avant transmission pour réduire la latence et la consommation de données.
+Should
+7.3. Module de reconnaissance (vision + OCR)
+Réf.
+Exigence
+Priorité
+EF-13
+Prétraitement de l'image (redimensionnement, correction, débruitage) via OpenCV.
+Must
+EF-14
+Détection et classification de l'objet par vision par ordinateur.
+Must
+EF-15
+Détection de texte et extraction par OCR (Tesseract) lorsque des inscriptions sont présentes.
+Must
+EF-16
+Fusion des résultats vision + OCR par un moteur de décision produisant un score de confiance.
+Must
+EF-17
+Affichage du statut « À vérifier » lorsque le score de confiance est inférieur à un seuil paramétrable.
+Must
+EF-18
+Restitution d'une explication simple du résultat (matériau détecté, consigne de tri associée).
+Should
+7.4. Résultats, historique et signalement
+Réf.
+Exigence
+Priorité
+EF-19
+Affichage clair du résultat avec catégorie, score de confiance et recommandation.
+Must
+EF-20
+Enregistrement automatique de chaque analyse dans l'historique de l'utilisateur.
+Must
+EF-21
+Consultation, recherche et filtrage de l'historique (par date, catégorie, statut).
+Must
+EF-22
+Possibilité pour l'utilisateur de signaler une classification erronée (boucle de feedback).
+Must
+EF-23
+Export de l'historique personnel (CSV/PDF) à la demande de l'utilisateur.
+Could
+7.5. Administration et supervision (plateforme web)
+Réf.
+Exigence
+Priorité
+EF-24
+Gestion des comptes utilisateurs (création, activation, suspension, suppression).
+Must
+EF-25
+Gestion des rôles et des permissions (contrôle d'accès basé sur les rôles).
+Must
+EF-26
+Gestion du référentiel des catégories et des consignes de tri.
+Must
+EF-27
+File de validation des cas « À vérifier » par les gestionnaires.
+Must
+EF-28
+Tableau de bord de supervision : volumétrie, taux de confiance, erreurs signalées, état du système.
+Must
+EF-29
+Consultation des journaux d'activité et d'audit.
+Must
+7.6. Statistiques et reporting
+Réf.
+Exigence
+Priorité
+EF-30
+Statistiques agrégées (nombre d'analyses, répartition par catégorie, évolution temporelle).
+Should
+EF-31
+Indicateurs de performance du modèle (précision estimée, taux de « À vérifier », taux d'erreurs signalées).
+Should
+EF-32
+Génération et export de rapports périodiques.
+Could
+7.7. Gestion du modèle d'IA et du dataset
+Réf.
+Exigence
+Priorité
+EF-33
+Stockage des images annotées et des retours utilisateurs pour enrichir le dataset.
+Must
+EF-34
+Interface d'annotation/validation des données pour préparer le ré-entraînement.
+Should
+EF-35
+Versionnement des modèles et possibilité de revenir à une version antérieure.
+Should
+EF-36
+Suivi des performances entre deux versions de modèle.
+Could
+7.8. Notifications et services transverses
+Réf.
+Exigence
+Priorité
+EF-37
+Notifications (e-mail et/ou push) pour les événements clés : validation de compte, sécurité, résultats de validation.
+Should
+EF-38
+Internationalisation (au minimum français, extensible à d'autres langues).
+Could
+EF-39
+Mode hors-ligne dégradé : mise en file des images et synchronisation à la reconnexion.
+Could
+EF-40
+API publique documentée pour une intégration future avec des systèmes tiers.
+Could
+8. Exigences non fonctionnelles
+Réf.
+Catégorie
+Exigence
+ENF-01
+Performance
+Le résultat d'une analyse doit être restitué en moins de 5 secondes dans des conditions réseau normales.
+ENF-02
+Disponibilité
+Taux de disponibilité cible de la plateforme ≥ 99 % (hors maintenance planifiée).
+ENF-03
+Scalabilité
+L'architecture doit supporter la montée en charge (traitement asynchrone, mise à l'échelle horizontale du backend et du module IA).
+ENF-04
+Fiabilité
+Le système doit gérer les erreurs avec élégance et ne jamais perdre une analyse soumise (file de traitement persistante).
+ENF-05
+Utilisabilité
+Interfaces simples, intuitives et accessibles, utilisables sans formation préalable.
+ENF-06
+Accessibilité
+Respect des bonnes pratiques d'accessibilité (contrastes, tailles, libellés) sur le web et le mobile.
+ENF-07
+Maintenabilité
+Code modulaire, documenté, testé (couverture cible des tests automatisés ≥ 70 %).
+ENF-08
+Portabilité
+Application mobile multiplateforme (Android/iOS) à partir d'une base de code unique.
+ENF-09
+Compatibilité
+Interface web compatible avec les navigateurs récents (Chrome, Firefox, Edge, Safari).
+ENF-10
+Sécurité
+Conformité aux exigences détaillées au chapitre 10 et aux recommandations OWASP.
+ENF-11
+Conformité
+Respect de la réglementation applicable sur la protection des données personnelles.
+ENF-12
+Observabilité
+Journalisation centralisée, métriques et alertes sur les incidents et les anomalies.
+9. Architecture technique
+9.1. Vue d'ensemble
+Le système adopte une architecture client-serveur en couches, découplant les clients (mobile et web) du backend via une API REST sécurisée. Le module d'intelligence artificielle est isolé en service dédié, ce qui permet de le faire évoluer et de le mettre à l'échelle indépendamment. Un traitement asynchrone (file de messages) absorbe les pics de charge et garantit qu'aucune analyse n'est perdue.
+Couche présentation : application mobile (Flutter) et interface web d'administration (React.js).
+Couche application/API : backend Python exposant une API REST authentifiée (gestion des utilisateurs, des analyses, des statistiques).
+Couche traitement intelligent : service de vision par ordinateur (OpenCV) et OCR (Tesseract) avec moteur de décision et score de confiance.
+Couche données : base de données relationnelle (PostgreSQL) et stockage d'objets pour les images.
+Couche transverse : sécurité, authentification, journalisation, supervision et sauvegardes.
+9.2. Schéma d'architecture (logique)
+  [App mobile Flutter]      [Web admin React]             \                    /              v                  v         ┌───────────────────────────┐         │  API REST sécurisée (HTTPS)│  <— Auth JWT/MFA, RBAC, WAF         └───────────────────────────┘              |              |              v              v    [File de messages] -> [Service IA: Vision + OCR]              |              |              v              v    [PostgreSQL]      [Stockage d'images chiffré]
+Note : ce schéma logique illustre le découplage des couches. Le détail des composants d'infrastructure (équilibreur de charge, pare-feu applicatif, conteneurs) est précisé au chapitre sécurité.
+9.3. Pile technologique
+Composant
+Technologie
+Justification
+Application mobile
+Flutter (Dart)
+Développement multiplateforme à partir d'une base de code unique, performances natives.
+Interface web admin
+React.js
+Flexibilité pour un tableau de bord interactif et riche.
+Backend / API
+Python (FastAPI ou Django REST)
+Intégration naturelle avec l'écosystème IA et vision par ordinateur.
+Vision par ordinateur
+OpenCV
+Prétraitement et analyse d'images robustes et éprouvés.
+OCR
+Tesseract OCR
+Extraction de texte des inscriptions et symboles.
+Base de données
+PostgreSQL
+Stockage relationnel structuré, fiable et transactionnel.
+Stockage d'images
+Stockage d'objets (ex. S3 compatible)
+Stockage évolutif et sécurisé des fichiers volumineux.
+File de messages
+Redis / RabbitMQ / Celery
+Traitement asynchrone et résilient des analyses.
+Conteneurisation
+Docker
+Reproductibilité des environnements et facilité de déploiement.
+Outils
+Postman, Git, GitHub
+Tests d'API, gestion du code source et suivi de l'évolution.
+10. Sécurité (exigences détaillées)
+La sécurité est une exigence transverse et prioritaire. S'agissant d'une application de gestion en ligne manipulant des comptes, des images et des données personnelles, le système applique une approche de défense en profondeur : chaque couche dispose de ses propres protections, de sorte que la compromission d'un seul composant ne suffit pas à compromettre l'ensemble. Les exigences ci-dessous sont identifiées par le code SEC-xx.
+10.1. Authentification et gestion des identités
+Réf.
+Exigence
+Priorité
+SEC-01
+Stockage des mots de passe sous forme de hachage robuste avec sel (bcrypt, Argon2 ou scrypt). Aucun mot de passe stocké ou journalisé en clair.
+Must
+SEC-02
+Politique de mots de passe forts (longueur minimale, complexité) et détection des mots de passe compromis.
+Must
+SEC-03
+Authentification multifacteur (MFA) obligatoire pour les rôles gestionnaire et administrateur.
+Must
+SEC-04
+Authentification par jetons JWT signés et de courte durée, avec jetons de rafraîchissement révocables.
+Must
+SEC-05
+Verrouillage temporaire du compte et temporisation progressive après plusieurs échecs de connexion (anti-bruteforce).
+Must
+SEC-06
+Liens de réinitialisation et de validation à usage unique et à durée de vie limitée.
+Must
+SEC-07
+Gestion et révocation des sessions actives ; déconnexion à distance des appareils.
+Should
+10.2. Autorisation et contrôle d'accès
+Réf.
+Exigence
+Priorité
+SEC-08
+Contrôle d'accès basé sur les rôles (RBAC) appliqué côté serveur sur chaque point d'entrée de l'API.
+Must
+SEC-09
+Application stricte du principe du moindre privilège pour tous les comptes et services.
+Must
+SEC-10
+Vérification systématique de la propriété des ressources (un utilisateur ne peut accéder qu'à ses propres données) afin de prévenir les accès directs non autorisés (IDOR).
+Must
+SEC-11
+Séparation des environnements (développement, test, production) et des secrets associés.
+Must
+10.3. Chiffrement et protection des données
+Réf.
+Exigence
+Priorité
+SEC-12
+Chiffrement de toutes les communications en transit via TLS 1.2+ (HTTPS obligatoire, redirection forcée).
+Must
+SEC-13
+Chiffrement des données sensibles au repos (base de données et stockage d'images).
+Must
+SEC-14
+Gestion centralisée et sécurisée des secrets (coffre-fort / variables d'environnement, jamais dans le code source).
+Must
+SEC-15
+En-têtes de sécurité HTTP (HSTS, Content-Security-Policy, X-Content-Type-Options, X-Frame-Options).
+Must
+SEC-16
+Anonymisation ou pseudonymisation des données utilisées pour l'entraînement du modèle.
+Should
+10.4. Sécurité applicative (OWASP Top 10)
+Le système est conçu pour contrer les principales vulnérabilités applicatives référencées par l'OWASP :
+Réf.
+Exigence
+Priorité
+SEC-17
+Validation et assainissement de toutes les entrées côté serveur ; usage de requêtes paramétrées/ORM pour prévenir les injections SQL.
+Must
+SEC-18
+Protection contre les failles XSS (échappement des sorties, CSP) et CSRF (jetons anti-CSRF).
+Must
+SEC-19
+Limitation du débit (rate limiting) et protection anti-déni de service sur les points d'entrée sensibles.
+Must
+SEC-20
+Messages d'erreur génériques côté client ; absence de divulgation d'informations techniques sensibles.
+Must
+SEC-21
+Gestion des dépendances : analyse régulière des bibliothèques tierces et application des correctifs de sécurité.
+Must
+10.5. Sécurité des fichiers et des images soumises
+Réf.
+Exigence
+Priorité
+SEC-22
+Validation stricte du type MIME, de l'extension et de la taille des images ; rejet de tout fichier non conforme.
+Must
+SEC-23
+Analyse antivirus/anti-malware des fichiers téléversés.
+Should
+SEC-24
+Suppression des métadonnées sensibles (EXIF, géolocalisation) des images avant stockage.
+Should
+SEC-25
+Stockage des images hors de la racine web, accès via URL signées et temporaires.
+Must
+10.6. Sécurité de l'API
+Réf.
+Exigence
+Priorité
+SEC-26
+Authentification obligatoire et autorisation sur tous les points d'entrée non publics.
+Must
+SEC-27
+Politique CORS restrictive limitée aux origines de confiance.
+Must
+SEC-28
+Versionnement de l'API et validation de schéma des requêtes/réponses.
+Should
+SEC-29
+Pare-feu applicatif web (WAF) en amont de l'API.
+Should
+10.7. Journalisation, audit et supervision
+Réf.
+Exigence
+Priorité
+SEC-30
+Journalisation des événements de sécurité (connexions, échecs, changements de rôle, accès administrateur).
+Must
+SEC-31
+Journaux d'audit horodatés, intègres et protégés contre la modification ; aucune donnée sensible en clair dans les journaux.
+Must
+SEC-32
+Supervision en temps réel et alertes sur les comportements anormaux (tentatives d'intrusion, pics d'erreurs).
+Should
+SEC-33
+Conservation des journaux selon une durée définie et conforme à la réglementation.
+Should
+10.8. Protection des données personnelles (conformité)
+Réf.
+Exigence
+Priorité
+SEC-34
+Recueil du consentement et information claire des utilisateurs sur les données collectées et leur usage.
+Must
+SEC-35
+Droits des personnes : accès, rectification, suppression (droit à l'oubli) et portabilité des données.
+Must
+SEC-36
+Minimisation des données : ne collecter que ce qui est strictement nécessaire.
+Must
+SEC-37
+Politique de conservation et de suppression automatique des données après expiration.
+Should
+SEC-38
+Registre des traitements et procédure de notification en cas de violation de données.
+Should
+10.9. Sécurité de l'infrastructure et du déploiement
+Réf.
+Exigence
+Priorité
+SEC-39
+Durcissement des serveurs et conteneurs ; réduction de la surface d'attaque (services et ports inutiles désactivés).
+Must
+SEC-40
+Pare-feu réseau et segmentation (la base de données n'est jamais exposée directement à Internet).
+Must
+SEC-41
+Sauvegardes régulières, chiffrées et testées, avec plan de restauration (PRA/PCA).
+Must
+SEC-42
+Intégration de contrôles de sécurité dans la chaîne CI/CD (analyse statique, scan de dépendances et d'images).
+Should
+SEC-43
+Tests de sécurité réguliers (revue de code, tests d'intrusion) avant mise en production.
+Should
+10.10. Gestion des incidents de sécurité
+Un plan de réponse aux incidents définit les rôles, les étapes de détection, de confinement, d'éradication et de restauration, ainsi que les modalités de communication. Les incidents majeurs font l'objet d'une analyse post-mortem visant à corriger les causes profondes et à renforcer les défenses.
+11. Modèle de données (entités principales)
+Le modèle relationnel s'appuie sur les entités suivantes, présentées de façon synthétique.
+Entité
+Attributs principaux
+Utilisateur
+identifiant, nom, e-mail, mot de passe haché, rôle, statut, date de création, préférences.
+Rôle / Permission
+identifiant, libellé, ensemble de permissions associées.
+Analyse
+identifiant, utilisateur, référence image, catégorie résultante, score de confiance, statut, date.
+Image
+identifiant, chemin de stockage, type, taille, empreinte (hash), métadonnées nettoyées.
+Catégorie
+identifiant, libellé (Recyclable, Non recyclable, À vérifier), consigne de tri.
+Signalement / Feedback
+identifiant, analyse concernée, motif, statut de traitement, date.
+Modèle d'IA
+identifiant, version, métriques de performance, date de mise en service.
+Journal d'audit
+identifiant, acteur, action, ressource, horodatage, adresse source.
+12. Contraintes et hypothèses
+L'application mobile nécessite un appareil doté d'un appareil photo et, pour l'analyse, d'une connexion réseau.
+La qualité des résultats dépend de la qualité des images et de la représentativité du jeu de données d'entraînement.
+Les performances du module IA dépendent des ressources de calcul allouées au service dédié.
+Le respect de la réglementation sur les données personnelles est une contrainte impérative.
+Le projet ne couvre pas le matériel physique de tri (hypothèse de périmètre).
+13. Livrables attendus
+L'application mobile (Android/iOS) packagée et installable.
+L'interface web d'administration déployée.
+Le backend, l'API documentée et le service IA.
+La base de données et les scripts d'initialisation.
+Le modèle d'IA entraîné et son jeu de données documenté.
+La documentation technique (architecture, API, déploiement) et le manuel utilisateur.
+Le plan de tests et le rapport de recette.
+La documentation de sécurité (mesures mises en œuvre, plan de réponse aux incidents).
+14. Phases du projet
+Phase
+Intitulé
+Contenu principal
+1
+Analyse et conception
+Recueil des besoins, ce cahier des charges, modélisation, architecture, choix de sécurité.
+2
+Mise en place de la base
+Backend, base de données, authentification et socle de sécurité.
+3
+Module IA
+Prétraitement, vision par ordinateur, OCR, moteur de décision, dataset.
+4
+Applications clientes
+Application mobile et interface web d'administration.
+5
+Intégration et tests
+Tests fonctionnels, tests de sécurité, recette.
+6
+Déploiement
+Mise en production, supervision, documentation, sauvegardes.
+15. Critères d'acceptation
+Toutes les exigences de priorité « Must » sont implémentées et validées par des tests.
+Une image valide produit un résultat de classification accompagné d'un score de confiance en moins de 5 secondes.
+Les cas incertains sont correctement orientés vers le statut « À vérifier ».
+Les contrôles de sécurité « Must » (chapitre 10) sont en place et vérifiés (authentification, RBAC, chiffrement, validation des entrées).
+Aucune donnée sensible n'est exposée en clair (stockage, transport, journaux).
+Les rôles et les droits fonctionnent conformément au modèle d'accès défini.
+Les sauvegardes et la restauration sont testées avec succès.
+16. Perspectives d'évolution
+Ajout de nouvelles catégories et sous-catégories de déchets.
+Enrichissement continu du dataset et amélioration de la précision du modèle.
+Statistiques avancées et tableaux de bord décisionnels enrichis.
+Géolocalisation des points de collecte et recommandations contextuelles.
+Mécanismes de gamification pour encourager le bon tri (badges, scores).
+Intégration avec les systèmes d'information des collectivités et des opérateurs de déchets.
+Intégration future d'un bras robotisé pour automatiser le tri physique.
+17. Glossaire
+Terme
+Définition
+OCR
+Reconnaissance optique de caractères : extraction du texte présent dans une image.
+Vision par ordinateur
+Ensemble de techniques permettant à un système d'analyser et d'interpréter des images.
+RBAC
+Contrôle d'accès basé sur les rôles : attribution des droits selon le rôle de l'utilisateur.
+MFA
+Authentification multifacteur : combinaison de plusieurs preuves d'identité.
+JWT
+Jeton d'authentification signé utilisé pour sécuriser les échanges avec l'API.
+OWASP
+Organisation de référence sur la sécurité des applications web.
+WAF
+Pare-feu applicatif web filtrant le trafic malveillant à destination de l'application.
+PRA / PCA
+Plan de reprise / continuité d'activité après un incident majeur.
+Score de confiance
+Indice numérique exprimant la fiabilité d'une prédiction du modèle.

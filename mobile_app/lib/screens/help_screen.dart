@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 import 'history_screen.dart';
 import 'home_screen.dart';
@@ -31,18 +32,18 @@ class _HelpScreenState extends State<HelpScreen> {
     const background = Color(0xFFF5F9F0);
     const darkGreen = Color(0xFF0A8A52);
 
-    const faqs = [
+    final faqs = [
       (
-        "L'objet n'est pas reconnu ?",
-        "Vérifiez la qualité de l’image, le cadrage et l’éclairage. Si nécessaire, recommencez l’analyse avec une photo plus nette.",
+        AppLocalizations.of(context).t('help.faq1.question'),
+        AppLocalizations.of(context).t('help.faq1.answer'),
       ),
       (
-        'Où trouver les points de collecte ?',
-        "Les points de collecte sont accessibles dans la section dédiée de l’application, avec les informations utiles sur leur localisation et les déchets acceptés.",
+        AppLocalizations.of(context).t('help.faq2.question'),
+        AppLocalizations.of(context).t('help.faq2.answer'),
       ),
       (
-        "Puis-je utiliser l'application sans internet ?",
-        "L’utilisation hors ligne peut être partielle. Certaines fonctions nécessitent une connexion pour l’analyse et la synchronisation des données.",
+        AppLocalizations.of(context).t('help.faq3.question'),
+        AppLocalizations.of(context).t('help.faq3.answer'),
       ),
     ];
 
@@ -60,7 +61,8 @@ class _HelpScreenState extends State<HelpScreen> {
                     Row(
                       children: [
                         IconButton(
-                          onPressed: () => Navigator.of(context).pushReplacement(
+                          onPressed: () =>
+                              Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (_) => const SettingsScreen(),
                             ),
@@ -72,10 +74,10 @@ class _HelpScreenState extends State<HelpScreen> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'Aide',
-                            style: TextStyle(
+                            AppLocalizations.of(context).t('help.title'),
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
                               color: darkGreen,
@@ -85,17 +87,17 @@ class _HelpScreenState extends State<HelpScreen> {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    const Row(
+                    Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.info_outline_rounded,
                           color: darkGreen,
                           size: 30,
                         ),
-                        SizedBox(width: 14),
+                        const SizedBox(width: 14),
                         Text(
-                          'Comment ça marche',
-                          style: TextStyle(
+                          AppLocalizations.of(context).t('help.how_it_works'),
+                          style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF17211C),
@@ -107,27 +109,28 @@ class _HelpScreenState extends State<HelpScreen> {
                     const _HeroDemoCard(),
                     const SizedBox(height: 22),
                     RichText(
-                      text: const TextSpan(
-                        style: TextStyle(
+                      text: TextSpan(
+                        style: const TextStyle(
                           fontSize: 17,
                           height: 1.6,
                           color: Color(0xFF27342C),
                         ),
                         children: [
                           TextSpan(
-                            text:
-                                'EcoSort simplifie votre recyclage. Prenez simplement une photo de votre déchet avec la fonction ',
+                            text: AppLocalizations.of(context)
+                                .t('help.explanation.part1'),
                           ),
                           TextSpan(
-                            text: 'Scan',
-                            style: TextStyle(
+                            text: AppLocalizations.of(context)
+                                .t('help.explanation.scan_label'),
+                            style: const TextStyle(
                               color: darkGreen,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           TextSpan(
-                            text:
-                                ', et notre IA vous dira instantanément dans quelle poubelle le jeter. Ensemble, optimisons le tri !',
+                            text: AppLocalizations.of(context)
+                                .t('help.explanation.part2'),
                           ),
                         ],
                       ),
@@ -135,25 +138,28 @@ class _HelpScreenState extends State<HelpScreen> {
                     const SizedBox(height: 26),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: const [
+                      children: [
                         _StepItem(
                           icon: Icons.camera_alt_outlined,
-                          label: 'Scannez',
+                          label:
+                              AppLocalizations.of(context).t('help.step.scan'),
                         ),
                         _StepItem(
                           icon: Icons.bolt_rounded,
-                          label: 'Analysez',
+                          label: AppLocalizations.of(context)
+                              .t('help.step.analyze'),
                         ),
                         _StepItem(
                           icon: Icons.delete_outline_rounded,
-                          label: 'Triez',
+                          label:
+                              AppLocalizations.of(context).t('help.step.sort'),
                         ),
                       ],
                     ),
                     const SizedBox(height: 42),
-                    const Text(
-                      'Questions Fréquentes',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context).t('help.faq_title'),
+                      style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF17211C),
@@ -175,9 +181,9 @@ class _HelpScreenState extends State<HelpScreen> {
                       ),
                     ),
                     const SizedBox(height: 34),
-                    const Text(
-                      'Contactez-nous',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context).t('help.contact_title'),
+                      style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF17211C),
@@ -185,32 +191,34 @@ class _HelpScreenState extends State<HelpScreen> {
                     ),
                     const SizedBox(height: 22),
                     Row(
-                      children: const [
+                      children: [
                         Expanded(
                           child: _ContactCard(
                             icon: Icons.mail_outline_rounded,
-                            label: 'E-mail',
-                            background: Color(0xFF71F59D),
-                            foreground: Color(0xFF0B6E42),
+                            label: AppLocalizations.of(context)
+                                .t('help.contact.email'),
+                            background: const Color(0xFF71F59D),
+                            foreground: const Color(0xFF0B6E42),
                           ),
                         ),
-                        SizedBox(width: 20),
+                        const SizedBox(width: 20),
                         Expanded(
                           child: _ContactCard(
                             icon: Icons.chat_bubble_outline_rounded,
-                            label: 'Chat Live',
-                            background: Color(0xFF08793E),
+                            label: AppLocalizations.of(context)
+                                .t('help.contact.chat'),
+                            background: const Color(0xFF08793E),
                             foreground: Colors.white,
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 24),
-                    const Center(
+                    Center(
                       child: Text(
-                        'Notre équipe est disponible du lundi au\nvendredi, de 9h à 18h pour répondre à toutes\nvos questions.',
+                        AppLocalizations.of(context).t('help.contact.note'),
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           height: 1.5,
                           color: Color(0xFF344239),

@@ -8,3 +8,5 @@ opencv-python
 pytesseract
 sqlalchemy
 psycopg
+python-dotenv
+slowapi

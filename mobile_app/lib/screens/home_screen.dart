@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../l10n.dart';
 
 import '../services/category_service.dart';
+import '../services/prediction_service.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 import '../widgets/app_logo.dart';
 import 'history_screen.dart';
@@ -16,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _categoryService = CategoryService();
+  final _predictionService = PredictionService();
 
   int _selectedIndex = 0;
 
@@ -23,10 +26,19 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadBootstrapData();
+    _syncPendingPredictions();
   }
 
   Future<void> _loadBootstrapData() async {
     await _categoryService.fetchCategories();
+  }
+
+  Future<void> _syncPendingPredictions() async {
+    try {
+      await _predictionService.syncPendingPredictions();
+    } catch (_) {
+      // Keep the app responsive even when sync cannot complete.
+    }
   }
 
   @override
@@ -44,10 +56,10 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 22),
               _buildHeroBanner(),
               const SizedBox(height: 28),
-              const Text(
-                'Bienvenue ! Simplifions\nle tri ensemble.',
+              Text(
+                AppLocalizations.of(context).t('home.welcome'),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 28,
                   height: 1.15,
                   fontWeight: FontWeight.w800,
@@ -55,10 +67,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 14),
-              const Text(
-                "Analysez vos dechets instantanement\navec l'IA.",
+              Text(
+                AppLocalizations.of(context).t('home.subtitle'),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   height: 1.45,
                   color: Color(0xFF5A655E),
@@ -72,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icons.eco_rounded,
                       iconColor: const Color(0xFF14945D),
                       value: '12kg',
-                      label: 'Tries ce mois',
+                      label: AppLocalizations.of(context).t('home.stat_month'),
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -81,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icons.stars_rounded,
                       iconColor: const Color(0xFFB3622C),
                       value: '850',
-                      label: 'Points Eco',
+                      label: AppLocalizations.of(context).t('home.stat_points'),
                     ),
                   ),
                 ],
@@ -89,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 22),
               _PrimaryActionButton(
                 icon: Icons.document_scanner_outlined,
-                label: "Commencer l'analyse",
+                label: AppLocalizations.of(context).t('home.start_scan'),
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (_) => const ScanScreen()),
@@ -99,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 14),
               _SecondaryActionButton(
                 icon: Icons.history_toggle_off_rounded,
-                label: "Voir l'historique",
+                label: AppLocalizations.of(context).t('home.view_history'),
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (_) => const HistoryScreen()),

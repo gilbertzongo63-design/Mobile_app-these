@@ -10,7 +10,7 @@ DEFAULT_SQLITE_URL = f"sqlite:///{(ROOT / 'backend_data' / 'app.db').as_posix()}
 
 
 def get_database_url():
-    return os.getenv("DATABASE_URL", DEFAULT_SQLITE_URL)
+    return os.getenv("DATABASE_URL") or DEFAULT_SQLITE_URL
 
 
 def _ensure_sqlite_parent_dir(database_url: str):
