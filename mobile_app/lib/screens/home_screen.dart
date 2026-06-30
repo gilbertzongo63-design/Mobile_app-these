@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../l10n.dart';
 
+import '../models/user_model.dart';
 import '../services/category_service.dart';
 import '../services/prediction_service.dart';
+import '../services/user_service.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 import '../widgets/app_logo.dart';
 import 'history_screen.dart';
@@ -173,34 +175,47 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildTopBar() {
-    return Row(
-      children: [
-        const AppBrand(),
-        const Spacer(),
-        GestureDetector(
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const SettingsScreen()),
-            );
-          },
-          child: Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: const Color(0xFFDFF4E8),
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(
-                color: const Color(0xFF19A85E),
-                width: 2,
+    return ValueListenableBuilder<UserModel?>(
+      valueListenable: UserService.currentUser,
+      builder: (context, user, child) {
+        return Row(
+          children: [
+            const AppBrand(),
+            const Spacer(),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                );
+              },
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFDFF4E8),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(
+                    color: const Color(0xFF19A85E),
+                    width: 2,
+                  ),
+                  image: user?.profileImageUrl.isNotEmpty == true
+                      ? DecorationImage(
+                          image: NetworkImage(user!.profileImageUrl),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                ),
+                child: user?.profileImageUrl.isNotEmpty == true
+                    ? null
+                    : const Icon(
+                        Icons.person_rounded,
+                        color: Color(0xFF0A8A52),
+                      ),
               ),
             ),
-            child: const Icon(
-              Icons.person_rounded,
-              color: Color(0xFF0A8A52),
-            ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 

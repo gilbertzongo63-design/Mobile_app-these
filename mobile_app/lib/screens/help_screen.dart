@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../l10n.dart';
 import '../widgets/app_bottom_nav_bar.dart';
@@ -199,16 +201,33 @@ class _HelpScreenState extends State<HelpScreen> {
                                 .t('help.contact.email'),
                             background: const Color(0xFF71F59D),
                             foreground: const Color(0xFF0B6E42),
+                            onTap: () async {
+                              final uri = Uri.parse(
+                                  'mailto:support@ecosort.fr?subject=Support%20EcoSort');
+                              if (await canLaunchUrl(uri)) {
+                                await launchUrl(uri);
+                              }
+                            },
                           ),
                         ),
                         const SizedBox(width: 20),
                         Expanded(
                           child: _ContactCard(
-                            icon: Icons.chat_bubble_outline_rounded,
+                            icon: FontAwesomeIcons.whatsapp,
                             label: AppLocalizations.of(context)
-                                .t('help.contact.chat'),
-                            background: const Color(0xFF08793E),
+                                .t('help.contact.whatsapp'),
+                            background: const Color(0xFF25D366),
                             foreground: Colors.white,
+                            onTap: () async {
+                              final uri = Uri.parse(
+                                  'https://wa.me/212600000000');
+                              if (await canLaunchUrl(uri)) {
+                                await launchUrl(
+                                  uri,
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              }
+                            },
                           ),
                         ),
                       ],
@@ -492,43 +511,48 @@ class _ContactCard extends StatelessWidget {
   final String label;
   final Color background;
   final Color foreground;
+  final VoidCallback onTap;
 
   const _ContactCard({
     required this.icon,
     required this.label,
     required this.background,
     required this.foreground,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 106,
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x12000000),
-            blurRadius: 16,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: foreground, size: 34),
-          const SizedBox(height: 12),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w500,
-              color: foreground,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 106,
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x12000000),
+              blurRadius: 16,
+              offset: Offset(0, 8),
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: foreground, size: 34),
+            const SizedBox(height: 12),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+                color: foreground,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

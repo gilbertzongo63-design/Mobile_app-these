@@ -16,6 +16,9 @@ dependencies:
   image_picker: ^1.1.2
   path_provider: ^2.0.0
   shared_preferences: ^2.3.2
+  share_plus: ^10.0.0
+  url_launcher: ^6.3.0
+  font_awesome_flutter: ^10.7.0
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2
@@ -30,3 +33,4 @@ flutter:
   assets:
     - assets/i18n/en.json
     - assets/i18n/fr.json
+    - assets/images/

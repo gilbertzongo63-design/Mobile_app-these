@@ -1,10 +1,9 @@
-import 'api_client.dart';
-
 class PushService {
-  PushService({ApiClient? apiClient});
+  const PushService();
 
   static Future<void> initialize() async {
-    // Push notifications disabled for web/demo compatibility
+    // Push notifications are disabled by default in this mobile client.
+    // Implement platform-specific push registration when the app is extended.
   }
 
   Future<String?> getDeviceToken() async {
@@ -12,10 +11,10 @@ class PushService {
   }
 
   Future<void> registerTokenWithServer() async {
-    // Not implemented
+    // No device token available, so this is intentionally a no-op.
   }
 
   Future<void> unregisterTokenFromServer() async {
-    // Not implemented
+    // No registration state to clear.
   }
 }

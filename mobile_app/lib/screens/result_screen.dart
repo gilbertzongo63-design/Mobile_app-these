@@ -91,28 +91,37 @@ class ResultScreen extends StatelessWidget {
         matched.isNotEmpty;
   }
 
+  bool get _hasReadableOcrText {
+    final rawText = (prediction?.ocr['raw_text'] as String? ?? '').trim();
+    final cleanText = (prediction?.ocr['clean_text'] as String? ?? '').trim();
+    final detectedWords = prediction?.ocr['detected_words'];
+    return rawText.isNotEmpty ||
+        cleanText.isNotEmpty ||
+        (detectedWords is List && detectedWords.isNotEmpty);
+  }
+
   String get _ocrRawText {
-    if (!_hasReliableOcr) {
-      return "Aucun texte fiable détecté sur l'objet.";
-    }
     final text = prediction?.ocr['raw_text'] as String? ?? '';
+    if (!_hasReliableOcr) {
+      if (text.trim().isEmpty) {
+        final words = _ocrDetectedWords;
+        if (words.isNotEmpty && words != 'Aucun mot fiable') {
+          return words;
+        }
+      }
+      return text.trim().isNotEmpty ? text.trim() : "Aucun texte fiable détecté sur l'objet.";
+    }
     return text.trim().isEmpty
         ? "Aucun texte fiable détecté sur l'objet."
         : text.trim();
   }
 
   String get _ocrCleanText {
-    if (!_hasReliableOcr) {
-      return '-';
-    }
     final text = prediction?.ocr['clean_text'] as String? ?? '';
     return text.trim().isEmpty ? '-' : text.trim();
   }
 
   String get _ocrClass {
-    if (!_hasReliableOcr) {
-      return 'OCR non fiable';
-    }
     final predictedClass = prediction?.ocr['predicted_class'] as String?;
     return predictedClass == null || predictedClass.isEmpty
         ? 'Aucune classe OCR'
@@ -120,17 +129,11 @@ class ResultScreen extends StatelessWidget {
   }
 
   String get _ocrConfidence {
-    if (!_hasReliableOcr) {
-      return '-';
-    }
     final confidence = (prediction?.ocr['confidence'] as num?)?.toDouble();
     return confidence == null ? '-' : '${(confidence * 100).round()}%';
   }
 
   String get _ocrKeywords {
-    if (!_hasReliableOcr) {
-      return 'Aucun mot-clé fiable';
-    }
     final matched = prediction?.ocr['matched_keywords'];
     if (matched is! Map || matched.isEmpty) {
       return 'Aucun mot-clé détecté';
@@ -155,9 +158,6 @@ class ResultScreen extends StatelessWidget {
   }
 
   String get _ocrQuality {
-    if (!_hasReliableOcr) {
-      return 'Non fiable';
-    }
     final confidence =
         (prediction?.ocr['average_word_confidence'] as num?)?.toDouble();
     if (confidence == null || confidence <= 0) {
@@ -167,9 +167,6 @@ class ResultScreen extends StatelessWidget {
   }
 
   String get _ocrBestPass {
-    if (!_hasReliableOcr) {
-      return '-';
-    }
     final variant = prediction?.ocr['preprocess_variant'] as String? ?? '';
     if (variant.trim().isEmpty) {
       return '-';
@@ -178,9 +175,6 @@ class ResultScreen extends StatelessWidget {
   }
 
   String get _ocrDetectedWords {
-    if (!_hasReliableOcr) {
-      return 'Aucun mot fiable';
-    }
     final detectedWords = prediction?.ocr['detected_words'];
     if (detectedWords is! List || detectedWords.isEmpty) {
       return 'Aucun mot lisible';
@@ -623,7 +617,8 @@ class _ResultHeroCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(26),
                 child: Image.memory(
                   imageBytes!,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
+                  filterQuality: FilterQuality.high,
                 ),
               ),
             )
@@ -633,7 +628,8 @@ class _ResultHeroCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(26),
                 child: Image.network(
                   imageUrl,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
+                  filterQuality: FilterQuality.high,
                   errorBuilder: (_, __, ___) => const _MaterialIllustration(),
                 ),
               ),

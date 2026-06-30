@@ -1,8 +1,12 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../services/user_service.dart';
 
 import '../l10n.dart';
 import '../services/api_client.dart';
@@ -50,6 +54,7 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   Future<void> _recoverLostImageIfAny() async {
+    if (kIsWeb) return;
     try {
       final lostData = await _imagePicker.retrieveLostData();
       if (lostData.isEmpty) {
@@ -70,7 +75,6 @@ class _ScanScreenState extends State<ScanScreen> {
           _selectedImageName = file.name.isNotEmpty ? file.name : 'capture.jpg';
         });
       } catch (e) {
-        // Fallback to path if bytes can't be read; keep app stable.
         if (!mounted) return;
         setState(() {
           _selectedImageBytes = null;
@@ -79,8 +83,6 @@ class _ScanScreenState extends State<ScanScreen> {
         });
       }
     } catch (_) {
-      // If Android recreates the activity while the picker is open,
-      // the user can simply import the image again.
     }
   }
 
@@ -89,7 +91,44 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   Future<void> _pickFromGallery() async {
-    await _pickImage(ImageSource.gallery);
+    if (_pickingImage) return;
+    setState(() => _pickingImage = true);
+
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+        withData: true,
+      );
+
+      if (result == null || result.files.isEmpty || !mounted) return;
+
+      final file = result.files.first;
+      if (file.bytes != null) {
+        setState(() {
+          _selectedImageBytes = file.bytes;
+          _selectedImagePath = null;
+          _selectedImageName = file.name.isNotEmpty ? file.name : 'imported.jpg';
+        });
+      } else if (file.path != null) {
+        setState(() {
+          _selectedImageBytes = null;
+          _selectedImagePath = file.path;
+          _selectedImageName = file.name.isNotEmpty ? file.name : 'imported.jpg';
+        });
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${AppLocalizations.of(context).t('scan.error.image_retrieval')} $error',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _pickingImage = false);
+    }
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -272,21 +311,36 @@ class _ScanScreenState extends State<ScanScreen> {
                               ),
                             );
                           },
-                          child: Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFDFF4E8),
-                              borderRadius: BorderRadius.circular(22),
-                              border: Border.all(
-                                color: const Color(0xFF19A85E),
-                                width: 2,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.person_rounded,
-                              color: darkGreen,
-                            ),
+                          child: ValueListenableBuilder(
+                            valueListenable: UserService.currentUser,
+                            builder: (context, user, child) {
+                              return Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFDFF4E8),
+                                  borderRadius: BorderRadius.circular(22),
+                                  border: Border.all(
+                                    color: const Color(0xFF19A85E),
+                                    width: 2,
+                                  ),
+                                  image:
+                                      user?.profileImageUrl.isNotEmpty == true
+                                          ? DecorationImage(
+                                              image: NetworkImage(
+                                                  user!.profileImageUrl),
+                                              fit: BoxFit.cover,
+                                            )
+                                          : null,
+                                ),
+                                child: user?.profileImageUrl.isNotEmpty == true
+                                    ? null
+                                    : const Icon(
+                                        Icons.person_rounded,
+                                        color: darkGreen,
+                                      ),
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -330,11 +384,11 @@ class _ScanScreenState extends State<ScanScreen> {
                                     _selectedImageBytes!,
                                     width: double.infinity,
                                     height: double.infinity,
-                                    fit: BoxFit.cover,
-                                    filterQuality: FilterQuality.low,
-                                    cacheWidth: 1200,
-                                    cacheHeight: 1200,
-                                  ),
+                                        fit: BoxFit.contain,
+                                        filterQuality: FilterQuality.high,
+                                        cacheWidth: 1600,
+                                        cacheHeight: 1600,
+                                      ),
                                 ),
                               )
                             : _selectedImagePath != null
@@ -346,10 +400,10 @@ class _ScanScreenState extends State<ScanScreen> {
                                         File(_selectedImagePath!),
                                         width: double.infinity,
                                         height: double.infinity,
-                                        fit: BoxFit.cover,
-                                        filterQuality: FilterQuality.low,
-                                        cacheWidth: 1200,
-                                        cacheHeight: 1200,
+                                        fit: BoxFit.contain,
+                                    filterQuality: FilterQuality.high,
+                                    cacheWidth: 1600,
+                                    cacheHeight: 1600,
                                       ),
                                     ),
                                   )
@@ -600,3 +654,4 @@ class _ActionTile extends StatelessWidget {
     );
   }
 }
+

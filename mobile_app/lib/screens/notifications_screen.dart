@@ -313,24 +313,21 @@ class _NotificationsHero extends StatelessWidget {
       height: 272,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(26),
-        color: const Color(0xFFE7F6EB),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(26),
-        child: Image.asset(
-          'assets/images/notifications_bins.png',
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Center(
-              child: Text(
-                'Image de notification manquante',
-                style: TextStyle(
-                  color: Colors.grey.shade700,
-                  fontSize: 16,
-                ),
-              ),
-            );
-          },
+      child: Center(
+        child: Text(
+          AppLocalizations.of(context).t('notifications.title'),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+          ),
         ),
       ),
     );

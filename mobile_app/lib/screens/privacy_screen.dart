@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n.dart';
+import '../services/user_service.dart';
 import '../widgets/app_bottom_nav_bar.dart';
+import 'auth_screen.dart';
 import 'history_screen.dart';
 import 'home_screen.dart';
 import 'scan_screen.dart';
 import 'settings_screen.dart';
+
+const _privacyPolicyUrl = 'http://127.0.0.1:8000/privacy';
 
 class PrivacyScreen extends StatefulWidget {
   const PrivacyScreen({super.key});
@@ -19,6 +24,58 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
   bool _locationEnabled = false;
   bool _biometricEnabled = true;
   bool _autoLockEnabled = false;
+  final _userService = UserService();
+
+  Future<void> _handleDeleteAccount() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Supprimer le compte'),
+          content: const Text(
+            'Cette action supprimera définitivement votre compte. Continuer ?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Supprimer'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true) {
+      return;
+    }
+
+    try {
+      await _userService.deleteAccount();
+      if (!mounted) {
+        return;
+      }
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (_) => const AuthScreen(
+            redirectTo: HomeScreen(),
+          ),
+        ),
+        (route) => false,
+      );
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString())),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,6 +192,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                                   label: AppLocalizations.of(context)
                                       .t('privacy.actions.delete_account'),
                                   destructive: true,
+                                  onTap: _handleDeleteAccount,
                                 ),
                               ],
                             ),
@@ -210,15 +268,25 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                           ),
                           const SizedBox(height: 56),
                           Center(
-                            child: Text(
-                              AppLocalizations.of(context)
-                                  .t('privacy.read_policy'),
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                height: 1.55,
-                                fontWeight: FontWeight.w600,
-                                color: darkGreen,
+                            child: GestureDetector(
+                              onTap: () async {
+                                final uri = Uri.parse(_privacyPolicyUrl);
+                                if (await canLaunchUrl(uri)) {
+                                  await launchUrl(uri,
+                                      mode: LaunchMode.externalApplication);
+                                }
+                              },
+                              child: Text(
+                                AppLocalizations.of(context)
+                                    .t('privacy.read_policy'),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  height: 1.55,
+                                  fontWeight: FontWeight.w600,
+                                  color: darkGreen,
+                                  decoration: TextDecoration.underline,
+                                ),
                               ),
                             ),
                           ),

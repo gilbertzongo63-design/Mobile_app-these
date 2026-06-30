@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -21,7 +22,6 @@ class AuthGateScreen extends StatefulWidget {
 class _AuthGateScreenState extends State<AuthGateScreen> {
   final _tokenStore = TokenStore();
   final _userService = UserService();
-  final _imagePicker = ImagePicker();
   final _pushService = PushService();
 
   bool _checking = true;
@@ -33,10 +33,19 @@ class _AuthGateScreenState extends State<AuthGateScreen> {
   }
 
   Future<void> _resolveEntry() async {
+    await UserService.restoreCurrentUser();
     try {
       final token = await _tokenStore.readToken();
-      final lostData = await _imagePicker.retrieveLostData();
-      final recovered = await _recoverLostImage(lostData);
+      _RecoveredImage? recovered;
+      if (!kIsWeb) {
+        final picker = ImagePicker();
+        try {
+          final lostData = await picker.retrieveLostData();
+          recovered = await _recoverLostImage(lostData);
+        } catch (_) {
+          recovered = null;
+        }
+      }
 
       if (!mounted) {
         return;

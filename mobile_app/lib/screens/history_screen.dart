@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../services/user_service.dart';
 
 import '../services/export_helper.dart';
 
@@ -131,8 +134,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         return AppLocalizations.of(context).t('history.export_unauthorized');
       }
       if (error.statusCode >= 500) {
-        return AppLocalizations.of(context)
-            .t('history.export_server_error');
+        return AppLocalizations.of(context).t('history.export_server_error');
       }
       return '${AppLocalizations.of(context).t('history.export_error')} (${error.statusCode})';
     }
@@ -464,21 +466,36 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               ),
                             );
                           },
-                          child: Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFDFF4E8),
-                              borderRadius: BorderRadius.circular(24),
-                              border: Border.all(
-                                color: const Color(0xFF20BD6C),
-                                width: 2,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.person_rounded,
-                              color: darkGreen,
-                            ),
+                          child: ValueListenableBuilder(
+                            valueListenable: UserService.currentUser,
+                            builder: (context, user, child) {
+                              return Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFDFF4E8),
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: Border.all(
+                                    color: const Color(0xFF20BD6C),
+                                    width: 2,
+                                  ),
+                                  image:
+                                      user?.profileImageUrl.isNotEmpty == true
+                                          ? DecorationImage(
+                                              image: NetworkImage(
+                                                  user!.profileImageUrl),
+                                              fit: BoxFit.cover,
+                                            )
+                                          : null,
+                                ),
+                                child: user?.profileImageUrl.isNotEmpty == true
+                                    ? null
+                                    : const Icon(
+                                        Icons.person_rounded,
+                                        color: darkGreen,
+                                      ),
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -818,6 +835,7 @@ class _PredictionThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasImage = prediction.imageUrl.isNotEmpty;
     final className = prediction.recommendedClass.toLowerCase();
     final icon = prediction.requiresReview
         ? Icons.search_off_rounded
@@ -849,7 +867,19 @@ class _PredictionThumb extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
       ),
-      child: Icon(icon, color: Colors.white, size: 34),
+      clipBehavior: Clip.antiAlias,
+      child: hasImage
+          ? Image.network(
+              prediction.imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) =>
+                  Icon(icon, color: Colors.white, size: 34),
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Icon(icon, color: Colors.white, size: 34);
+              },
+            )
+          : Icon(icon, color: Colors.white, size: 34),
     );
   }
 }
@@ -1108,7 +1138,18 @@ class _ImpactSummaryCard extends StatelessWidget {
           const SizedBox(height: 18),
           Align(
             alignment: Alignment.centerRight,
-            child: Container(
+            child: GestureDetector(
+              onTap: () {
+                final text =
+                    'EcoSort - Mon impact du mois\n\n'
+                    '$estimatedKg kg de déchets recyclés\n'
+                    '$recyclableCount objets recyclables\n'
+                    '$nonRecyclableCount non recyclables\n'
+                    '$reviewCount à vérifier\n\n'
+                    'Rejoins-moi sur EcoSort !';
+                Share.share(text);
+              },
+              child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.16),
@@ -1122,6 +1163,7 @@ class _ImpactSummaryCard extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
+            ),
             ),
           ),
         ],

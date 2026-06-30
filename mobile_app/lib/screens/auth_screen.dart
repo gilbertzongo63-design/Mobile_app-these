@@ -10,6 +10,7 @@ import '../services/api_client.dart';
 import '../services/auth_service.dart';
 import '../services/google_web_client_id.dart';
 import '../services/push_service.dart';
+import '../services/user_service.dart';
 import '../l10n.dart';
 import '../widgets/app_logo.dart';
 import 'password_reset_screen.dart';
@@ -231,6 +232,8 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _goToNextScreen(UserModel user) async {
+    await UserService.setCurrentUser(user);
+
     try {
       await _pushService.registerTokenWithServer();
     } catch (_) {
