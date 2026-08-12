@@ -7,9 +7,7 @@ import '../services/prediction_service.dart';
 import '../services/user_service.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 import '../widgets/app_logo.dart';
-import 'history_screen.dart';
-import 'scan_screen.dart';
-import 'settings_screen.dart';
+import '../app_routes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -105,9 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.document_scanner_outlined,
                 label: AppLocalizations.of(context).t('home.start_scan'),
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const ScanScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.scan);
                 },
               ),
               const SizedBox(height: 14),
@@ -115,14 +112,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.history_toggle_off_rounded,
                 label: AppLocalizations.of(context).t('home.view_history'),
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HistoryScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.history);
                 },
               ),
               const SizedBox(height: 28),
-              const Text(
-                'ASTUCES DU JOUR',
+              Text(
+                AppLocalizations.of(context).t('home.daily_tips'),
                 style: TextStyle(
                   fontSize: 13,
                   letterSpacing: 1.1,
@@ -149,23 +145,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (index == 1) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const ScanScreen()),
-      );
+      Navigator.of(context).pushReplacementNamed(AppRoutes.scan);
       return;
     }
 
     if (index == 2) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HistoryScreen()),
-      );
+      Navigator.of(context).pushReplacementNamed(AppRoutes.history);
       return;
     }
 
     if (index == 3) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const SettingsScreen()),
-      );
+      Navigator.of(context).pushReplacementNamed(AppRoutes.settings);
       return;
     }
 
@@ -184,9 +174,8 @@ class _HomeScreenState extends State<HomeScreen> {
             const Spacer(),
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                );
+                Navigator.of(context)
+                    .pushReplacementNamed(AppRoutes.settings);
               },
               child: Container(
                 width: 44,
@@ -285,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          const Positioned(
+          Positioned(
             left: 22,
             right: 22,
             bottom: 22,
@@ -293,17 +282,17 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Accompagne eco facile',
-                  style: TextStyle(
+                  AppLocalizations.of(context).t('home.hero.title'),
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(
-                  'Scannez, comprenez, triez correctement.',
-                  style: TextStyle(
+                  AppLocalizations.of(context).t('home.hero.subtitle'),
+                  style: const TextStyle(
                     color: Color(0xFFE7F4E9),
                     fontSize: 12,
                     height: 1.4,
@@ -540,27 +529,27 @@ class _TipCard extends StatelessWidget {
         ),
         border: Border.all(color: const Color(0xFFCDEED0)),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _TipIcon(),
-          SizedBox(width: 16),
+          const _TipIcon(),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Le saviez-vous ?',
-                  style: TextStyle(
+                  AppLocalizations.of(context).t('home.tip.did_you_know'),
+                  style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFF147A4E),
                   ),
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(
-                  'Rincez vos pots de yaourt pour faciliter leur recyclage mecanique.',
-                  style: TextStyle(
+                  AppLocalizations.of(context).t('home.tip.fact'),
+                  style: const TextStyle(
                     fontSize: 15,
                     height: 1.45,
                     color: Color(0xFF2F4537),

@@ -15,13 +15,10 @@ Widget buildGoogleSignInButton(void Function() onPressed) {
         fontWeight: FontWeight.w700,
       ),
     ),
-    icon: const Text(
-      'G',
-      style: TextStyle(
-        fontSize: 30,
-        fontWeight: FontWeight.w800,
-        color: Color(0xFFEA4335),
-      ),
+    icon: Image.asset(
+      'assets/images/google_g_logo.png',
+      width: 28,
+      height: 28,
     ),
     label: const Text('Continuer avec Google'),
   );

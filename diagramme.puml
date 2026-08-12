@@ -1,0 +1,37 @@
+@startuml
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+skinparam ArrowColor #2E4053
+skinparam RectanglePadding 20
+skinparam RectangleBorderThickness 1.5
+skinparam defaultFontSize 13
+skinparam nodesep 60
+skinparam ranksep 60
+skinparam padding 10
+
+actor "User" as U
+
+rectangle "Mobile App\n[Interface]" as Mobile
+rectangle "Preprocessing\n[Nettoyage]" as Pre
+rectangle "Computer Vision\n[Dtection]" as CV
+rectangle "OCR\n[Reconnaissance\nde texte]" as OCR
+rectangle "Result Fusion\n[Classement]" as Fusion
+rectangle "Backend\n[API]" as BE
+database "Database\n[Stockage]" as DB
+rectangle "Web Admin\nInterface\n[Supervision]" as Web
+
+U -right-> Mobile : image
+Mobile -right-> Pre : send
+Pre -right-> CV : image traitee
+Pre -down-> OCR : image traitee
+CV -down-> Fusion : resultat visuel
+OCR -left-> Fusion : texte extrait
+Fusion -down-> BE : decision
+BE -right-> Mobile : resultat
+BE -down-> DB : historique
+BE -left-> Web : supervision
+
+@enduml

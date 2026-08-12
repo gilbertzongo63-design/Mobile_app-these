@@ -11,11 +11,7 @@ import '../services/prediction_service.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 import '../widgets/app_logo.dart';
 import '../l10n.dart';
-import 'auth_screen.dart';
-import 'home_screen.dart';
-import 'result_screen.dart';
-import 'scan_screen.dart';
-import 'settings_screen.dart';
+import '../app_routes.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -104,14 +100,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Future<void> _openAuthScreen() async {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => const AuthScreen(
-          redirectTo: HistoryScreen(),
-          initialMode: AuthMode.login,
-        ),
-      ),
-    );
+    Navigator.of(context).pushReplacementNamed(AppRoutes.auth);
   }
 
   bool _isNetworkError(Object error) {
@@ -460,11 +449,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (_) => const SettingsScreen(),
-                              ),
-                            );
+                            Navigator.of(context)
+                                .pushReplacementNamed(AppRoutes.settings);
                           },
                           child: ValueListenableBuilder(
                             valueListenable: UserService.currentUser,
@@ -593,12 +579,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               deleting: _deletingPredictionId ==
                                   prediction.predictionId,
                               onTap: () {
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (_) => ResultScreen(
-                                      prediction: prediction,
-                                    ),
-                                  ),
+                                Navigator.of(context).pushReplacementNamed(
+                                  AppRoutes.result,
+                                  arguments: <String, dynamic>{
+                                    'prediction': prediction,
+                                  },
                                 );
                               },
                               onEdit: () => _editPrediction(prediction),
@@ -634,18 +619,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
               selectedIndex: 2,
               onChanged: (index) {
                 if (index == 0) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    AppRoutes.home,
                     (route) => false,
                   );
                 } else if (index == 1) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const ScanScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.scan);
                 } else if (index == 3) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.settings);
                 }
               },
             ),
@@ -673,32 +656,32 @@ class _HistoryCard extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  String get _title => prediction.requiresReview
-      ? 'Objet à vérifier'
-      : '${prediction.classLabel} détecté';
+  String _getTitle(BuildContext context) => prediction.requiresReview
+      ? AppLocalizations.of(context).t('history.card.to_review')
+      : AppLocalizations.of(context).t('history.card.detected').replaceAll('{class}', prediction.classLabel);
 
-  String get _actionText {
+  String _getActionText(BuildContext context) {
     if (prediction.requiresReview) {
-      return 'Reprendre la photo';
+      return AppLocalizations.of(context).t('history.card.retake_photo');
     }
 
     switch (prediction.recommendedClass.toLowerCase()) {
       case 'plastic':
-        return 'Voir les consignes de tri';
+        return AppLocalizations.of(context).t('history.card.sorting_instructions');
       case 'glass':
-        return 'Voir le conteneur adapté';
+        return AppLocalizations.of(context).t('history.card.adapted_container');
       case 'metal':
-        return 'Trouver la bonne filière';
+        return AppLocalizations.of(context).t('history.card.find_line');
       case 'papercardboard':
-        return 'Détails du tri';
+        return AppLocalizations.of(context).t('history.card.sorting_details');
       default:
-        return 'Consignes locales';
+        return AppLocalizations.of(context).t('history.card.local_instructions');
     }
   }
 
-  String get _dateText {
+  String _getDateText(BuildContext context) {
     if (prediction.createdAt.isEmpty) {
-      return 'Analyse récente';
+      return AppLocalizations.of(context).t('history.card.recent_analysis');
     }
     final date = DateTime.tryParse(prediction.createdAt);
     if (date == null) {
@@ -743,7 +726,7 @@ class _HistoryCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          _title,
+                          _getTitle(context),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -759,7 +742,7 @@ class _HistoryCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _dateText,
+                    _getDateText(context),
                     style: const TextStyle(
                       fontSize: 14,
                       color: Color(0xFF505C55),
@@ -770,7 +753,7 @@ class _HistoryCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          _actionText,
+                          _getActionText(context),
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -780,7 +763,7 @@ class _HistoryCard extends StatelessWidget {
                       ),
                       IconButton(
                         visualDensity: VisualDensity.compact,
-                        tooltip: 'Modifier',
+                        tooltip: AppLocalizations.of(context).t('common.edit'),
                         onPressed: editing || deleting ? null : onEdit,
                         icon: editing
                             ? const SizedBox(
@@ -797,7 +780,7 @@ class _HistoryCard extends StatelessWidget {
                       ),
                       IconButton(
                         visualDensity: VisualDensity.compact,
-                        tooltip: 'Supprimer',
+                        tooltip: AppLocalizations.of(context).t('common.delete'),
                         onPressed: editing || deleting ? null : onDelete,
                         icon: deleting
                             ? const SizedBox(
@@ -940,11 +923,11 @@ class _HistoryFilters extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const filters = [
-      ('all', 'Tout'),
-      ('recyclable', 'Recyclable'),
-      ('non_recyclable', 'Non recyclable'),
-      ('review', 'À vérifier'),
+    final filters = [
+      ('all', AppLocalizations.of(context).t('history.filter.all')),
+      ('recyclable', AppLocalizations.of(context).t('history.filter.recyclable')),
+      ('non_recyclable', AppLocalizations.of(context).t('history.filter.non_recyclable')),
+      ('review', AppLocalizations.of(context).t('history.filter.to_check')),
     ];
 
     return Column(
@@ -955,7 +938,7 @@ class _HistoryFilters extends StatelessWidget {
           controller: TextEditingController(text: searchQuery)
             ..selection = TextSelection.collapsed(offset: searchQuery.length),
           decoration: InputDecoration(
-            hintText: 'Rechercher par classe, statut ou raison...',
+            hintText: AppLocalizations.of(context).t('history.search_hint'),
             prefixIcon: const Icon(Icons.search_rounded),
             filled: true,
             fillColor: Colors.white,
@@ -1016,27 +999,27 @@ class _EmptyFilterCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
+          const Icon(
             Icons.filter_alt_off_outlined,
             color: Color(0xFF0A8A52),
             size: 30,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
-            'Aucun résultat',
-            style: TextStyle(
+            AppLocalizations.of(context).t('history.filter.empty_title'),
+            style: const TextStyle(
               fontSize: 19,
               fontWeight: FontWeight.w800,
               color: Color(0xFF17211C),
             ),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
-            'Essayez un autre mot-clé ou un autre filtre de statut.',
-            style: TextStyle(
+            AppLocalizations.of(context).t('history.filter.empty_subtitle'),
+            style: const TextStyle(
               fontSize: 15,
               height: 1.4,
               color: Color(0xFF58655D),
@@ -1079,18 +1062,18 @@ class _ImpactSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.eco_rounded,
                 color: Color(0xFFE6F8EA),
                 size: 22,
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Votre impact du mois',
-                  style: TextStyle(
+                  AppLocalizations.of(context).t('history.impact.title'),
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFFF4FFF6),
@@ -1111,7 +1094,7 @@ class _ImpactSummaryCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '$recyclableCount objets recyclables identifiés',
+            AppLocalizations.of(context).t('history.impact.recyclable_count').replaceAll('{count}', '$recyclableCount'),
             style: const TextStyle(
               fontSize: 16,
               color: Color(0xFFE1F5E7),
@@ -1123,14 +1106,14 @@ class _ImpactSummaryCard extends StatelessWidget {
               Expanded(
                 child: _ImpactMiniMetric(
                   value: '$nonRecyclableCount',
-                  label: 'non recyclables',
+                  label: AppLocalizations.of(context).t('history.impact.non_recyclable'),
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: _ImpactMiniMetric(
                   value: '$reviewCount',
-                  label: 'à vérifier',
+                  label: AppLocalizations.of(context).t('history.impact.to_check'),
                 ),
               ),
             ],
@@ -1155,8 +1138,8 @@ class _ImpactSummaryCard extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.16),
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: const Text(
-                'Partager',
+              child: Text(
+                AppLocalizations.of(context).t('common.share'),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -1225,18 +1208,18 @@ class _LoadingHistoryCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          SizedBox(
+          const SizedBox(
             width: 24,
             height: 24,
             child: CircularProgressIndicator(strokeWidth: 2.4),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Text(
-              'Chargement de votre historique...',
-              style: TextStyle(
+              AppLocalizations.of(context).t('history.loading'),
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF304136),
@@ -1267,27 +1250,27 @@ class _EmptyHistoryCard extends StatelessWidget {
           ),
         ],
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
+          const Icon(
             Icons.history_toggle_off_rounded,
             color: Color(0xFF0A8A52),
             size: 34,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
-            'Aucune analyse enregistrée',
-            style: TextStyle(
+            AppLocalizations.of(context).t('history.empty.title'),
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
               color: Color(0xFF1C261F),
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
-            'Vos prochaines prédictions apparaîtront ici automatiquement.',
-            style: TextStyle(
+            AppLocalizations.of(context).t('history.empty.subtitle'),
+            style: const TextStyle(
               fontSize: 15,
               height: 1.45,
               color: Color(0xFF58655D),
@@ -1322,17 +1305,17 @@ class _AuthHistoryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Connexion requise',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).t('history.auth_required.title'),
+            style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w800,
               color: Color(0xFF17211C),
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
-            'Connectez-vous pour récupérer votre historique de scans et vos prédictions sauvegardées.',
+          Text(
+            AppLocalizations.of(context).t('history.auth_required.description'),
             style: TextStyle(
               fontSize: 15,
               height: 1.45,

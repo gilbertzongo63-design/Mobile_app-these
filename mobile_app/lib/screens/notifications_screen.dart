@@ -3,10 +3,7 @@ import '../l10n.dart';
 
 import '../services/notification_service.dart';
 import '../widgets/app_bottom_nav_bar.dart';
-import 'history_screen.dart';
-import 'home_screen.dart';
-import 'scan_screen.dart';
-import 'settings_screen.dart';
+import '../app_routes.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -53,11 +50,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       children: [
                         IconButton(
                           onPressed: () =>
-                              Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (_) => const SettingsScreen(),
-                            ),
-                          ),
+                              Navigator.of(context)
+                                  .pushReplacementNamed(AppRoutes.settings),
                           icon: const Icon(
                             Icons.arrow_back_rounded,
                             color: darkGreen,
@@ -138,45 +132,58 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               )
                             else
                               ...notifications.map(
-                                (notification) => Container(
-                                  width: double.infinity,
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: notification.isRead
-                                        ? Colors.white
-                                        : const Color(0xFFEAF9F0),
-                                    borderRadius: BorderRadius.circular(18),
-                                    border: Border.all(
-                                        color: const Color(0xFFBFE8C5)),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        notification.title,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xFF0A8A52),
+                                (notification) => GestureDetector(
+                                  onTap: notification.isRead
+                                      ? null
+                                      : () async {
+                                          await _notificationService
+                                              .markAsRead(notification.id);
+                                          setState(() {
+                                            _loadNotifications();
+                                          });
+                                        },
+                                  child: Container(
+                                    width: double.infinity,
+                                    margin:
+                                        const EdgeInsets.only(bottom: 12),
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: notification.isRead
+                                          ? Colors.white
+                                          : const Color(0xFFEAF9F0),
+                                      borderRadius:
+                                          BorderRadius.circular(18),
+                                      border: Border.all(
+                                          color: const Color(0xFFBFE8C5)),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          notification.title,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                            color: Color(0xFF0A8A52),
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        notification.message,
-                                        style: const TextStyle(
-                                            fontSize: 15,
-                                            color: Color(0xFF374047)),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        notification.createdAt,
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Color(0xFF6B7A6F)),
-                                      ),
-                                    ],
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          notification.message,
+                                          style: const TextStyle(
+                                              fontSize: 15,
+                                              color: Color(0xFF374047)),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          notification.createdAt,
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Color(0xFF6B7A6F)),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -277,22 +284,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               selectedIndex: 3,
               onChanged: (index) {
                 if (index == 0) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    AppRoutes.home,
                     (route) => false,
                   );
                 } else if (index == 1) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const ScanScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.scan);
                 } else if (index == 2) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HistoryScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.history);
                 } else if (index == 3) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.settings);
                 }
               },
             ),

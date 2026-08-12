@@ -1,5 +1,4 @@
-import 'dart:io';
-import 'dart:typed_data';
+import 'dart:io' as io;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -13,10 +12,7 @@ import '../services/api_client.dart';
 import '../services/prediction_service.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 import '../widgets/app_logo.dart';
-import 'history_screen.dart';
-import 'home_screen.dart';
-import 'result_screen.dart';
-import 'settings_screen.dart';
+import '../app_routes.dart';
 
 class ScanScreen extends StatefulWidget {
   const ScanScreen({
@@ -218,13 +214,12 @@ class _ScanScreenState extends State<ScanScreen> {
         return;
       }
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => ResultScreen(
-            prediction: result,
-            imageBytes: _selectedImageBytes,
-          ),
-        ),
+      Navigator.of(context).pushReplacementNamed(
+        AppRoutes.result,
+        arguments: <String, dynamic>{
+          'prediction': result,
+          'imageBytes': _selectedImageBytes,
+        },
       );
     } on OfflineQueuedException {
       if (!mounted) {
@@ -241,10 +236,11 @@ class _ScanScreenState extends State<ScanScreen> {
       if (!mounted) {
         return;
       }
+      final msg = error.statusCode == 0
+          ? '${AppLocalizations.of(context).t('scan.error.analysis_failed')} ${error.message}'
+          : _friendlyAnalyzeError(context, error.message);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_friendlyAnalyzeError(context, error.message)),
-        ),
+        SnackBar(content: Text(msg)),
       );
     } catch (error) {
       if (!mounted) {
@@ -305,11 +301,8 @@ class _ScanScreenState extends State<ScanScreen> {
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (_) => const SettingsScreen(),
-                              ),
-                            );
+                            Navigator.of(context)
+                                .pushReplacementNamed(AppRoutes.settings);
                           },
                           child: ValueListenableBuilder(
                             valueListenable: UserService.currentUser,
@@ -356,10 +349,9 @@ class _ScanScreenState extends State<ScanScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      'Prenez une photo de votre objet pour savoir\n'
-                      'comment le trier correctement.',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context).t('scan.subtitle'),
+                      style: const TextStyle(
                         fontSize: 16,
                         height: 1.45,
                         color: Color(0xFF4F5E52),
@@ -391,13 +383,13 @@ class _ScanScreenState extends State<ScanScreen> {
                                       ),
                                 ),
                               )
-                            : _selectedImagePath != null
+                            : _selectedImagePath != null && !kIsWeb
                                 ? Padding(
                                     padding: const EdgeInsets.all(18),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(22),
                                       child: Image.file(
-                                        File(_selectedImagePath!),
+                                        io.File(_selectedImagePath!),
                                         width: double.infinity,
                                         height: double.infinity,
                                         fit: BoxFit.contain,
@@ -542,17 +534,14 @@ class _ScanScreenState extends State<ScanScreen> {
               selectedIndex: 1,
               onChanged: (index) {
                 if (index == 0) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.home);
                 } else if (index == 2) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HistoryScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.history);
                 } else if (index == 3) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.settings);
                 }
               },
             ),
@@ -585,18 +574,18 @@ class _PreviewPlaceholder extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 30),
-        const Text(
-          "Prêt pour l'analyse",
-          style: TextStyle(
+        Text(
+          AppLocalizations.of(context).t('scan.preview.ready'),
+          style: const TextStyle(
             fontSize: 19,
             fontWeight: FontWeight.w700,
             color: Color(0xFF2D3930),
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          "Le rendu s'affichera ici",
-          style: TextStyle(
+        Text(
+          AppLocalizations.of(context).t('scan.preview.placeholder'),
+          style: const TextStyle(
             fontSize: 15,
             color: Color(0xFF738076),
           ),

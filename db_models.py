@@ -34,12 +34,25 @@ class User(Base):
 
     predictions = relationship("Prediction", back_populates="user")
     uploaded_images = relationship("UploadedImage", back_populates="user")
-    feedback_items = relationship("Feedback", back_populates="user")
+    feedback_items = relationship("Feedback", foreign_keys="Feedback.user_id", back_populates="user")
     refresh_tokens = relationship("RefreshToken", back_populates="user")
     email_verification_tokens = relationship("EmailVerificationToken", back_populates="user")
     password_reset_tokens = relationship("PasswordResetToken", back_populates="user")
     notifications = relationship("Notification", back_populates="recipient")
     device_tokens = relationship("DeviceToken", back_populates="user")
+
+
+class PendingRegistration(Base):
+    __tablename__ = "pending_registrations"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
+    full_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    password_hash: Mapped[str] = mapped_column(Text, nullable=False)
+    role: Mapped[str] = mapped_column(String(50), default="user", nullable=False)
+    otp_code_hash: Mapped[str] = mapped_column(String(128), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
 
 
 class Category(Base):
@@ -108,8 +121,13 @@ class Feedback(Base):
     comment: Mapped[str] = mapped_column(Text, default="", nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
 
-    user = relationship("User", back_populates="feedback_items")
+    admin_reply: Mapped[str | None] = mapped_column(Text, nullable=True)
+    admin_replied_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    replied_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+
+    user = relationship("User", foreign_keys=[user_id], back_populates="feedback_items")
     prediction = relationship("Prediction", back_populates="feedback_items")
+    replied_by = relationship("User", foreign_keys=[replied_by_user_id])
 
 
 class RefreshToken(Base):

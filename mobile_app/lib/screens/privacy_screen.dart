@@ -4,11 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../l10n.dart';
 import '../services/user_service.dart';
 import '../widgets/app_bottom_nav_bar.dart';
-import 'auth_screen.dart';
-import 'history_screen.dart';
-import 'home_screen.dart';
-import 'scan_screen.dart';
-import 'settings_screen.dart';
+import '../app_routes.dart';
 
 const _privacyPolicyUrl = 'http://127.0.0.1:8000/privacy';
 
@@ -31,18 +27,18 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Supprimer le compte'),
-          content: const Text(
-            'Cette action supprimera définitivement votre compte. Continuer ?',
+          title: Text(AppLocalizations.of(context).t('privacy.delete_account_title')),
+          content: Text(
+            AppLocalizations.of(context).t('privacy.delete_account_confirm'),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Annuler'),
+              child: Text(AppLocalizations.of(context).t('common.cancel')),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Supprimer'),
+              child: Text(AppLocalizations.of(context).t('common.delete')),
             ),
           ],
         );
@@ -59,12 +55,8 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
         return;
       }
 
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (_) => const AuthScreen(
-            redirectTo: HomeScreen(),
-          ),
-        ),
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        AppRoutes.auth,
         (route) => false,
       );
     } catch (error) {
@@ -107,11 +99,8 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                         children: [
                           IconButton(
                             onPressed: () =>
-                                Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (_) => const SettingsScreen(),
-                              ),
-                            ),
+                                Navigator.of(context)
+                                    .pushReplacementNamed(AppRoutes.settings),
                             icon: const Icon(
                               Icons.arrow_back_rounded,
                               color: darkGreen,
@@ -128,11 +117,6 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                                 color: darkGreen,
                               ),
                             ),
-                          ),
-                          const Icon(
-                            Icons.eco_outlined,
-                            color: darkGreen,
-                            size: 32,
                           ),
                         ],
                       ),
@@ -164,11 +148,9 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                                   label: AppLocalizations.of(context)
                                       .t('privacy.actions.view_data'),
                                   onTap: () {
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (_) => const HistoryScreen(),
-                                      ),
-                                    );
+                                    Navigator.of(context)
+                                        .pushReplacementNamed(
+                                            AppRoutes.history);
                                   },
                                 ),
                                 const Divider(
@@ -178,11 +160,9 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                                   label: AppLocalizations.of(context)
                                       .t('privacy.actions.export_data'),
                                   onTap: () {
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (_) => const HistoryScreen(),
-                                      ),
-                                    );
+                                    Navigator.of(context)
+                                        .pushReplacementNamed(
+                                            AppRoutes.history);
                                   },
                                 ),
                                 const Divider(
@@ -312,22 +292,19 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
               selectedIndex: 3,
               onChanged: (index) {
                 if (index == 0) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    AppRoutes.home,
                     (route) => false,
                   );
                 } else if (index == 1) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const ScanScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.scan);
                 } else if (index == 2) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HistoryScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.history);
                 } else if (index == 3) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.settings);
                 }
               },
             ),

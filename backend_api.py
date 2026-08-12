@@ -5,12 +5,9 @@ import json
 import mimetypes
 import re
 import secrets
-import smtplib
-import ssl
 import urllib.request
 import urllib.parse
 from datetime import datetime, timedelta, timezone
-from email.message import EmailMessage
 from io import StringIO
 from os import getenv
 from pathlib import Path
@@ -31,6 +28,8 @@ from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
+load_dotenv()
+
 from auth_utils import create_access_token, decode_access_token, hash_password, verify_password
 from database import engine, get_database_url, get_db
 from db_models import (
@@ -43,6 +42,7 @@ from db_models import (
     MfaToken,
     Notification,
     PasswordResetToken,
+    PendingRegistration,
     Prediction,
     RefreshToken,
     UploadedImage,
@@ -52,10 +52,9 @@ from db_models import (
 from fusion_service import fuse_predictions
 from model_profile import ACTIVE_MODEL_PROFILE
 from ocr_service import OCRAnalyzer
+from tasks import send_email_task, send_push_notification_task
 from vision_service import VisionClassifier
 
-
-load_dotenv()
 
 ROOT = Path(__file__).resolve().parent
 BACKEND_DATA_DIR = ROOT / "backend_data"
@@ -195,7 +194,16 @@ class RequestEmailVerificationRequest(BaseModel):
 
 
 class VerifyEmailRequest(BaseModel):
-    token: str = Field(min_length=16)
+    email: str
+    token: str = Field(min_length=6, max_length=6)
+
+    @field_validator("email")
+    @classmethod
+    def validate_email(cls, value: str):
+        normalized = value.strip().lower()
+        if not EMAIL_PATTERN.match(normalized):
+            raise ValueError("Invalid email address")
+        return normalized
 
 
 class RequestPasswordResetRequest(BaseModel):
@@ -210,8 +218,12 @@ class RequestPasswordResetRequest(BaseModel):
         return normalized
 
 
+class VerifyResetOtpRequest(BaseModel):
+    token: str = Field(min_length=6)
+
+
 class ResetPasswordRequest(BaseModel):
-    token: str = Field(min_length=16)
+    token: str = Field(min_length=6)
     password: str = Field(min_length=6, max_length=128)
 
 
@@ -226,6 +238,10 @@ class FeedbackRequest(BaseModel):
     prediction_id: int
     rating: int = Field(ge=1, le=5)
     comment: str = Field(default="", max_length=2000)
+
+
+class ReplyRequest(BaseModel):
+    reply: str = Field(..., min_length=1, max_length=2000)
 
 
 class UpdateProfileRequest(BaseModel):
@@ -371,8 +387,10 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://192.168.11.118:8000",
+        "http://192.168.11.118:5173",
     ],
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|192\.168\.\d{1,3}\.\d{1,3})(:\d+)?$",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
@@ -386,7 +404,7 @@ async def add_security_headers(request, call_next):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; connect-src 'self' http://localhost:8000 http://127.0.0.1:8000 http://localhost:3000 http://127.0.0.1:3000; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: http://127.0.0.1:8000 http://localhost:8000; font-src 'self' data:"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
     return response
@@ -472,8 +490,14 @@ def _run_lightweight_migrations(db: Session):
     prediction_columns = {
         "review_status": "VARCHAR(50) NOT NULL DEFAULT 'auto_accepted'",
     }
+    feedback_columns = {
+        "admin_reply": "TEXT",
+        "admin_replied_at": "TIMESTAMP",
+        "replied_by_user_id": "INTEGER",
+    }
     _ensure_columns(db, "users", user_columns)
     _ensure_columns(db, "predictions", prediction_columns)
+    _ensure_columns(db, "feedback", feedback_columns)
 
 
 def _ensure_columns(db: Session, table_name: str, columns: dict[str, str]):
@@ -624,6 +648,9 @@ def _serialize_feedback(feedback: Feedback):
         "rating": feedback.rating,
         "comment": feedback.comment,
         "created_at": feedback.created_at.isoformat(),
+        "admin_reply": feedback.admin_reply,
+        "admin_replied_at": feedback.admin_replied_at.isoformat() if feedback.admin_replied_at else None,
+        "replied_by": _serialize_user(feedback.replied_by) if feedback.replied_by else None,
     }
 
 
@@ -657,26 +684,31 @@ def _serialize_notification(notification: Notification):
 def _send_email_message(to_address: str, subject: str, body: str) -> bool:
     if not SMTP_SERVER or not EMAIL_FROM_ADDRESS:
         return False
-
-    message = EmailMessage()
-    message["From"] = EMAIL_FROM_ADDRESS
-    message["To"] = to_address
-    message["Subject"] = subject
-    message.set_content(body)
-
     try:
-        if SMTP_USE_TLS:
-            context = ssl.create_default_context()
-            with smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10) as server:
+        import ssl as _ssl
+        import smtplib as _smtplib
+        from email.message import EmailMessage as _EmailMessage
+        smtp_port = int(getenv("SMTP_PORT", "587"))
+        smtp_username = getenv("SMTP_USERNAME", "")
+        smtp_password = getenv("SMTP_PASSWORD", "")
+        smtp_use_tls = getenv("SMTP_USE_TLS", "true").lower() in ("true", "1", "yes")
+        msg = _EmailMessage()
+        msg["From"] = EMAIL_FROM_ADDRESS
+        msg["To"] = to_address
+        msg["Subject"] = subject
+        msg.set_content(body)
+        if smtp_use_tls:
+            context = _ssl.create_default_context()
+            with _smtplib.SMTP(SMTP_SERVER, smtp_port, timeout=15) as server:
                 server.starttls(context=context)
-                if SMTP_USERNAME:
-                    server.login(SMTP_USERNAME, SMTP_PASSWORD)
-                server.send_message(message)
+                if smtp_username:
+                    server.login(smtp_username, smtp_password)
+                server.send_message(msg)
         else:
-            with smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10) as server:
-                if SMTP_USERNAME:
-                    server.login(SMTP_USERNAME, SMTP_PASSWORD)
-                server.send_message(message)
+            with _smtplib.SMTP(SMTP_SERVER, smtp_port, timeout=15) as server:
+                if smtp_username:
+                    server.login(smtp_username, smtp_password)
+                server.send_message(msg)
         return True
     except Exception:
         return False
@@ -685,35 +717,8 @@ def _send_email_message(to_address: str, subject: str, body: str) -> bool:
 def _send_push_notification(tokens: list[str], title: str, message: str, data: dict | None = None) -> bool:
     if not FCM_SERVER_KEY or not tokens:
         return False
-
-    payload = {
-        "registration_ids": tokens,
-        "notification": {
-            "title": title,
-            "body": message,
-            "sound": "default",
-        },
-        "priority": "high",
-    }
-
-    if data:
-        payload["data"] = data
-
-    request = urllib.request.Request(
-        "https://fcm.googleapis.com/fcm/send",
-        data=json.dumps(payload).encode("utf-8"),
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"key={FCM_SERVER_KEY}",
-        },
-        method="POST",
-    )
-
-    try:
-        with urllib.request.urlopen(request, timeout=10) as response:
-            return 200 <= response.status < 300
-    except Exception:
-        return False
+    send_push_notification_task.delay(tokens, title, message, data)
+    return True
 
 
 def _notify_user_channels(
@@ -903,6 +908,10 @@ def _mark_mfa_token_used(db: Session, token_record: MfaToken):
     db.commit()
 
 
+def _create_otp_code() -> str:
+    return str(secrets.randbelow(900000) + 100000)
+
+
 def _create_user_action_token(
     db: Session,
     user: User,
@@ -910,8 +919,10 @@ def _create_user_action_token(
     expires_hours: int,
     user_agent: str | None = None,
     ip_address: str | None = None,
+    raw_token: str | None = None,
 ) -> str:
-    raw_token = secrets.token_urlsafe(32)
+    if raw_token is None:
+        raw_token = secrets.token_urlsafe(32)
     token_record = model_class(
         user_id=user.id,
         token_hash=_hash_refresh_token(raw_token),
@@ -943,6 +954,11 @@ def _is_expired(dt):
 def _mark_user_action_token_used(db: Session, token_record):
     token_record.used = 1
     db.add(token_record)
+    db.commit()
+
+
+def _cleanup_pending_registration(db: Session, pending: PendingRegistration):
+    db.delete(pending)
     db.commit()
 
 
@@ -1075,48 +1091,41 @@ def health_check(db: Session = Depends(get_db)):
 @limiter.limit("10/day")
 @app.post("/auth/register")
 def register_user(request: Request, payload: RegisterRequest, db: Session = Depends(get_db)):
-    existing = db.scalar(select(User).where(User.email == payload.email))
-    if existing is not None:
+    existing_user = db.scalar(select(User).where(User.email == payload.email))
+    if existing_user is not None:
         raise HTTPException(status_code=409, detail="Email already registered")
+
+    existing_pending = db.scalar(select(PendingRegistration).where(PendingRegistration.email == payload.email))
+    if existing_pending is not None:
+        _cleanup_pending_registration(db, existing_pending)
 
     is_first_user = (db.scalar(select(func.count(User.id))) or 0) == 0
     role = "admin" if is_first_user else payload.role
-    user = User(
+
+    otp_code = _create_otp_code()
+    pending = PendingRegistration(
         email=payload.email,
         full_name=payload.full_name,
         password_hash=hash_password(payload.password),
         role=role,
-        status="active",
-        email_verified=1 if is_first_user else 0,
+        otp_code_hash=_hash_refresh_token(otp_code),
+        expires_at=datetime.now(timezone.utc) + timedelta(hours=EMAIL_VERIFICATION_TOKEN_TTL_HOURS),
     )
-    db.add(user)
+    db.add(pending)
     db.commit()
-    db.refresh(user)
-    _write_audit(
-        db,
-        actor=user,
-        action="auth.register",
-        resource_type="user",
-        resource_id=user.id,
-        details={"role": user.role},
-    )
-    db.commit()
-    token = create_access_token({"sub": user.id, "email": user.email})
-    refresh_token = _create_refresh_token(db, user)
-    verification_token = _create_user_action_token(
-        db,
-        user,
-        EmailVerificationToken,
-        EMAIL_VERIFICATION_TOKEN_TTL_HOURS,
+
+    _send_email_message(
+        to_address=payload.email,
+        subject="Votre code de vérification EcoSort",
+        body=f"Bonjour {payload.full_name},\n\n"
+             f"Votre code de vérification est : {otp_code}\n\n"
+             f"Ce code expire dans {EMAIL_VERIFICATION_TOKEN_TTL_HOURS} heure(s).\n\n"
+             f"Merci,\nL'équipe EcoSort",
     )
 
     return {
-        "message": "User registered successfully. Verification token issued.",
-        "access_token": token,
-        "refresh_token": refresh_token,
-        "verification_token": verification_token,
-        "token_type": "bearer",
-        "user": _serialize_user(user),
+        "message": "Inscription réussie. Un code de vérification a été envoyé par email.",
+        "email": payload.email,
     }
 
 
@@ -1127,23 +1136,52 @@ def request_email_verification(
     user_agent: str | None = Header(default=None, alias="User-Agent"),
 ):
     user = db.scalar(select(User).where(User.email == payload.email))
-    if user is None:
-        return {"message": "If your email is registered, a verification token has been issued."}
-    if user.email_verified:
-        return {"message": "Email is already verified."}
+    if user is not None:
+        if user.email_verified:
+            return {"message": "Email is already verified."}
+        otp_code = _create_otp_code()
+        _create_user_action_token(
+            db,
+            user,
+            EmailVerificationToken,
+            EMAIL_VERIFICATION_TOKEN_TTL_HOURS,
+            user_agent=user_agent,
+            raw_token=otp_code,
+        )
+        _send_email_message(
+            to_address=user.email,
+            subject="Votre code de vérification EcoSort",
+            body=f"Bonjour,\n\n"
+                 f"Votre code de vérification est : {otp_code}\n\n"
+                 f"Ce code expire dans {EMAIL_VERIFICATION_TOKEN_TTL_HOURS} heure(s).\n\n"
+                 f"Merci,\nL'équipe EcoSort",
+        )
+        _write_audit(db, actor=user, action="auth.request_email_verification", resource_type="user", resource_id=user.id)
+        return {"message": "Un code de vérification a été envoyé par email."}
 
-    verification_token = _create_user_action_token(
-        db,
-        user,
-        EmailVerificationToken,
-        EMAIL_VERIFICATION_TOKEN_TTL_HOURS,
-        user_agent=user_agent,
-    )
-    _write_audit(db, actor=user, action="auth.request_email_verification", resource_type="user", resource_id=user.id)
-    return {
-        "message": "Verification token issued.",
-        "verification_token": verification_token,
-    }
+    pending = db.scalar(select(PendingRegistration).where(PendingRegistration.email == payload.email))
+    if pending is not None:
+        if _is_expired(pending.expires_at):
+            _cleanup_pending_registration(db, pending)
+            return {"message": "If your email is registered, a verification code has been sent."}
+
+        otp_code = _create_otp_code()
+        pending.otp_code_hash = _hash_refresh_token(otp_code)
+        pending.expires_at = datetime.now(timezone.utc) + timedelta(hours=EMAIL_VERIFICATION_TOKEN_TTL_HOURS)
+        db.add(pending)
+        db.commit()
+
+        _send_email_message(
+            to_address=pending.email,
+            subject="Votre code de vérification EcoSort",
+            body=f"Bonjour,\n\n"
+                 f"Votre code de vérification est : {otp_code}\n\n"
+                 f"Ce code expire dans {EMAIL_VERIFICATION_TOKEN_TTL_HOURS} heure(s).\n\n"
+                 f"Merci,\nL'équipe EcoSort",
+        )
+        return {"message": "Un code de vérification a été envoyé par email."}
+
+    return {"message": "If your email is registered, a verification code has been sent."}
 
 
 @app.post("/auth/verify-email")
@@ -1151,28 +1189,86 @@ def verify_email(
     payload: VerifyEmailRequest,
     db: Session = Depends(get_db),
 ):
-    token_record = _get_user_action_token_record(db, payload.token, EmailVerificationToken)
-    if token_record is None:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
+    pending = db.scalar(
+        select(PendingRegistration).where(PendingRegistration.email == payload.email)
+    )
+    if pending is not None:
+        if _is_expired(pending.expires_at):
+            _cleanup_pending_registration(db, pending)
+            raise HTTPException(status_code=400, detail="Le code de vérification a expiré. Veuillez vous réinscrire.")
 
-    expires_at = token_record.expires_at
-    if expires_at is None:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
-    if expires_at.tzinfo is None:
-        expires_at = expires_at.replace(tzinfo=timezone.utc)
-    if expires_at < datetime.now(timezone.utc):
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
+        otp_hash = _hash_refresh_token(payload.token)
+        if pending.otp_code_hash != otp_hash:
+            raise HTTPException(status_code=400, detail="Code de vérification invalide.")
 
-    user = db.scalar(select(User).where(User.id == token_record.user_id))
-    if user is None:
-        raise HTTPException(status_code=400, detail="Invalid token")
+        user = User(
+            email=pending.email,
+            full_name=pending.full_name,
+            password_hash=pending.password_hash,
+            role=pending.role,
+            status="pending",
+            email_verified=1,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        _cleanup_pending_registration(db, pending)
 
-    user.email_verified = 1
-    db.add(user)
-    _mark_user_action_token_used(db, token_record)
-    _write_audit(db, actor=user, action="auth.verify_email", resource_type="user", resource_id=user.id)
-    db.commit()
-    return {"message": "Email verified successfully."}
+        _write_audit(
+            db,
+            actor=user,
+            action="auth.register",
+            resource_type="user",
+            resource_id=user.id,
+            details={"role": user.role},
+        )
+        _write_audit(db, actor=user, action="auth.verify_email", resource_type="user", resource_id=user.id)
+
+        for role in ("admin", "manager"):
+            _create_notification(
+                db,
+                title="Nouvel inscrit",
+                message=f"Un nouvel utilisateur s'est inscrit : {user.email}.",
+                recipient_role=role,
+                related_type="user",
+                related_id=str(user.id),
+            )
+
+        db.commit()
+    else:
+        user = db.scalar(select(User).where(User.email == payload.email))
+        if user is None:
+            raise HTTPException(status_code=400, detail="Email non trouvé.")
+        if user.email_verified:
+            token = create_access_token({"sub": user.id, "email": user.email})
+            refresh_token = _create_refresh_token(db, user)
+            return {
+                "message": "Email already verified.",
+                "access_token": token,
+                "refresh_token": refresh_token,
+                "token_type": "bearer",
+                "user": _serialize_user(user),
+            }
+        token_record = _get_user_action_token_record(db, payload.token, EmailVerificationToken)
+        if token_record is None or token_record.user_id != user.id:
+            raise HTTPException(status_code=400, detail="Code de vérification invalide.")
+        if _is_expired(token_record.expires_at):
+            raise HTTPException(status_code=400, detail="Le code de vérification a expiré.")
+        user.email_verified = 1
+        db.add(user)
+        _mark_user_action_token_used(db, token_record)
+        _write_audit(db, actor=user, action="auth.verify_email", resource_type="user", resource_id=user.id)
+        db.commit()
+
+    token = create_access_token({"sub": user.id, "email": user.email})
+    refresh_token = _create_refresh_token(db, user)
+    return {
+        "message": "Email verified successfully.",
+        "access_token": token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+        "user": _serialize_user(user),
+    }
 
 
 @app.post("/auth/request-password-reset")
@@ -1183,20 +1279,39 @@ def request_password_reset(
 ):
     user = db.scalar(select(User).where(User.email == payload.email))
     if user is None:
-        return {"message": "If your email is registered, a password reset token has been issued."}
+        return {"message": "If your email is registered, a password reset code has been sent."}
 
-    reset_token = _create_user_action_token(
+    otp_code = _create_otp_code()
+    _create_user_action_token(
         db,
         user,
         PasswordResetToken,
         PASSWORD_RESET_TOKEN_TTL_HOURS,
         user_agent=user_agent,
+        raw_token=otp_code,
+    )
+    _send_email_message(
+        to_address=user.email,
+        subject="Votre code de réinitialisation EcoSort",
+        body=f"Bonjour,\n\n"
+             f"Votre code de réinitialisation de mot de passe est : {otp_code}\n\n"
+             f"Ce code expire dans {PASSWORD_RESET_TOKEN_TTL_HOURS} heure(s).\n\n"
+             f"Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.\n\n"
+             f"Merci,\nL'équipe EcoSort",
     )
     _write_audit(db, actor=user, action="auth.request_password_reset", resource_type="user", resource_id=user.id)
-    return {
-        "message": "Password reset token issued.",
-        "reset_token": reset_token,
-    }
+    return {"message": "Un code de réinitialisation a été envoyé par email."}
+
+
+@app.post("/auth/verify-reset-otp")
+def verify_reset_otp(
+    payload: VerifyResetOtpRequest,
+    db: Session = Depends(get_db),
+):
+    token_record = _get_user_action_token_record(db, payload.token, PasswordResetToken)
+    if token_record is None or _is_expired(token_record.expires_at):
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+    return {"message": "OTP verified successfully."}
 
 
 @app.post("/auth/reset-password")
@@ -1237,7 +1352,7 @@ def login_user(
         if locked_until > now:
             raise HTTPException(status_code=423, detail="Account temporarily locked")
 
-    if user is None or not verify_password(payload.password, user.password_hash):
+    if user is None or not user.password_hash or not verify_password(payload.password, user.password_hash):
         if user is not None:
             user.failed_login_count += 1
             if user.failed_login_count >= LOCKOUT_THRESHOLD:
@@ -1289,6 +1404,17 @@ def login_user(
     user.locked_until = None
     db.add(user)
     _write_audit(db, actor=user, action="auth.login", resource_type="user", resource_id=user.id)
+
+    for role in ("admin", "manager"):
+        _create_notification(
+            db,
+            title="Connexion utilisateur",
+            message=f"L'utilisateur {user.email} s'est connecté.",
+            recipient_role=role,
+            related_type="user",
+            related_id=str(user.id),
+        )
+
     db.commit()
     token = create_access_token({"sub": user.id, "email": user.email})
     refresh_token = _create_refresh_token(db, user, user_agent=user_agent)
@@ -1336,6 +1462,17 @@ def google_login(
                 resource_id=user.id,
                 details={"email": user.email},
             )
+
+            for role in ("admin", "manager"):
+                _create_notification(
+                    db,
+                    title="Nouvel inscrit (Google)",
+                    message=f"Un nouvel utilisateur s'est inscrit via Google : {user.email}.",
+                    recipient_role=role,
+                    related_type="user",
+                    related_id=str(user.id),
+                )
+
             db.commit()
         else:
             user.google_id = google_payload["sub"]
@@ -1343,6 +1480,17 @@ def google_login(
             db.add(user)
             db.commit()
             db.refresh(user)
+
+            for role in ("admin", "manager"):
+                _create_notification(
+                    db,
+                    title="Connexion Google",
+                    message=f"L'utilisateur {user.email} s'est connecté via Google.",
+                    recipient_role=role,
+                    related_type="user",
+                    related_id=str(user.id),
+                )
+            db.commit()
 
     if user.status != "active":
         raise HTTPException(status_code=403, detail="User account is not active")
@@ -1501,22 +1649,34 @@ def _run_prediction(
     uploaded_image: UploadedImage | None = None,
 ):
     classifier, active_profile = _get_vision_classifier(db)
-    raw_vision_result = classifier.predict(stored_path, top_k=top_k)
+
+    from concurrent.futures import ThreadPoolExecutor
+
+    def _run_vision():
+        return classifier.predict(stored_path, top_k=top_k)
+
+    def _run_ocr():
+        if disable_ocr:
+            return {
+                "raw_text": "",
+                "clean_text": "",
+                "predicted_class": None,
+                "confidence": 0.0,
+                "scores": {},
+                "matched_keywords": {},
+                "has_text_signal": False,
+            }
+        return ocr_analyzer.analyze(stored_path)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        vision_future = pool.submit(_run_vision)
+        ocr_future = pool.submit(_run_ocr)
+        raw_vision_result = vision_future.result()
+        ocr_result = ocr_future.result()
+
     vision_result = raw_vision_result if debug else {
         key: value for key, value in raw_vision_result.items() if key != "preprocessing"
     }
-    if disable_ocr:
-        ocr_result = {
-            "raw_text": "",
-            "clean_text": "",
-            "predicted_class": None,
-            "confidence": 0.0,
-            "scores": {},
-            "matched_keywords": {},
-            "has_text_signal": False,
-        }
-    else:
-        ocr_result = ocr_analyzer.analyze(stored_path)
 
     decision = fuse_predictions(vision_result, ocr_result, policy=active_profile["policy"])
 
@@ -1606,6 +1766,8 @@ def predict_image(
             "stored_image_path": str(stored_path),
             "image_url": f"/uploads/{stored_path.name}",
             "model_profile": active_profile["name"],
+            "review_status": prediction.review_status,
+            "created_at": prediction.created_at.isoformat(),
             "vision": vision_result,
             "ocr": ocr_result,
             "decision": decision,
@@ -1637,7 +1799,7 @@ def analyze_alias(
 
 @app.get("/predictions")
 def list_predictions(
-    limit: int = Query(20, ge=1, le=200),
+    limit: int = Query(50, ge=1, le=200),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -2094,6 +2256,13 @@ def admin_delete_user(
         db.delete(reset_token)
     for verification in db.scalars(select(EmailVerificationToken).where(EmailVerificationToken.user_id == user_id)).all():
         db.delete(verification)
+    for device_token in db.scalars(select(DeviceToken).where(DeviceToken.user_id == user_id)).all():
+        db.delete(device_token)
+    for mfa_token in db.scalars(select(MfaToken).where(MfaToken.user_id == user_id)).all():
+        db.delete(mfa_token)
+    for audit_log in db.scalars(select(AuditLog).where(AuditLog.actor_user_id == user_id)).all():
+        audit_log.actor_user_id = None
+        db.add(audit_log)
 
     _write_audit(
         db,
@@ -2164,7 +2333,7 @@ def admin_update_user(
 @app.get("/admin/predictions")
 def admin_list_predictions(
     review_status: str | None = Query(default=None),
-    limit: int = Query(50, ge=1, le=200),
+    limit: int = Query(100, ge=1, le=500),
     current_user: User = Depends(get_current_privileged_user),
     db: Session = Depends(get_db),
 ):
@@ -2233,6 +2402,48 @@ def admin_validate_prediction(
     return _serialize_admin_prediction(prediction)
 
 
+@app.delete("/admin/predictions/{prediction_id}")
+def admin_delete_prediction(
+    prediction_id: int,
+    current_user: User = Depends(get_current_privileged_user),
+    db: Session = Depends(get_db),
+):
+    prediction = db.scalar(select(Prediction).where(Prediction.id == prediction_id))
+    if prediction is None:
+        raise HTTPException(status_code=404, detail="Prediction not found")
+
+    if prediction.user_id is not None:
+        user = db.scalar(select(User).where(User.id == prediction.user_id))
+        if user is not None:
+            _create_notification(
+                db,
+                title="Votre analyse a ete supprimee",
+                message="Votre analyse a ete supprimee par un administrateur.",
+                recipient_user_id=user.id,
+                related_type="prediction",
+                related_id=str(prediction.id),
+            )
+
+    _write_audit(
+        db,
+        actor=current_user,
+        action="admin.prediction_deleted",
+        resource_type="prediction",
+        resource_id=prediction.id,
+        details={
+            "predicted_class": prediction.predicted_class,
+            "review_status": prediction.review_status,
+        },
+    )
+
+    image = db.scalar(select(UploadedImage).where(UploadedImage.id == prediction.image_id))
+    db.delete(prediction)
+    if image is not None:
+        db.delete(image)
+    db.commit()
+    return {"message": "Prediction deleted successfully", "prediction_id": prediction_id}
+
+
 @app.get("/admin/feedback")
 def admin_list_feedback(
     limit: int = Query(50, ge=1, le=200),
@@ -2241,6 +2452,36 @@ def admin_list_feedback(
 ):
     items = db.scalars(select(Feedback).order_by(Feedback.id.desc()).limit(limit)).all()
     return {"count": len(items), "items": [_serialize_feedback(item) for item in items]}
+
+
+@app.post("/admin/feedback/{feedback_id}/reply")
+def admin_reply_feedback(
+    feedback_id: int,
+    payload: ReplyRequest,
+    current_user: User = Depends(get_current_privileged_user),
+    db: Session = Depends(get_db),
+):
+    feedback = db.scalar(select(Feedback).where(Feedback.id == feedback_id))
+    if feedback is None:
+        raise HTTPException(status_code=404, detail="Feedback not found")
+
+    feedback.admin_reply = payload.reply
+    feedback.admin_replied_at = datetime.now(timezone.utc)
+    feedback.replied_by_user_id = current_user.id
+    db.add(feedback)
+
+    if feedback.user_id:
+        _create_notification(
+            db,
+            title="Réponse à votre feedback",
+            message=f"Un administrateur a répondu à votre feedback sur l'analyse #{feedback.prediction_id}.",
+            recipient_user_id=feedback.user_id,
+            related_type="feedback",
+            related_id=str(feedback.id),
+        )
+    db.commit()
+    db.refresh(feedback)
+    return _serialize_feedback(feedback)
 
 
 @app.get("/admin/audit-logs")
@@ -2449,17 +2690,18 @@ def create_feedback(
     )
     db.add(feedback)
     db.commit()
-    _create_notification(
-        db,
-        title="Nouveau feedback utilisateur",
-        message=(
-            "Un utilisateur a soumis un feedback pour une analyse. "
-            f"Prediction #{feedback.prediction_id}, note: {feedback.rating}."
-        ),
-        recipient_role="admin",
-        related_type="feedback",
-        related_id=str(feedback.id),
-    )
+    for role in ("admin", "manager"):
+        _create_notification(
+            db,
+            title="Nouveau feedback utilisateur",
+            message=(
+                "Un utilisateur a soumis un feedback pour une analyse. "
+                f"Prediction #{feedback.prediction_id}, note: {feedback.rating}."
+            ),
+            recipient_role=role,
+            related_type="feedback",
+            related_id=str(feedback.id),
+        )
     db.commit()
     db.refresh(feedback)
     return {

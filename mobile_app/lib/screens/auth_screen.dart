@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../services/google_auth_redirect.dart';
 import '../services/google_sign_in_button.dart';
 
 import '../models/auth_response.dart';
@@ -13,20 +14,21 @@ import '../services/push_service.dart';
 import '../services/user_service.dart';
 import '../l10n.dart';
 import '../widgets/app_logo.dart';
-import 'password_reset_screen.dart';
-import 'verify_email_screen.dart';
+import '../app_routes.dart';
 
 enum AuthMode { register, login }
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({
     super.key,
-    required this.redirectTo,
+    this.redirectToRoute = AppRoutes.home,
     this.initialMode = AuthMode.register,
+    this.googleIdToken,
   });
 
-  final Widget redirectTo;
+  final String redirectToRoute;
   final AuthMode initialMode;
+  final String? googleIdToken;
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -40,10 +42,8 @@ class _AuthScreenState extends State<AuthScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _mfaCodeController = TextEditingController();
-  late final GoogleSignIn _googleSignIn;
+  GoogleSignIn? _googleSignIn;
   String _webGoogleClientId = '';
-  StreamSubscription<GoogleSignInAccount?>? _googleSignInSubscription;
-  bool _googleSignInProcessing = false;
 
   String? _mfaToken;
   String? _mfaMethod;
@@ -63,90 +63,73 @@ class _AuthScreenState extends State<AuthScreen> {
     _mode = widget.initialMode;
     _webGoogleClientId = kIsWeb ? getGoogleWebClientId() : '';
     _googleSignIn = GoogleSignIn(
-      scopes: ['email'],
-      clientId: _webGoogleClientId.isNotEmpty ? _webGoogleClientId : null,
+      scopes: ['email', 'profile'],
+      clientId: kIsWeb && _webGoogleClientId.isNotEmpty ? _webGoogleClientId : null,
     );
-    _googleSignInSubscription = _googleSignIn.onCurrentUserChanged.listen(
-      (GoogleSignInAccount? account) {
-        if (account != null) {
-          _handleGoogleSignInAccount(account);
+    if (kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final token = widget.googleIdToken ?? extractGoogleIdTokenFromUrl();
+        if (token != null) {
+          _processGoogleIdToken(token);
         }
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _googleSignInSubscription?.cancel();
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _mfaCodeController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleGoogleSignInAccount(
-      GoogleSignInAccount googleUser) async {
-    if (_googleSignInProcessing) {
-      return;
+      });
     }
-    _googleSignInProcessing = true;
+  }
+
+  Future<void> _processGoogleIdToken(String idToken) async {
+    print('[AUTH_DEBUG] _processGoogleIdToken called, token length: ${idToken.length}');
     setState(() {
       _submitting = true;
       _error = null;
-      _pendingGoogleIdToken = null;
-      _pendingGoogleDisplayName = null;
     });
 
     try {
-      final googleAuth = await googleUser.authentication;
-      final idToken = googleAuth.idToken;
-      if (idToken == null || idToken.isEmpty) {
-        throw const ApiException(
-          message: 'Impossible de récupérer le jeton Google.',
-          statusCode: 400,
-        );
-      }
-
-      final result = await _authService.googleLogin(
-        idToken: idToken,
-        displayName: googleUser.displayName,
-      );
+      print('[AUTH_DEBUG] Calling googleLogin...');
+      final result = await _authService.googleLogin(idToken: idToken);
+      print('[AUTH_DEBUG] googleLogin success, mfaRequired: ${result.mfaRequired}');
 
       if (!mounted) {
+        print('[AUTH_DEBUG] Widget not mounted, aborting');
         return;
       }
 
       if (result.mfaRequired) {
         _pendingGoogleIdToken = idToken;
-        _pendingGoogleDisplayName = googleUser.displayName;
         await _handleMfaChallenge(result, isGoogle: true);
         return;
       }
 
+      print('[AUTH_DEBUG] Navigating to next screen...');
       await _goToNextScreen(result.authResponse!.user);
+      print('[AUTH_DEBUG] Navigation complete');
     } on ApiException catch (error) {
-      if (!mounted) {
-        return;
-      }
+      print('[AUTH_DEBUG] ApiException: ${error.statusCode} - ${error.message}');
+      if (!mounted) return;
       setState(() {
         _error = error.message;
       });
     } catch (error) {
-      if (!mounted) {
-        return;
-      }
+      print('[AUTH_DEBUG] Unknown error: $error');
+      if (!mounted) return;
       setState(() {
         _error = _getAuthErrorMessage(error);
       });
     } finally {
-      _googleSignInProcessing = false;
       if (mounted) {
         setState(() {
           _submitting = false;
         });
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _mfaCodeController.dispose();
+    super.dispose();
   }
 
   Future<void> _submit() async {
@@ -163,7 +146,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
     try {
       if (_registerMode) {
-        final response = await _authService.register(
+        await _authService.register(
           email: _emailController.text.trim(),
           fullName: _nameController.text.trim(),
           password: _passwordController.text,
@@ -173,22 +156,9 @@ class _AuthScreenState extends State<AuthScreen> {
           return;
         }
 
-        final messenger = ScaffoldMessenger.of(context);
-        await _authService.logout();
-        setState(() {
-          _mode = AuthMode.login;
-          _error = null;
-        });
-
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text(
-              response.verificationToken != null &&
-                      response.verificationToken!.isNotEmpty
-                  ? 'Compte créé. Votre token de vérification est : ${response.verificationToken}'
-                  : 'Compte créé avec succès. Connectez-vous maintenant.',
-            ),
-          ),
+        Navigator.of(context).pushNamed(
+          AppRoutes.verifyEmail,
+          arguments: {'email': _emailController.text.trim()},
         );
         return;
       }
@@ -245,14 +215,14 @@ class _AuthScreenState extends State<AuthScreen> {
     }
 
     final messenger = ScaffoldMessenger.of(context);
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => widget.redirectTo),
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      widget.redirectToRoute,
       (route) => false,
     );
 
     messenger.showSnackBar(
       SnackBar(
-        content: Text('Bienvenue ${user.fullName}.'),
+        content: Text(AppLocalizations.of(context).t('auth.welcome_snackbar').replaceAll('{name}', user.fullName)),
       ),
     );
   }
@@ -263,7 +233,9 @@ class _AuthScreenState extends State<AuthScreen> {
         message.contains('given origin is not allowed') ||
         message.contains('origin is not authorized') ||
         message.contains('google sign-in') ||
-        message.contains('google.accounts.id')) {
+        message.contains('google.accounts.id') ||
+        message.contains('cors') ||
+        message.contains('blocked')) {
       return AppLocalizations.of(context).t('auth.google_origin_error');
     }
     if (message.contains('socketexception') ||
@@ -273,7 +245,13 @@ class _AuthScreenState extends State<AuthScreen> {
         message.contains('network is unreachable') ||
         message.contains('timed out') ||
         message.contains('timeout') ||
-        message.contains('network')) {
+        message.contains('network') ||
+        message.contains('xmlhttprequest') ||
+        message.contains('failed to fetch') ||
+        message.contains('impossible de joindre')) {
+      return AppLocalizations.of(context).t('auth.network_error');
+    }
+    if (message.contains('apiconnection(0)')) {
       return AppLocalizations.of(context).t('auth.network_error');
     }
     return AppLocalizations.of(context).t('auth.connection_error');
@@ -304,8 +282,8 @@ class _AuthScreenState extends State<AuthScreen> {
               TextField(
                 controller: _mfaCodeController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Code MFA',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context).t('auth.mfa_code_label'),
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -363,7 +341,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
       if (challengeResult.mfaRequired) {
         setState(() {
-          _error = 'Le code MFA est invalide ou a expiré.';
+          _error = AppLocalizations.of(context).t('auth.mfa_invalid_code');
         });
         return;
       }
@@ -404,13 +382,23 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         _submitting = false;
         _error =
-            'Google web client ID est manquant. Vérifiez mobile_app/web/index.html et .env.';
+            AppLocalizations.of(context).t('auth.google_missing_client_id');
       });
       return;
     }
 
+    if (kIsWeb) {
+      redirectToGoogleOAuth(scopes: ['email', 'profile']);
+      return;
+    }
+
     try {
-      final googleUser = await _googleSignIn.signIn();
+      try {
+        await _googleSignIn!.disconnect();
+      } catch (_) {
+        // Best-effort cleanup; ignore errors.
+      }
+      final googleUser = await _googleSignIn!.signIn();
       if (googleUser == null) {
         return;
       }
@@ -418,8 +406,8 @@ class _AuthScreenState extends State<AuthScreen> {
       final googleAuth = await googleUser.authentication;
       final idToken = googleAuth.idToken;
       if (idToken == null || idToken.isEmpty) {
-        throw const ApiException(
-          message: 'Impossible de récupérer le jeton Google.',
+        throw ApiException(
+          message: AppLocalizations.of(context).t('auth.google_token_failed'),
           statusCode: 400,
         );
       }
@@ -452,6 +440,7 @@ class _AuthScreenState extends State<AuthScreen> {
       if (!mounted) {
         return;
       }
+      debugPrint('[Auth] Google sign-in error: $error');
       setState(() {
         _error = _getAuthErrorMessage(error);
       });
@@ -470,64 +459,54 @@ class _AuthScreenState extends State<AuthScreen> {
       backgroundColor: const Color(0xFFF5F9F0),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(32, 18, 32, 32),
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).maybePop(),
-                    icon: const Icon(
-                      Icons.arrow_back_rounded,
-                      color: Color(0xFF0A8A52),
-                      size: 34,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'EcoSort',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF0A8A52),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 36),
+              const SizedBox(height: 16),
               const Center(
                 child: AppLogo(
-                  size: 112,
+                  size: 80,
                   color: Color(0xFF2CCB6A),
                 ),
               ),
-              const SizedBox(height: 38),
+              const SizedBox(height: 8),
               Center(
                 child: Text(
-                  _registerMode ? 'Créer un compte' : 'Se connecter',
+                  AppLocalizations.of(context).t('app.name'),
                   style: const TextStyle(
-                    fontSize: 34,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF0A8A52),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Center(
+                child: Text(
+                  _registerMode ? AppLocalizations.of(context).t('auth.create_account') : AppLocalizations.of(context).t('auth.login'),
+                  style: const TextStyle(
+                    fontSize: 28,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFF131B17),
                   ),
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 8),
               Center(
                 child: Text(
                   _registerMode
-                      ? "Rejoignez l'aventure écologique et\ntransformez votre gestion des déchets en\naction positive."
-                      : "Retrouvez votre historique, vos analyses\net votre profil en quelques secondes.",
+                      ? AppLocalizations.of(context).t('auth.register_subtitle')
+                      : AppLocalizations.of(context).t('auth.login_subtitle'),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     height: 1.45,
                     color: Color(0xFF49574E),
                   ),
                 ),
               ),
-              const SizedBox(height: 38),
+              const SizedBox(height: 16),
               Form(
                 key: _formKey,
                 child: Column(
@@ -536,7 +515,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     if (_registerMode) ...[
                       _AuthFieldLabel(AppLocalizations.of(context)
                           .t('auth.full_name_label')),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 8),
                       _AuthTextField(
                         controller: _nameController,
                         hintText: AppLocalizations.of(context)
@@ -544,16 +523,16 @@ class _AuthScreenState extends State<AuthScreen> {
                         prefixIcon: Icons.person_outline_rounded,
                         validator: (value) {
                           if (value == null || value.trim().length < 2) {
-                            return 'Veuillez entrer votre nom complet.';
+                            return AppLocalizations.of(context).t('auth.validation.enter_name');
                           }
                           return null;
                         },
                       ),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 16),
                     ],
                     _AuthFieldLabel(
                         AppLocalizations.of(context).t('auth.email_label')),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 8),
                     _AuthTextField(
                       controller: _emailController,
                       hintText:
@@ -572,10 +551,10 @@ class _AuthScreenState extends State<AuthScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 16),
                     _AuthFieldLabel(
                         AppLocalizations.of(context).t('auth.password_label')),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 8),
                     _AuthTextField(
                       controller: _passwordController,
                       hintText:
@@ -604,7 +583,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       },
                     ),
                     if (_error != null) ...[
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 12),
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(14),
@@ -621,10 +600,10 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                       ),
                     ],
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
-                      height: 68,
+                      height: 52,
                       child: ElevatedButton(
                         onPressed: _submitting ? null : _submit,
                         style: ElevatedButton.styleFrom(
@@ -649,65 +628,58 @@ class _AuthScreenState extends State<AuthScreen> {
                                 ),
                               )
                             : Text(
-                                _registerMode ? "S'inscrire" : 'Se connecter'),
+                                _registerMode ? AppLocalizations.of(context).t('auth.register') : AppLocalizations.of(context).t('auth.login')),
                       ),
                     ),
                     if (!_registerMode) ...[
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 10),
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
                           onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const PasswordResetScreen(),
-                              ),
-                            );
+                            Navigator.of(context).pushNamed(
+                              AppRoutes.passwordReset,
+                            ).then((result) {
+                              if (!mounted) return;
+                              if (result is Map && result['email'] is String) {
+                                _emailController.text = result['email'] as String;
+                                setState(() {
+                                  _mode = AuthMode.login;
+                                  _error = null;
+                                });
+                              }
+                            });
                           },
-                          child: const Text('Mot de passe oublié ?'),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const VerifyEmailScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text('Vérifier mon email'),
+                          child: Text(AppLocalizations.of(context).t('auth.forgot_password')),
                         ),
                       ),
                     ],
-                    const SizedBox(height: 34),
-                    const Row(
+                    const SizedBox(height: 16),
+                    Row(
                       children: [
-                        Expanded(child: Divider(color: Color(0xFFBFCABF))),
+                        const Expanded(child: Divider(color: Color(0xFFBFCABF))),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 18),
+                          padding: const EdgeInsets.symmetric(horizontal: 18),
                           child: Text(
-                            'ou',
-                            style: TextStyle(
+                            AppLocalizations.of(context).t('auth.or_divider'),
+                            style: const TextStyle(
                               fontSize: 16,
                               color: Color(0xFF2C312D),
                             ),
                           ),
                         ),
-                        Expanded(child: Divider(color: Color(0xFFBFCABF))),
+                        const Expanded(child: Divider(color: Color(0xFFBFCABF))),
                       ],
                     ),
-                    const SizedBox(height: 34),
+                    const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
-                      height: 74,
+                      height: 52,
                       child: buildGoogleSignInButton(
                         _submitting ? () {} : _signInWithGoogle,
                       ),
                     ),
-                    const SizedBox(height: 34),
+                    const SizedBox(height: 16),
                     Center(
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
@@ -823,7 +795,7 @@ class _AuthTextField extends StatelessWidget {
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 18,
-          vertical: 22,
+          vertical: 16,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),

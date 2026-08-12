@@ -27,7 +27,7 @@ class AuthService {
     }
   }
 
-  Future<AuthResponse> register({
+  Future<Map<String, dynamic>> register({
     required String email,
     required String fullName,
     required String password,
@@ -40,9 +40,7 @@ class AuthService {
         'password': password,
       },
     );
-    final response = AuthResponse.fromJson(payload);
-    await _saveTokens(response);
-    return response;
+    return payload;
   }
 
   Future<AuthResult> login({
@@ -107,27 +105,46 @@ class AuthService {
     }
   }
 
-  Future<String> requestEmailVerification({required String email}) async {
-    final payload = await _client.postJson(
+  Future<void> requestEmailVerification({required String email}) async {
+    await _client.postJson(
       '/auth/request-email-verification',
       body: {'email': email},
     );
-    return payload['verification_token'] as String? ?? '';
   }
 
-  Future<void> verifyEmail({required String token}) async {
-    await _client.postJson(
-      '/auth/verify-email',
-      body: {'token': token},
-    );
-  }
-
-  Future<String> requestPasswordReset({required String email}) async {
+  Future<AuthResponse> verifyEmail({required String email, required String token}) async {
     final payload = await _client.postJson(
+      '/auth/verify-email',
+      body: {'email': email, 'token': token},
+    );
+    final userJson = payload['user'];
+    final accessToken = payload['access_token'];
+    if (userJson is! Map<String, dynamic> ||
+        accessToken == null ||
+        accessToken.toString().isEmpty) {
+      throw ApiException(
+        message: payload['message'] as String? ??
+            'La vérification du code a échoué.',
+        statusCode: 200,
+      );
+    }
+    final response = AuthResponse.fromJson(payload);
+    await _saveTokens(response);
+    return response;
+  }
+
+  Future<void> requestPasswordReset({required String email}) async {
+    await _client.postJson(
       '/auth/request-password-reset',
       body: {'email': email},
     );
-    return payload['reset_token'] as String? ?? '';
+  }
+
+  Future<void> verifyResetOtp({required String token}) async {
+    await _client.postJson(
+      '/auth/verify-reset-otp',
+      body: {'token': token},
+    );
   }
 
   Future<void> resetPassword(

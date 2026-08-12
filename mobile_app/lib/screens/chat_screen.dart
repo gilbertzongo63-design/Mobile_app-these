@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n.dart';
 import '../services/chat_service.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -52,7 +53,7 @@ class _ChatScreenState extends State<ChatScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Erreur : ${e.toString().replaceFirst('ApiException', '')}'),
+          content: Text(AppLocalizations.of(context).t('chat.error').replaceAll('{error}', e.toString().replaceFirst('ApiException', ''))),
         ),
       );
     }
@@ -73,9 +74,9 @@ class _ChatScreenState extends State<ChatScreen> {
           icon: const Icon(Icons.arrow_back_rounded, color: darkGreen),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Chat EcoSort',
-          style: TextStyle(color: darkGreen, fontWeight: FontWeight.w700),
+        title: Text(
+          AppLocalizations.of(context).t('chat.title'),
+          style: const TextStyle(color: darkGreen, fontWeight: FontWeight.w700),
         ),
         centerTitle: true,
       ),
@@ -91,7 +92,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(32),
                       child: Text(
-                        'Posez votre question, un conseiller vous répondra sous 24h.',
+                        AppLocalizations.of(context).t('chat.empty_state'),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 16,
@@ -134,7 +135,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       controller: _textController,
                       textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
-                        hintText: 'Votre message...',
+                        hintText: AppLocalizations.of(context).t('chat.hint'),
                         filled: true,
                         fillColor: const Color(0xFFF0F4EF),
                         border: OutlineInputBorder(

@@ -1,0 +1,44 @@
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Runtime data
+backend_data/
+build/
+
+# Node
+node_modules/
+dist/
+.npm-cache/
+
+# Web admin lives in its own repository
+Web_App-These/
+
+# Mobile build / screenshots
+mobile_app/screenshots/
+mobile_app/test/screenshots/
+mobile_app/build/
+
+# Temp / artifacts
+temp_frontend.py
+screen.png
+test_image.jpg
+capture_screenshots.ps1
+history_export_*.csv
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log

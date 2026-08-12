@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n.dart';
+
 class AppBottomNavBar extends StatelessWidget {
   const AppBottomNavBar({
     super.key,
@@ -12,11 +14,11 @@ class AppBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const items = [
-      ('Home', Icons.home_rounded),
-      ('Scan', Icons.document_scanner_outlined),
-      ('History', Icons.history_toggle_off_rounded),
-      ('Settings', Icons.settings_rounded),
+    final items = [
+      (AppLocalizations.of(context).t('nav.home'), Icons.home_rounded),
+      (AppLocalizations.of(context).t('nav.scan'), Icons.document_scanner_outlined),
+      (AppLocalizations.of(context).t('nav.history'), Icons.history_toggle_off_rounded),
+      (AppLocalizations.of(context).t('nav.settings'), Icons.settings_rounded),
     ];
 
     return Container(

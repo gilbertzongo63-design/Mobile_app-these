@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'screens/auth_gate_screen.dart';
-import 'l10n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'app_routes.dart';
+import 'l10n.dart';
 
 class WasteSortingMobileApp extends StatefulWidget {
   const WasteSortingMobileApp({super.key});
@@ -48,6 +48,7 @@ class WasteSortingMobileAppState extends State<WasteSortingMobileApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      key: ValueKey(_locale?.languageCode ?? 'default'),
       debugShowCheckedModeBanner: false,
       title: 'EcoRecycle',
       locale: _locale,
@@ -58,6 +59,8 @@ class WasteSortingMobileAppState extends State<WasteSortingMobileApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [Locale('fr'), Locale('en')],
+      initialRoute: AppRoutes.authGate,
+      onGenerateRoute: AppRoutes.generateRoute,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF0D6B4D),
@@ -67,7 +70,6 @@ class WasteSortingMobileAppState extends State<WasteSortingMobileApp> {
         scaffoldBackgroundColor: const Color(0xFFF5F1E8),
         useMaterial3: true,
       ),
-      home: const AuthGateScreen(),
     );
   }
 }

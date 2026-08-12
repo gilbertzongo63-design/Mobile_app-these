@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../services/api_client.dart';
+import '../services/google_auth_redirect.dart';
 import '../services/push_service.dart';
 import '../l10n.dart';
 import '../services/token_store.dart';
 import '../services/user_service.dart';
 import '../widgets/app_logo.dart';
-import 'auth_screen.dart';
-import 'home_screen.dart';
-import 'scan_screen.dart';
+import '../app_routes.dart';
 
 class AuthGateScreen extends StatefulWidget {
   const AuthGateScreen({super.key});
@@ -33,6 +32,15 @@ class _AuthGateScreenState extends State<AuthGateScreen> {
   }
 
   Future<void> _resolveEntry() async {
+    print('[GATE_DEBUG] _resolveEntry starting...');
+    final googleIdToken = extractGoogleIdTokenFromUrl();
+    print('[GATE_DEBUG] googleIdToken extracted: ${googleIdToken != null}');
+
+    if (googleIdToken != null) {
+      _goToAuth(googleIdToken: googleIdToken);
+      return;
+    }
+
     await UserService.restoreCurrentUser();
     try {
       final token = await _tokenStore.readToken();
@@ -107,31 +115,24 @@ class _AuthGateScreenState extends State<AuthGateScreen> {
     return _RecoveredImage(path: file.path, name: name);
   }
 
-  void _goToAuth() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => const AuthScreen(
-          redirectTo: HomeScreen(),
-          initialMode: AuthMode.register,
-        ),
-      ),
+  void _goToAuth({String? googleIdToken}) {
+    Navigator.of(context).pushReplacementNamed(
+      AppRoutes.auth,
+      arguments: {'googleIdToken': googleIdToken},
     );
   }
 
   void _goToHome() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
-    );
+    Navigator.of(context).pushReplacementNamed(AppRoutes.home);
   }
 
   void _goToScan(String path, String name) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => ScanScreen(
-          initialImagePath: path,
-          initialImageName: name,
-        ),
-      ),
+    Navigator.of(context).pushReplacementNamed(
+      AppRoutes.scan,
+      arguments: <String, dynamic>{
+        'imagePath': path,
+        'imageName': name,
+      },
     );
   }
 

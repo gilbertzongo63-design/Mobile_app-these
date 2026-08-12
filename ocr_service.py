@@ -1,5 +1,6 @@
 import re
 import unicodedata
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from difflib import SequenceMatcher
 from pathlib import Path
 
@@ -261,31 +262,111 @@ def _enhance_gray(image):
     return gray, clahe, denoised, sharpened
 
 
-def preprocess_variants_for_ocr(image_path: Path):
-    image = _load_image(image_path)
-    variants = []
-    for region_name, region in _candidate_regions(image):
-        _, _, _, sharpened = _enhance_gray(region)
-        blurred = cv2.GaussianBlur(sharpened, (3, 3), 0)
+def _enhance_gray_full(image):
+    gray = cv2.cvtColor(_resize_for_ocr(image), cv2.COLOR_BGR2GRAY)
+    return gray
 
-        _, otsu = cv2.threshold(sharpened, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        adaptive = cv2.adaptiveThreshold(
-            blurred,
-            255,
-            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-            cv2.THRESH_BINARY,
-            35,
-            9,
-        )
 
-        variants.extend(
+def _denoise_full(gray):
+    return cv2.fastNlMeansDenoising(gray, None, 9, 7, 21)
+
+
+def _enhance_gray_region(denoised_full, region_bbox):
+    x1, y1, x2, y2 = region_bbox
+    crop = denoised_full[y1:y2, x1:x2]
+    clahe = cv2.createCLAHE(clipLimit=2.8, tileGridSize=(8, 8)).apply(crop)
+    sharpened = cv2.addWeighted(clahe, 1.75, cv2.GaussianBlur(clahe, (0, 0), 2), -0.75, 0)
+    return sharpened
+
+
+def _candidate_region_bboxes(image):
+    height, width = image.shape[:2]
+    bboxes = [("full", (0, 0, width, height))]
+    if height > 0 and width > 0:
+        bboxes.extend(
             [
-                (f"{region_name}:sharpened", sharpened),
-                (f"{region_name}:otsu", otsu),
-                (f"{region_name}:adaptive_gaussian", adaptive),
-                (f"{region_name}:inverted_adaptive", cv2.bitwise_not(adaptive)),
+                ("full_rot90_cw", None),
+                ("full_rot90_ccw", None),
+                ("full_rot180", None),
             ]
         )
+    crop_specs = [
+        ("center_object", 0.14, 0.12, 0.86, 0.88),
+        ("middle_label", 0.08, 0.24, 0.92, 0.76),
+        ("lower_label", 0.10, 0.45, 0.90, 0.95),
+        ("upper_label", 0.10, 0.05, 0.90, 0.55),
+        ("left_label", 0.00, 0.15, 0.58, 0.90),
+        ("right_label", 0.42, 0.15, 1.00, 0.90),
+    ]
+
+    for name, left, top, right, bottom in crop_specs:
+        x1 = int(width * left)
+        y1 = int(height * top)
+        x2 = int(width * right)
+        y2 = int(height * bottom)
+        bboxes.append((name, (x1, y1, x2, y2)))
+    return bboxes
+
+
+def preprocess_variants_for_ocr(image_path: Path):
+    image = _load_image(image_path)
+    gray_full = _enhance_gray_full(image)
+    denoised_full = _denoise_full(gray_full)
+    h_full, w_full = denoised_full.shape[:2]
+    bboxes = _candidate_region_bboxes(image)
+
+    rotated_cache = {}
+
+    def _process_region(region_name, bbox):
+        if bbox is not None:
+            x1, y1, x2, y2 = bbox
+            if x2 <= w_full and y2 <= h_full and (x1, y1, x2, y2) != (0, 0, w_full, h_full):
+                sharpened = _enhance_gray_region(denoised_full, bbox)
+            else:
+                sharpened = _enhance_gray_region(denoised_full, (0, 0, w_full, h_full))
+        else:
+            if region_name == "full_rot90_cw":
+                key = "rot90_cw"
+            elif region_name == "full_rot90_ccw":
+                key = "rot90_ccw"
+            else:
+                key = "rot180"
+            if key not in rotated_cache:
+                if key == "rot90_cw":
+                    rot = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
+                elif key == "rot90_ccw":
+                    rot = cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
+                else:
+                    rot = cv2.rotate(image, cv2.ROTATE_180)
+                gray_rot = _enhance_gray_full(rot)
+                denoised_rot = _denoise_full(gray_rot)
+                rotated_cache[key] = denoised_rot
+            denoised_rot = rotated_cache[key]
+            sharpened = _enhance_gray_region(denoised_rot, (0, 0, denoised_rot.shape[1], denoised_rot.shape[0]))
+
+        blurred = cv2.GaussianBlur(sharpened, (3, 3), 0)
+        _, otsu = cv2.threshold(sharpened, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        adaptive = cv2.adaptiveThreshold(
+            blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 35, 9,
+        )
+        return [
+            (f"{region_name}:sharpened", sharpened),
+            (f"{region_name}:otsu", otsu),
+            (f"{region_name}:adaptive_gaussian", adaptive),
+            (f"{region_name}:inverted_adaptive", cv2.bitwise_not(adaptive)),
+        ]
+
+    variants = []
+    with ThreadPoolExecutor(max_workers=min(len(bboxes), 8)) as executor:
+        futures = {
+            executor.submit(_process_region, name, bbox): name
+            for name, bbox in bboxes
+        }
+        for future in as_completed(futures):
+            try:
+                variants.extend(future.result())
+            except Exception:
+                pass
 
     return variants
 
@@ -410,38 +491,97 @@ def _attempt_rank(clean_text: str, scores, average_word_confidence: float):
 
 class OCRAnalyzer:
     def analyze(self, image_path: Path):
-        attempts = []
-        for variant_name, processed in preprocess_variants_for_ocr(image_path):
-            for config in TESSERACT_CONFIGS:
-                raw_text, words, average_word_confidence = _safe_tesseract_words(processed, config=config)
-                clean_text = normalize_text(raw_text)
-                scores, matched_keywords = match_keywords(clean_text)
-                label_indicators = match_label_indicators(clean_text)
-                rank = _attempt_rank(clean_text, scores, average_word_confidence)
-                if label_indicators:
-                    rank = (
-                        rank[0],
-                        rank[1],
-                        rank[2] + min(len(label_indicators), 4),
-                        rank[3],
-                    )
-                attempts.append(
-                    {
-                        "raw_text": raw_text.strip(),
-                        "clean_text": clean_text,
-                        "scores": scores,
-                        "matched_keywords": matched_keywords,
-                        "label_indicators": label_indicators,
-                        "preprocess_variant": variant_name,
-                        "tesseract_config": config,
-                        "average_word_confidence": round(average_word_confidence, 4),
-                        "detected_words": words[:24],
-                        "_rank": rank,
-                    }
-                )
-                if rank[0] >= 2 and rank[1] >= 0.55:
-                    break
+        variants = preprocess_variants_for_ocr(image_path)
 
+        def _run_tesseract(args):
+            variant_name, processed, config = args
+            raw_text, words, average_word_confidence = _safe_tesseract_words(processed, config=config)
+            clean_text = normalize_text(raw_text)
+            scores, matched_keywords = match_keywords(clean_text)
+            label_indicators = match_label_indicators(clean_text)
+            rank = _attempt_rank(clean_text, scores, average_word_confidence)
+            if label_indicators:
+                rank = (
+                    rank[0],
+                    rank[1],
+                    rank[2] + min(len(label_indicators), 4),
+                    rank[3],
+                )
+            return {
+                "raw_text": raw_text.strip(),
+                "clean_text": clean_text,
+                "scores": scores,
+                "matched_keywords": matched_keywords,
+                "label_indicators": label_indicators,
+                "preprocess_variant": variant_name,
+                "tesseract_config": config,
+                "average_word_confidence": round(average_word_confidence, 4),
+                "detected_words": words[:24],
+                "_rank": rank,
+            }
+
+        PRIMARY_CONFIGS = [
+            "--oem 3 --psm 6 -c preserve_interword_spaces=1",
+            "--oem 3 --psm 11 -c preserve_interword_spaces=1",
+        ]
+
+        primary_variants = [
+            (vn, p) for vn, p in variants
+            if any(vn.startswith(pfx) for pfx in ("full:", "center_object:", "middle_label:"))
+        ]
+
+        phase1_tasks = [
+            (vn, p, cfg)
+            for vn, p in primary_variants
+            for cfg in PRIMARY_CONFIGS
+        ]
+
+        attempts = []
+        with ThreadPoolExecutor(max_workers=min(len(phase1_tasks) or 1, 8)) as pool:
+            futures = {pool.submit(_run_tesseract, t): t for t in phase1_tasks}
+            for f in as_completed(futures):
+                try:
+                    attempts.append(f.result())
+                except Exception:
+                    pass
+
+        if attempts:
+            best_phase1 = max(attempts, key=lambda a: a["_rank"])
+            if best_phase1["_rank"][0] >= 2 and best_phase1["_rank"][1] >= 0.55:
+                return self._build_result(attempts)
+
+        phase1_has_any_signal = any(
+            a["scores"] or a["label_indicators"] for a in attempts
+        )
+
+        if not phase1_has_any_signal:
+            return self._build_result(attempts)
+
+        phase2_tasks = [
+            (vn, p, cfg)
+            for vn, p in variants
+            for cfg in TESSERACT_CONFIGS
+            if not any(
+                t[0] == vn and t[2] == cfg
+                for t in phase1_tasks
+            )
+        ]
+
+        if phase2_tasks:
+            with ThreadPoolExecutor(max_workers=min(len(phase2_tasks), 8)) as pool:
+                futures = {pool.submit(_run_tesseract, t): t for t in phase2_tasks}
+                for f in as_completed(futures):
+                    try:
+                        attempts.append(f.result())
+                    except Exception:
+                        pass
+
+        if not attempts:
+            return self._empty_result()
+
+        return self._build_result(attempts)
+
+    def _build_result(self, attempts):
         best = max(attempts, key=lambda attempt: attempt["_rank"])
         scores = best["scores"]
         matched_keywords = best["matched_keywords"]
@@ -458,7 +598,7 @@ class OCRAnalyzer:
             predicted_class = None
             confidence = round(min(0.35, best["average_word_confidence"] * 0.35), 4)
 
-        top_attempts = sorted(attempts, key=lambda attempt: attempt["_rank"], reverse=True)[:5]
+        top_attempts = sorted(attempts, key=lambda a: a["_rank"], reverse=True)[:5]
 
         return {
             "raw_text": best["raw_text"],
@@ -476,13 +616,31 @@ class OCRAnalyzer:
             "detected_words": best["detected_words"],
             "top_ocr_attempts": [
                 {
-                    "preprocess_variant": attempt["preprocess_variant"],
-                    "tesseract_config": attempt["tesseract_config"],
-                    "clean_text": attempt["clean_text"],
-                    "average_word_confidence": attempt["average_word_confidence"],
-                    "scores": attempt["scores"],
-                    "label_indicators": attempt["label_indicators"],
+                    "preprocess_variant": a["preprocess_variant"],
+                    "tesseract_config": a["tesseract_config"],
+                    "clean_text": a["clean_text"],
+                    "average_word_confidence": a["average_word_confidence"],
+                    "scores": a["scores"],
+                    "label_indicators": a["label_indicators"],
                 }
-                for attempt in top_attempts
+                for a in top_attempts
             ],
+        }
+
+    def _empty_result(self):
+        return {
+            "raw_text": "",
+            "clean_text": "",
+            "predicted_class": None,
+            "confidence": 0.0,
+            "scores": {},
+            "matched_keywords": {},
+            "label_indicators": [],
+            "useful_text_signal": False,
+            "has_text_signal": False,
+            "preprocess_variant": "",
+            "tesseract_config": "",
+            "average_word_confidence": 0.0,
+            "detected_words": [],
+            "top_ocr_attempts": [],
         }

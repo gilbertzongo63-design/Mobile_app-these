@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../l10n.dart';
 import '../widgets/app_bottom_nav_bar.dart';
-import '../widgets/app_logo.dart';
-import 'history_screen.dart';
-import 'home_screen.dart';
-import 'scan_screen.dart';
-import 'settings_screen.dart';
+import '../app_routes.dart';
 
 class RecyclingTipsScreen extends StatelessWidget {
   const RecyclingTipsScreen({super.key});
@@ -31,11 +27,8 @@ class RecyclingTipsScreen extends StatelessWidget {
                       children: [
                         IconButton(
                           onPressed: () =>
-                              Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (_) => const SettingsScreen(),
-                            ),
-                          ),
+                              Navigator.of(context)
+                                  .pushReplacementNamed(AppRoutes.settings),
                           icon: const Icon(
                             Icons.arrow_back_rounded,
                             color: darkGreen,
@@ -53,7 +46,6 @@ class RecyclingTipsScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const AppLogo(size: 32),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -147,22 +139,19 @@ class RecyclingTipsScreen extends StatelessWidget {
               selectedIndex: 3,
               onChanged: (index) {
                 if (index == 0) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    AppRoutes.home,
                     (route) => false,
                   );
                 } else if (index == 1) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const ScanScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.scan);
                 } else if (index == 2) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HistoryScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.history);
                 } else if (index == 3) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.settings);
                 }
               },
             ),

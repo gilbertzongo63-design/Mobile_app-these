@@ -44,4 +44,12 @@ class NotificationService {
             NotificationItem.fromJson(Map<String, dynamic>.from(item as Map)))
         .toList();
   }
+
+  Future<void> markAsRead(int notificationId) async {
+    await _client.patchJson(
+      '/notifications/$notificationId/read',
+      body: {},
+      authRequired: true,
+    );
+  }
 }

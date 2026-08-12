@@ -1,18 +1,25 @@
-import 'package:flutter/widgets.dart';
-import 'package:google_sign_in_web/web_only.dart' as google_sign_in_web;
+import 'package:flutter/material.dart';
 
 Widget buildGoogleSignInButton(void Function() onPressed) {
-  // The Google Sign-In web button manages its own click handling internally.
-  // Pass a complete configuration to avoid null query parameters.
-  return google_sign_in_web.renderButton(
-    configuration: google_sign_in_web.GSIButtonConfiguration(
-      type: google_sign_in_web.GSIButtonType.standard,
-      theme: google_sign_in_web.GSIButtonTheme.outline,
-      size: google_sign_in_web.GSIButtonSize.large,
-      text: google_sign_in_web.GSIButtonText.continueWith,
-      shape: google_sign_in_web.GSIButtonShape.rectangular,
-      logoAlignment: google_sign_in_web.GSIButtonLogoAlignment.left,
-      minimumWidth: 280,
+  return OutlinedButton.icon(
+    onPressed: onPressed,
+    style: OutlinedButton.styleFrom(
+      foregroundColor: const Color(0xFF161C19),
+      backgroundColor: Colors.white,
+      side: const BorderSide(color: Color(0xFFD3DED0)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+      ),
+      textStyle: const TextStyle(
+        fontSize: 17,
+        fontWeight: FontWeight.w700,
+      ),
     ),
+    icon: Image.asset(
+      'assets/images/google_g_logo.png',
+      width: 28,
+      height: 28,
+    ),
+    label: const Text('Continuer avec Google'),
   );
 }

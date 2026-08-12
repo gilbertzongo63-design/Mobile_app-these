@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import '../app.dart';
 import '../l10n.dart';
 import '../widgets/app_bottom_nav_bar.dart';
-import 'history_screen.dart';
-import 'home_screen.dart';
-import 'scan_screen.dart';
-import 'settings_screen.dart';
+import '../app_routes.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({super.key});
@@ -35,12 +32,13 @@ class _LanguageScreenState extends State<LanguageScreen> {
     final locale = Locale(_selectedLanguageCode);
     await WasteSortingMobileApp.of(context)?.setLocale(locale);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context).t('language.saved')),
-      ),
-    );
-    Navigator.of(context).pop();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        AppRoutes.settings,
+        (route) => false,
+      );
+    });
   }
 
   @override
@@ -77,11 +75,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
                         children: [
                           IconButton(
                             onPressed: () =>
-                                Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (_) => const SettingsScreen(),
-                              ),
-                            ),
+                                Navigator.of(context)
+                                    .pushReplacementNamed(AppRoutes.settings),
                             icon: const Icon(
                               Icons.arrow_back_rounded,
                               color: darkGreen,
@@ -224,22 +219,19 @@ class _LanguageScreenState extends State<LanguageScreen> {
               selectedIndex: 3,
               onChanged: (index) {
                 if (index == 0) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    AppRoutes.home,
                     (route) => false,
                   );
                 } else if (index == 1) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const ScanScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.scan);
                 } else if (index == 2) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HistoryScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.history);
                 } else if (index == 3) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.settings);
                 }
               },
             ),

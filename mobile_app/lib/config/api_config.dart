@@ -6,16 +6,22 @@ class ApiConfig {
     defaultValue: '',
   );
 
-  // Web/Desktop: 127.0.0.1
-  // Android emulator: 10.0.2.2
-  // Physical phone: pass --dart-define=API_BASE_URL=http://IP_DU_PC:8000
-  static String get baseUrl {
+  static List<String> get baseUrls {
+    final urls = <String>[];
     if (_overrideBaseUrl.isNotEmpty) {
-      return _overrideBaseUrl;
+      urls.add(_overrideBaseUrl);
     }
     if (kIsWeb) {
-      return 'http://127.0.0.1:8000';
+      urls.add('http://127.0.0.1:8000');
+      urls.add('http://localhost:8000');
+    } else {
+      urls.add('http://192.168.11.118:8000');
+      urls.add('http://10.0.2.2:8000');
+      urls.add('http://127.0.0.1:8000');
+      urls.add('http://localhost:8000');
     }
-    return 'http://10.0.2.2:8000';
+    return urls;
   }
+
+  static String get baseUrl => baseUrls.first;
 }

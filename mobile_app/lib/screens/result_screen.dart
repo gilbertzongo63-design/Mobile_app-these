@@ -7,10 +7,7 @@ import '../models/prediction_result.dart';
 import '../services/api_client.dart';
 import '../services/prediction_service.dart';
 import '../widgets/app_bottom_nav_bar.dart';
-import 'history_screen.dart';
-import 'home_screen.dart';
-import 'scan_screen.dart';
-import 'settings_screen.dart';
+import '../app_routes.dart';
 
 class ResultScreen extends StatelessWidget {
   const ResultScreen({
@@ -22,12 +19,12 @@ class ResultScreen extends StatelessWidget {
   final PredictionResult? prediction;
   final Uint8List? imageBytes;
 
-  String get _detectedTitle => prediction?.classLabel ?? 'Objet inconnu';
+  String _detectedTitle(BuildContext context) => prediction?.classLabel ?? AppLocalizations.of(context).t('result.fallback.unknown_object');
 
-  String get _instruction =>
+  String _instruction(BuildContext context) =>
       prediction?.sortInstruction ??
-      "Analyse indisponible. Lancez un nouveau scan pour obtenir une consigne de tri.";
-  String get _statusLabel => prediction?.triageLabel ?? 'À vérifier';
+      AppLocalizations.of(context).t('result.fallback.no_instruction');
+  String _statusLabel(BuildContext context) => prediction?.triageLabel ?? AppLocalizations.of(context).t('result.fallback.to_check');
 
   bool get _isRecyclable => prediction?.isRecyclable ?? false;
   bool get _isNonRecyclable => prediction?.isNonRecyclable ?? false;
@@ -35,7 +32,7 @@ class ResultScreen extends StatelessWidget {
 
   String get _confidenceLabel => prediction?.formattedConfidence ?? '0%';
 
-  String get _binBadge => prediction?.binLabel ?? 'BAC À VÉRIFIER';
+  String _binBadge(BuildContext context) => prediction?.binLabel ?? AppLocalizations.of(context).t('result.fallback.bin_to_check');
 
   Color get _binAccentColor {
     if (_requiresReview) return const Color(0xFFF09A2D);
@@ -43,10 +40,10 @@ class ResultScreen extends StatelessWidget {
     return const Color(0xFF0E8A57);
   }
 
-  String get _decisionLabel => prediction?.decisionLabel ?? 'À valider';
+  String _decisionLabel(BuildContext context) => prediction?.decisionLabel ?? AppLocalizations.of(context).t('result.fallback.to_validate');
 
-  String get _decisionReason =>
-      prediction?.reasonLabel ?? 'Décision automatique';
+  String _decisionReason(BuildContext context) =>
+      prediction?.reasonLabel ?? AppLocalizations.of(context).t('result.fallback.auto_decision');
   String get _visionClass {
     final predictedClass = prediction?.vision['predicted_class'] as String?;
     if (predictedClass != null && predictedClass.isNotEmpty) {
@@ -91,28 +88,20 @@ class ResultScreen extends StatelessWidget {
         matched.isNotEmpty;
   }
 
-  bool get _hasReadableOcrText {
-    final rawText = (prediction?.ocr['raw_text'] as String? ?? '').trim();
-    final cleanText = (prediction?.ocr['clean_text'] as String? ?? '').trim();
-    final detectedWords = prediction?.ocr['detected_words'];
-    return rawText.isNotEmpty ||
-        cleanText.isNotEmpty ||
-        (detectedWords is List && detectedWords.isNotEmpty);
-  }
 
-  String get _ocrRawText {
+  String _ocrRawText(BuildContext context) {
     final text = prediction?.ocr['raw_text'] as String? ?? '';
     if (!_hasReliableOcr) {
       if (text.trim().isEmpty) {
-        final words = _ocrDetectedWords;
+        final words = _ocrDetectedWords(context);
         if (words.isNotEmpty && words != 'Aucun mot fiable') {
           return words;
         }
       }
-      return text.trim().isNotEmpty ? text.trim() : "Aucun texte fiable détecté sur l'objet.";
+      return text.trim().isNotEmpty ? text.trim() : AppLocalizations.of(context).t('result.ocr.no_reliable_text');
     }
     return text.trim().isEmpty
-        ? "Aucun texte fiable détecté sur l'objet."
+        ? AppLocalizations.of(context).t('result.ocr.no_reliable_text')
         : text.trim();
   }
 
@@ -121,10 +110,10 @@ class ResultScreen extends StatelessWidget {
     return text.trim().isEmpty ? '-' : text.trim();
   }
 
-  String get _ocrClass {
+  String _ocrClass(BuildContext context) {
     final predictedClass = prediction?.ocr['predicted_class'] as String?;
     return predictedClass == null || predictedClass.isEmpty
-        ? 'Aucune classe OCR'
+        ? AppLocalizations.of(context).t('result.ocr.no_class')
         : predictedClass;
   }
 
@@ -133,10 +122,10 @@ class ResultScreen extends StatelessWidget {
     return confidence == null ? '-' : '${(confidence * 100).round()}%';
   }
 
-  String get _ocrKeywords {
+  String _ocrKeywords(BuildContext context) {
     final matched = prediction?.ocr['matched_keywords'];
     if (matched is! Map || matched.isEmpty) {
-      return 'Aucun mot-clé détecté';
+      return AppLocalizations.of(context).t('result.ocr.no_keywords');
     }
 
     final keywords = <String>[];
@@ -146,13 +135,13 @@ class ResultScreen extends StatelessWidget {
       }
     }
 
-    return keywords.isEmpty ? 'Aucun mot-clé détecté' : keywords.join(', ');
+    return keywords.isEmpty ? AppLocalizations.of(context).t('result.ocr.no_keywords') : keywords.join(', ');
   }
 
-  String get _ocrLabelIndicators {
+  String _ocrLabelIndicators(BuildContext context) {
     final indicators = prediction?.ocr['label_indicators'];
     if (indicators is! List || indicators.isEmpty) {
-      return 'Aucun indice utile repéré';
+      return AppLocalizations.of(context).t('result.ocr.no_indicators');
     }
     return indicators.take(12).map((item) => item.toString()).join(', ');
   }
@@ -174,10 +163,10 @@ class ResultScreen extends StatelessWidget {
     return variant.replaceAll('_', ' ');
   }
 
-  String get _ocrDetectedWords {
+  String _ocrDetectedWords(BuildContext context) {
     final detectedWords = prediction?.ocr['detected_words'];
     if (detectedWords is! List || detectedWords.isEmpty) {
-      return 'Aucun mot lisible';
+      return AppLocalizations.of(context).t('result.ocr.no_readable_words');
     }
 
     final words = <String>[];
@@ -189,7 +178,7 @@ class ResultScreen extends StatelessWidget {
         }
       }
     }
-    return words.isEmpty ? 'Aucun mot lisible' : words.take(12).join(', ');
+    return words.isEmpty ? AppLocalizations.of(context).t('result.ocr.no_readable_words') : words.take(12).join(', ');
   }
 
   Future<void> _reportIssue(BuildContext context) async {
@@ -359,15 +348,15 @@ class ResultScreen extends StatelessWidget {
                     _ResultHeroCard(
                       imageBytes: imageBytes,
                       imageUrl: prediction?.imageUrl ?? '',
-                      statusLabel: _statusLabel,
+                      statusLabel: _statusLabel(context),
                       isRecyclable: _isRecyclable,
                       isNonRecyclable: _isNonRecyclable,
                       requiresReview: _requiresReview,
                     ),
                     const SizedBox(height: 28),
                     _DetectedObjectCard(
-                      title: _detectedTitle,
-                      instruction: _instruction,
+                      title: _detectedTitle(context),
+                      instruction: _instruction(context),
                       isRecyclable: _isRecyclable,
                       isNonRecyclable: _isNonRecyclable,
                       requiresReview: _requiresReview,
@@ -400,8 +389,8 @@ class ResultScreen extends StatelessWidget {
                             borderColor: const Color(0xFFF0D6BF),
                             icon: Icons.category_outlined,
                             iconColor: const Color(0xFFB55C30),
-                            value: _decisionLabel,
-                            label: _decisionReason,
+                            value: _decisionLabel(context),
+                            label: _decisionReason(context),
                             valueColor: const Color(0xFFB04D26),
                           ),
                         ),
@@ -411,16 +400,16 @@ class ResultScreen extends StatelessWidget {
                     _AnalysisDetailsCard(
                       visionClass: _visionClass,
                       visionConfidence: _visionConfidence,
-                      ocrClass: _ocrClass,
+                      ocrClass: _ocrClass(context),
                       ocrConfidence: _ocrConfidence,
-                      ocrRawText: _ocrRawText,
+                      ocrRawText: _ocrRawText(context),
                       ocrCleanText: _ocrCleanText,
-                      ocrKeywords: _ocrKeywords,
-                      ocrLabelIndicators: _ocrLabelIndicators,
+                      ocrKeywords: _ocrKeywords(context),
+                      ocrLabelIndicators: _ocrLabelIndicators(context),
                       ocrQuality: _ocrQuality,
                       ocrBestPass: _ocrBestPass,
-                      ocrDetectedWords: _ocrDetectedWords,
-                      decisionReason: _decisionReason,
+                      ocrDetectedWords: _ocrDetectedWords(context),
+                      decisionReason: _decisionReason(context),
                     ),
                     const SizedBox(height: 16),
                     SizedBox(
@@ -449,18 +438,15 @@ class ResultScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     _BinRecommendation(
-                        badge: _binBadge, accent: _binAccentColor),
+                        badge: _binBadge(context), accent: _binAccentColor),
                     const SizedBox(height: 26),
                     SizedBox(
                       width: double.infinity,
                       height: 70,
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (_) => const ScanScreen(),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .pushReplacementNamed(AppRoutes.scan);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: green,
@@ -485,10 +471,8 @@ class ResultScreen extends StatelessWidget {
                       height: 70,
                       child: OutlinedButton.icon(
                         onPressed: () {
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (_) => const HomeScreen(),
-                            ),
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            AppRoutes.home,
                             (route) => false,
                           );
                         },
@@ -517,22 +501,19 @@ class ResultScreen extends StatelessWidget {
               selectedIndex: 1,
               onChanged: (index) {
                 if (index == 0) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    AppRoutes.home,
                     (route) => false,
                   );
                 } else if (index == 1) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const ScanScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.scan);
                 } else if (index == 2) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HistoryScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.history);
                 } else if (index == 3) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.settings);
                 }
               },
             ),
@@ -750,8 +731,8 @@ class _DetectedObjectCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'CLASSE DÉTECTÉE',
+                    Text(
+                      AppLocalizations.of(context).t('result.detected_class_label'),
                       style: TextStyle(
                         letterSpacing: 1.1,
                         fontSize: 15,
@@ -798,16 +779,16 @@ class _DetectedObjectCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.info_outline_rounded,
                       color: Color(0xFF178755),
                       size: 22,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text(
-                      'Instruction de tri',
+                      AppLocalizations.of(context).t('result.sort_instruction'),
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
@@ -918,7 +899,7 @@ class _BinRecommendation extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Où jeter',
+                  AppLocalizations.of(context).t('result.where_to_throw'),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
@@ -992,16 +973,16 @@ class _AnalysisDetailsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.analytics_outlined,
                 color: Color(0xFF0A8A52),
                 size: 24,
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Text(
-                "Details de l'analyse",
+                AppLocalizations.of(context).t('result.analysis_details'),
                 style: TextStyle(
                   fontSize: 19,
                   fontWeight: FontWeight.w800,
@@ -1016,7 +997,7 @@ class _AnalysisDetailsCard extends StatelessWidget {
               Expanded(
                 child: _AnalysisMetric(
                   icon: Icons.visibility_outlined,
-                  label: 'Vision',
+                  label: AppLocalizations.of(context).t('result.vision'),
                   value: visionClass,
                   detail: visionConfidence,
                 ),
@@ -1025,7 +1006,7 @@ class _AnalysisDetailsCard extends StatelessWidget {
               Expanded(
                 child: _AnalysisMetric(
                   icon: Icons.text_fields_rounded,
-                  label: 'OCR',
+                  label: AppLocalizations.of(context).t('result.ocr'),
                   value: ocrClass,
                   detail: ocrConfidence,
                 ),
@@ -1034,30 +1015,30 @@ class _AnalysisDetailsCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           _AnalysisTextBlock(
-            title: "Texte lu par l'OCR",
+            title: AppLocalizations.of(context).t('result.ocr.raw_text'),
             text: ocrRawText,
           ),
           const SizedBox(height: 12),
           _AnalysisTextBlock(
-            title: 'Texte nettoyé',
+            title: AppLocalizations.of(context).t('result.ocr.clean_text'),
             text: ocrCleanText,
             compact: true,
           ),
           const SizedBox(height: 14),
-          _AnalysisLine(label: 'Qualité OCR', value: ocrQuality),
+          _AnalysisLine(label: AppLocalizations.of(context).t('result.ocr.quality'), value: ocrQuality),
           const SizedBox(height: 8),
-          _AnalysisLine(label: 'Passe OCR', value: ocrBestPass),
+          _AnalysisLine(label: AppLocalizations.of(context).t('result.ocr.pass'), value: ocrBestPass),
           const SizedBox(height: 8),
-          _AnalysisLine(label: 'Mots lus', value: ocrDetectedWords),
+          _AnalysisLine(label: AppLocalizations.of(context).t('result.ocr.words_read'), value: ocrDetectedWords),
           const SizedBox(height: 8),
-          _AnalysisLine(label: 'Mots-clés détectés', value: ocrKeywords),
+          _AnalysisLine(label: AppLocalizations.of(context).t('result.ocr.detected_keywords'), value: ocrKeywords),
           const SizedBox(height: 8),
           _AnalysisLine(
-            label: 'Indices utiles',
+            label: AppLocalizations.of(context).t('result.ocr.useful_indicators'),
             value: ocrLabelIndicators,
           ),
           const SizedBox(height: 8),
-          _AnalysisLine(label: 'Fusion', value: decisionReason),
+          _AnalysisLine(label: AppLocalizations.of(context).t('result.ocr.fusion'), value: decisionReason),
         ],
       ),
     );

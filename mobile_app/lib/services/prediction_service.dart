@@ -1,6 +1,8 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
+import 'dart:io' as io;
+
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' show ClientException;
 
 import '../models/prediction_result.dart';
 import 'api_client.dart';
@@ -195,6 +197,7 @@ class PredictionService {
   }
 
   Future<void> syncPendingPredictions() async {
+    if (kIsWeb) return;
     final pending = await _offlineQueue.loadPending();
     for (final item in pending) {
       final id = item['id'] as String?;
@@ -210,7 +213,7 @@ class PredictionService {
         continue;
       }
 
-      final file = File(filePath);
+      final file = io.File(filePath);
       if (!await file.exists()) {
         await _offlineQueue.remove(id);
         continue;
@@ -223,10 +226,10 @@ class PredictionService {
           disableOcr: disableOcr,
           topK: topK,
         );
-        await _offlineQueue.remove(id);
+        await _offlineQueue.remove(id, deleteFile: true);
       } catch (error) {
         if (!_isOfflineError(error)) {
-          await _offlineQueue.remove(id);
+          await _offlineQueue.remove(id, deleteFile: true);
         }
       }
     }
@@ -236,9 +239,10 @@ class PredictionService {
     if (error is OfflineQueuedException) {
       return true;
     }
-    if (error is SocketException ||
-        error is HttpException ||
-        error is TimeoutException) {
+    if (error is io.SocketException ||
+        error is io.HttpException ||
+        error is TimeoutException ||
+        error is ClientException) {
       return true;
     }
     if (error is ApiException && error.statusCode >= 500) {
@@ -252,7 +256,9 @@ class PredictionService {
     if (imageUrl == null || imageUrl.isEmpty || imageUrl.startsWith('http')) {
       return;
     }
-    final base = Uri.parse(ApiConfig.baseUrl);
+    final base = Uri.parse(
+      ApiClient.lastSuccessfulBaseUrl ?? ApiConfig.baseUrl,
+    );
     payload['image_url'] = base.replace(path: imageUrl).toString();
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -6,14 +7,21 @@ import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import 'token_store.dart';
 
+const Duration _requestTimeout = Duration(seconds: 15);
+const Duration _predictTimeout = Duration(seconds: 90);
+
 class ApiClient {
   ApiClient({TokenStore? tokenStore})
       : _tokenStore = tokenStore ?? TokenStore();
 
   final TokenStore _tokenStore;
+  static Completer<bool>? _refreshMutex;
+  static String? _lastSuccessfulBaseUrl;
 
-  Uri _uri(String path, [Map<String, dynamic>? queryParameters]) {
-    final base = Uri.parse(ApiConfig.baseUrl);
+  static String? get lastSuccessfulBaseUrl => _lastSuccessfulBaseUrl;
+
+  Uri _uri(String baseUrl, String path, [Map<String, dynamic>? queryParameters]) {
+    final base = Uri.parse(baseUrl);
     return base.replace(
       path: path.startsWith('/') ? path : '/$path',
       queryParameters: queryParameters?.map(
@@ -40,12 +48,14 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     bool authRequired = false,
   }) async {
-    return _requestWithRefresh(
-      () async => http.get(
-        _uri(path, queryParameters),
-        headers: await _headers(authRequired: authRequired),
+    return _requestWithFallback(
+      (baseUrl) => _requestWithRefresh(
+        () async => http.get(
+          _uri(baseUrl, path, queryParameters),
+          headers: await _headers(authRequired: authRequired),
+        ),
+        authRequired: authRequired,
       ),
-      authRequired: authRequired,
     );
   }
 
@@ -54,12 +64,14 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     bool authRequired = false,
   }) async {
-    return _requestRawWithRefresh(
-      () async => http.get(
-        _uri(path, queryParameters),
-        headers: await _headers(authRequired: authRequired),
+    return _requestRawWithFallback(
+      (baseUrl) => _requestRawWithRefresh(
+        () async => http.get(
+          _uri(baseUrl, path, queryParameters),
+          headers: await _headers(authRequired: authRequired),
+        ),
+        authRequired: authRequired,
       ),
-      authRequired: authRequired,
     );
   }
 
@@ -68,17 +80,19 @@ class ApiClient {
     required Map<String, dynamic> body,
     bool authRequired = false,
   }) async {
-    return _requestWithRefresh(
-      () async {
-        final headers = await _headers(authRequired: authRequired)
-          ..['Content-Type'] = 'application/json';
-        return http.post(
-          _uri(path),
-          headers: headers,
-          body: jsonEncode(body),
-        );
-      },
-      authRequired: authRequired,
+    return _requestWithFallback(
+      (baseUrl) => _requestWithRefresh(
+        () async {
+          final headers = await _headers(authRequired: authRequired)
+            ..['Content-Type'] = 'application/json';
+          return http.post(
+            _uri(baseUrl, path),
+            headers: headers,
+            body: jsonEncode(body),
+          );
+        },
+        authRequired: authRequired,
+      ),
     );
   }
 
@@ -87,17 +101,19 @@ class ApiClient {
     required Map<String, dynamic> body,
     bool authRequired = false,
   }) async {
-    return _requestWithRefresh(
-      () async {
-        final headers = await _headers(authRequired: authRequired)
-          ..['Content-Type'] = 'application/json';
-        return http.patch(
-          _uri(path),
-          headers: headers,
-          body: jsonEncode(body),
-        );
-      },
-      authRequired: authRequired,
+    return _requestWithFallback(
+      (baseUrl) => _requestWithRefresh(
+        () async {
+          final headers = await _headers(authRequired: authRequired)
+            ..['Content-Type'] = 'application/json';
+          return http.patch(
+            _uri(baseUrl, path),
+            headers: headers,
+            body: jsonEncode(body),
+          );
+        },
+        authRequired: authRequired,
+      ),
     );
   }
 
@@ -105,12 +121,14 @@ class ApiClient {
     String path, {
     bool authRequired = false,
   }) async {
-    return _requestWithRefresh(
-      () async => http.delete(
-        _uri(path),
-        headers: await _headers(authRequired: authRequired),
+    return _requestWithFallback(
+      (baseUrl) => _requestWithRefresh(
+        () async => http.delete(
+          _uri(baseUrl, path),
+          headers: await _headers(authRequired: authRequired),
+        ),
+        authRequired: authRequired,
       ),
-      authRequired: authRequired,
     );
   }
 
@@ -128,33 +146,36 @@ class ApiClient {
       throw ArgumentError('Either bytes or filePath must be provided.');
     }
 
-    return _multipartRequestWithRefresh(
-      () async {
-        final request =
-            http.MultipartRequest('POST', _uri(path, queryParameters))
-              ..headers.addAll(await _headers(authRequired: authRequired))
-              ..files.add(
-                filePath != null
-                    ? await http.MultipartFile.fromPath(
-                        fileField,
-                        filePath,
-                        filename: filename,
-                      )
-                    : http.MultipartFile.fromBytes(
-                        fileField,
-                        bytes!,
-                        filename: filename,
-                      ),
-              );
+    return _requestWithFallback(
+      (baseUrl) => _multipartRequestWithRefresh(
+        () async {
+          final request =
+              http.MultipartRequest('POST', _uri(baseUrl, path, queryParameters))
+                ..headers.addAll(await _headers(authRequired: authRequired))
+                ..files.add(
+                  filePath != null
+                      ? await http.MultipartFile.fromPath(
+                          fileField,
+                          filePath,
+                          filename: filename,
+                        )
+                      : http.MultipartFile.fromBytes(
+                          fileField,
+                          bytes!,
+                          filename: filename,
+                        ),
+                );
 
-        if (fields != null) {
-          request.fields.addAll(
-            fields.map((key, value) => MapEntry(key, value.toString())),
-          );
-        }
-        return request;
-      },
-      authRequired: authRequired,
+          if (fields != null) {
+            request.fields.addAll(
+              fields.map((key, value) => MapEntry(key, value.toString())),
+            );
+          }
+          return request;
+        },
+        authRequired: authRequired,
+      ),
+      timeout: _predictTimeout,
     );
   }
 
@@ -167,28 +188,85 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     bool authRequired = false,
   }) async {
-    return _multipartRequestWithRefresh(
-      () async {
-        final request =
-            http.MultipartRequest('POST', _uri(path, queryParameters))
-              ..headers.addAll(await _headers(authRequired: authRequired))
-              ..files.add(
-                await http.MultipartFile.fromPath(
-                  fileField,
-                  filePath,
-                  filename: filename,
-                ),
-              );
+    return _requestWithFallback(
+      (baseUrl) => _multipartRequestWithRefresh(
+        () async {
+          final request =
+              http.MultipartRequest('POST', _uri(baseUrl, path, queryParameters))
+                ..headers.addAll(await _headers(authRequired: authRequired))
+                ..files.add(
+                  await http.MultipartFile.fromPath(
+                    fileField,
+                    filePath,
+                    filename: filename,
+                  ),
+                );
 
-        if (fields != null) {
-          request.fields.addAll(
-            fields.map((key, value) => MapEntry(key, value.toString())),
+          if (fields != null) {
+            request.fields.addAll(
+              fields.map((key, value) => MapEntry(key, value.toString())),
+            );
+          }
+
+          return request;
+        },
+        authRequired: authRequired,
+      ),
+      timeout: _predictTimeout,
+    );
+  }
+
+  Future<T> _requestWithFallback<T>(
+    Future<T> Function(String baseUrl) requestFn, {
+    Duration? timeout,
+  }) async {
+    final effectiveTimeout = timeout ?? _requestTimeout;
+    final urls = ApiConfig.baseUrls;
+    for (var i = 0; i < urls.length; i++) {
+      try {
+        final result = await requestFn(urls[i]).timeout(effectiveTimeout);
+        _lastSuccessfulBaseUrl = urls[i];
+        return result;
+      } on ApiException {
+        rethrow;
+      } catch (e) {
+        if (i == urls.length - 1) {
+          throw ApiException(
+            message: 'Impossible de joindre le serveur ($e)',
+            statusCode: 0,
           );
         }
+      }
+    }
+    throw ApiException(
+      message: 'Impossible de joindre le serveur',
+      statusCode: 0,
+    );
+  }
 
-        return request;
-      },
-      authRequired: authRequired,
+  Future<http.Response> _requestRawWithFallback(
+    Future<http.Response> Function(String baseUrl) requestFn,
+  ) async {
+    final urls = ApiConfig.baseUrls;
+    for (var i = 0; i < urls.length; i++) {
+      try {
+        final response = await requestFn(urls[i]).timeout(_requestTimeout);
+        _lastSuccessfulBaseUrl = urls[i];
+        return response;
+      } on ApiException {
+        rethrow;
+      } catch (e) {
+        if (i == urls.length - 1) {
+          throw ApiException(
+            message: 'Impossible de joindre le serveur ($e)',
+            statusCode: 0,
+          );
+        }
+      }
+    }
+    throw ApiException(
+      message: 'Impossible de joindre le serveur',
+      statusCode: 0,
     );
   }
 
@@ -215,27 +293,45 @@ class ApiClient {
   }
 
   Future<bool> _refreshToken() async {
-    final refreshToken = await _tokenStore.readRefreshToken();
-    if (refreshToken == null || refreshToken.isEmpty) {
-      return false;
+    if (_refreshMutex != null) {
+      return _refreshMutex!.future;
     }
 
+    _refreshMutex = Completer<bool>();
+
     try {
-      final response = await http.post(
-        _uri('/auth/refresh'),
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({'refresh_token': refreshToken}),
+      final refreshToken = await _tokenStore.readRefreshToken();
+      if (refreshToken == null || refreshToken.isEmpty) {
+        _refreshMutex!.complete(false);
+        _refreshMutex = null;
+        return false;
+      }
+
+      final response = await _requestRawWithFallback(
+        (baseUrl) async => http.post(
+          _uri(baseUrl, '/auth/refresh'),
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({'refresh_token': refreshToken}),
+        ),
       );
+
+      if (response.statusCode == 401) {
+        await _tokenStore.clearTokens();
+        _refreshMutex!.complete(false);
+        _refreshMutex = null;
+        return false;
+      }
 
       final payload = _decodeResponse(response);
       final accessToken = payload['access_token'] as String?;
       final refreshTokenValue = payload['refresh_token'] as String?;
 
       if (accessToken == null || accessToken.isEmpty) {
-        await _tokenStore.clearTokens();
+        _refreshMutex!.complete(false);
+        _refreshMutex = null;
         return false;
       }
 
@@ -245,9 +341,12 @@ class ApiClient {
         await _tokenStore.saveAccessToken(accessToken);
       }
 
+      _refreshMutex!.complete(true);
+      _refreshMutex = null;
       return true;
     } catch (_) {
-      await _tokenStore.clearTokens();
+      _refreshMutex!.complete(false);
+      _refreshMutex = null;
       return false;
     }
   }
@@ -285,9 +384,35 @@ class ApiClient {
   }
 
   Map<String, dynamic> _decodeResponse(http.Response response) {
-    final payload = response.body.isEmpty
-        ? <String, dynamic>{}
-        : Map<String, dynamic>.from(jsonDecode(response.body) as Map);
+    if (response.body.isEmpty) {
+      if (response.statusCode >= 400) {
+        throw ApiException(
+          message: 'API request failed (status ${response.statusCode})',
+          statusCode: response.statusCode,
+        );
+      }
+      return <String, dynamic>{};
+    }
+
+    final dynamic decoded;
+    try {
+      decoded = jsonDecode(response.body);
+    } catch (_) {
+      if (response.statusCode >= 400) {
+        throw ApiException(
+          message: response.body.length > 200
+              ? response.body.substring(0, 200)
+              : response.body,
+          statusCode: response.statusCode,
+        );
+      }
+      return <String, dynamic>{'raw': response.body};
+    }
+
+    final payload = decoded is Map
+        ? Map<String, dynamic>.from(decoded)
+        : <String, dynamic>{'value': decoded};
+
     if (response.statusCode >= 400) {
       throw ApiException(
         message: payload['detail'] as String? ?? 'API request failed',
